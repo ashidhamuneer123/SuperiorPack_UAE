@@ -1,5 +1,6 @@
-import User from "../models/User.js";
 
+import Category from "../models/Category.js";
+import Product from "../models/Product.js"
 
 
 // Admin login page
@@ -34,55 +35,184 @@ export const handleAdminLogout = (req, res) => {
 };
 
 
+
 // Show admin dashboard
 export const showAdminDashboard = async (req, res) => {
   try {
-    const users = await User.find();
-    res.render("adminDashboard", { users });
+    // Get all customized products
+    const customizedProducts = await Product.find({ isCustomized: true });
+
+    // Group customized products by user (if userId exists)
+    const usersWithCustomizedProducts = customizedProducts.reduce((acc, product) => {
+      if (product.userId) {
+        const existingUser = acc.find(u => u.userId.toString() === product.userId.toString());
+
+        if (existingUser) {
+          existingUser.products.push(product);
+        } else {
+          acc.push({
+            userId: product.userId,
+            userName: product.userName,
+            userEmail: product.userEmail,
+            products: [product]
+          });
+        }
+      }
+      return acc;
+    }, []);
+
+    res.render("adminDashboard", { usersWithCustomizedProducts });
   } catch (error) {
-    console.error("Error fetching users:", error);
+    console.error("Error fetching customized product users:", error);
     res.status(500).send("Internal Server Error");
   }
 };
-// Show add user page
-export const showAddUserPage = (req, res) => {
-  res.render("addUser");
-};
 
-
-// Add user with multiple products
-export const addUser = async (req, res) => {
+// Show category page
+export const showAddCategoryPage = async (req, res) => {
   try {
-    const { username, email, products, moqs } = req.body;  // Getting data from the form
-    const files = req.files['productImages'];  // Correct way to access product images
-
-    if (!files || files.length === 0) {
-      return res.status(400).send("No product images uploaded.");
-    }
-
-    // Ensure product names and moqs are properly mapped
-    const productData = products.map((productName, index) => {
-      return {
-        name: productName,
-        moq: moqs[index] || 0,  // If moq is not provided, default to 0
-        image: files[index] ? files[index].filename : null  // Store image filename (Multer saves the filename)
-      };
-    });
-
-    // Create a new user and associate the products with them
-    const newUser = new User({
-      username,
-      email,
-      products: productData
-    });
-
-    // Save the new user to the database
-    await newUser.save();
-
-    res.redirect("/admin");  // Redirect to admin dashboard to view the updated list
+    const categories = await Category.find({ isDeleted: false });
+    res.render("addCategory", { categories });
   } catch (error) {
-    console.error("Error adding user:", error);
+    console.error("Error fetching categories:", error);
     res.status(500).send("Internal Server Error");
   }
 };
+
+export const addCategory = async (req, res) => {
+  try {
+    const { name } = req.body;
+    const productImages = req.files?.productImages
+      ? req.files.productImages.map(file => file.filename)
+      : [];
+
+    const category = new Category({
+      name,
+      image: productImages
+    });
+
+    await category.save();
+    res.redirect('/admin/addCategory');
+  } catch (error) {
+    console.error("Error saving category:", error);
+    res.status(500).send("Internal Server Error");
+  }
+};
+
+export const deleteCategory = async (req, res) => {
+  try {
+    await Category.findByIdAndUpdate(req.params.id, { isDeleted: true });
+    res.redirect('/admin/addCategory');
+  } catch (error) {
+    console.error("Error deleting category:", error);
+    res.status(500).send("Internal Server Error");
+  }
+};
+export const showEditCategoryPage = async (req, res) => {
+  try {
+    const category = await Category.findById(req.params.id);
+    res.render("editCategory", { category });
+  } catch (error) {
+    console.error("Error fetching category:", error);
+    res.status(500).send("Internal Server Error");
+  }
+};
+
+export const updateCategory = async (req, res) => {
+  try {
+    const { name } = req.body;
+    const image = req.files?.productImages
+      ? req.files.productImages.map(file => file.path)
+      : undefined;
+
+    const updateData = { name };
+    if (image) updateData.image = image;
+
+    await Category.findByIdAndUpdate(req.params.id, updateData);
+    res.redirect('/admin/addCategory');
+  } catch (error) {
+    console.error("Error updating category:", error);
+    res.status(500).send("Internal Server Error");
+  }
+};
+
+
+
+
+// Show product page
+export const showAddProductPage =async (req, res) => {
+  try {
+    const categories = await Category.find(); 
+    res.render("addProduct",{ categories });
+  } catch (error) {
+    console.error("Error saving product:", error);
+    res.status(500).send("Internal Server Error");
+  }
+ 
+};
+
+export const addProduct = async (req, res) => {
+  try {
+    const {
+      name,
+      moq,
+      description,
+      material,
+      function: func,
+      size,
+      leadTime,
+      isCustomized,
+      userId,
+      userName,
+      userEmail,
+      prod_id,
+      catId
+    } = req.body;
+
+    // Get product images uploaded via multer.fields()
+    const productImages = req.files?.productImages?.map(file => file.filename) || [];
+
+    const product = new Product({
+      name,
+      moq,
+      description,
+      material,
+     
+      function: func,
+      size,
+      leadTime,
+      image: productImages,
+      isCustomized: isCustomized === "true",
+      userId: isCustomized === "true" ? userId : null,
+      userName: isCustomized === "true" ? userName : null,
+      userEmail: isCustomized === "true" ? userEmail : null,
+      prod_id,
+      catId
+    });
+
+    await product.save();
+    res.redirect('/admin'); // Adjust this to your admin product listing route if needed
+  } catch (error) {
+    console.error("Error saving product:", error);
+    res.status(500).send("Internal Server Error");
+  }
+};
+
+
+
+
+
+
+export const blockUser = async (req, res) => {
+  const userId = req.params.userId;
+
+  try {
+    // Soft delete by setting a flag
+    await Product.updateMany({ userId }, { isCustomized: false });
+    res.redirect('/admin');
+  } catch (err) {
+    res.status(500).send('Failed to block user');
+  }
+};
+
 

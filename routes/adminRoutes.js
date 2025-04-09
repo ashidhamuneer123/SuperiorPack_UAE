@@ -1,6 +1,6 @@
 import express from "express";
 import upload from "../middlewares/multerConfig.js"; 
-import { showAdminDashboard, addUser ,showLoginPage, handleAdminLogin, handleAdminLogout,showAddUserPage} from "../controllers/adminController.js";
+import { showAdminDashboard,showLoginPage, handleAdminLogin, handleAdminLogout,showAddProductPage,addProduct,blockUser,showAddCategoryPage,addCategory,showEditCategoryPage,updateCategory,deleteCategory} from "../controllers/adminController.js";
 import { adminAuth } from "../middlewares/authMiddleware.js";
 const router = express.Router();
 
@@ -12,10 +12,17 @@ router.get("/logout", handleAdminLogout);
 // Admin dashboard route
 router.get("/",adminAuth, showAdminDashboard);
 
-// Route for displaying the add user page
-router.get("/add", adminAuth, showAddUserPage);
+router.get("/addCategory", adminAuth, showAddCategoryPage);
+router.post("/addCategory", adminAuth, upload, addCategory);
+router.get("/category/edit/:id", adminAuth, showEditCategoryPage);
+router.post("/category/edit/:id", adminAuth, upload, updateCategory);
+router.get("/category/delete/:id", adminAuth, deleteCategory);
 
-// Route for adding a new user with products
-router.post("/add", adminAuth, upload, addUser);
+router.get("/addProduct", adminAuth, showAddProductPage);
+
+router.post("/addProduct", adminAuth,upload,addProduct );
+
+// Block user
+router.post('/block-user/:userId', adminAuth,blockUser);
 
 export default router;

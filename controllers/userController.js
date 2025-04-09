@@ -1,14 +1,33 @@
-import User from "../models/User.js";
+import Product from "../models/Product.js";
+import Category from "../models/Category.js";
 import nodemailer from "nodemailer";
 
 export const loadHome = async (req, res) => {
   try {
-    res.render("home");
+   
+
+ // fetch categories and products for rendering
+    const categories = await Category.find({ isDeleted: false });
+    const productsByCategory = await Product.find().populate('catId');
+
+    const categoryProductsMap = {};
+    productsByCategory.forEach(product => {
+      const categoryId = product.catId._id.toString();
+      if (!categoryProductsMap[categoryId]) {
+        categoryProductsMap[categoryId] = [];
+      }
+      categoryProductsMap[categoryId].push(product);
+    });
+    const products = await Product.find().limit(8).sort({ timestamp: -1 }); 
+    const custProducts = await Product.find({isCustomized:true}).limit(8).sort({ timestamp: -1 }); 
+    res.render("home", { categories, categoryProductsMap ,products,custProducts});
+
   } catch (error) {
-    console.error("Error fetching users:", error);
+    console.error("Error loading home:", error);
     res.status(500).send("Internal Server Error");
   }
 };
+
 
 export const instantQuote = async (req, res) => {
     try {
@@ -60,23 +79,87 @@ export const instantQuote = async (req, res) => {
         res.status(500).json({ success: false, message: 'Error sending quote' });
     }
 };
-export const userLogin = async (req, res) => {
-    try {
-      res.render("userLogin");
-    } catch (error) {
-      console.error("Error fetching users:", error);
-      res.status(500).send("Internal Server Error");
-    }
-  };
 
-export const userDashboard = async (req, res) => {
-    try {
-      res.render("userDashboard");
-    } catch (error) {
-      console.error("Error fetching users:", error);
-      res.status(500).send("Internal Server Error");
+export const productDetailPage = async (req, res) => {
+  try {
+    const product = await Product.findById(req.params.id);
+    // Fetch categories that are not deleted
+    const categories = await Category.find({ isDeleted: false });
+
+    // Fetch products and group them by category
+    const productsByCategory = await Product.find().populate('catId');
+
+    // Create a map of categoryId to product list
+    const categoryProductsMap = {};
+
+    productsByCategory.forEach(product => {
+      const categoryId = product.catId._id.toString();
+      if (!categoryProductsMap[categoryId]) {
+        categoryProductsMap[categoryId] = [];
+      }
+      categoryProductsMap[categoryId].push(product);
+    });
+    res.render("productDetail",{ product,categories, categoryProductsMap });
+  } catch (error) {
+    console.error("Error fetching users:", error);
+    res.status(500).send("Internal Server Error");
+  }
+};
+
+export const userLoginPage = async (req, res) => {
+  try {
+    res.render("userLogin");
+  } catch (error) {
+    console.error("Error fetching users:", error);
+    res.status(500).send("Internal Server Error");
+  }
+};
+
+export const userLogin = async (req, res) => {
+  try {
+    const { userId, email } = req.body;
+
+    // Check if there's a product matching this userId and email
+    const product = await Product.findOne({ userId, userEmail: email });
+
+    if (!product) {
+      return res.status(404).send("Invalid credentials. Please try again.");
     }
-  };
+
+    // ✅ Save user info to session
+    req.session.user = {
+      id: userId,
+      email,
+    };
+
+    // ✅ Redirect to dashboard
+    res.redirect("/userdashboard");
+  } catch (error) {
+    console.error("Error in login:", error);
+    res.status(500).send("Internal Server Error");
+  }
+};
+
+
+// Fetch products for the user in the dashboard
+export const userDashboard = async (req, res) => {
+  try {
+    const { id, email } = req.session.user; // Session-based values
+
+    // Fetch products associated with this user
+    const products = await Product.find({ userId: id, userEmail: email });
+
+    res.render("userDashboard", {
+      userId: id,
+      userEmail: email,
+      products,
+    });
+  } catch (error) {
+    console.error("Error fetching dashboard data:", error);
+    res.status(500).send("Internal Server Error");
+  }
+};
+
 
   export const aboutUs = async (req, res) => {
     try {
@@ -85,3 +168,14 @@ export const userDashboard = async (req, res) => {
       res.status(500).send("Internal Server Error");
     }
   };
+
+  export const userLogout = (req, res) => {
+    req.session.destroy((err) => {
+      if (err) {
+        console.error("Logout error:", err);
+        return res.status(500).send("Could not log out.");
+      }
+      res.redirect('/login');
+    });
+  };
+  

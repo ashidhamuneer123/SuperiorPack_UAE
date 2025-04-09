@@ -192,37 +192,26 @@
                 <!-- Right Section - Login Form -->
                 <div class="d-flex flex-column justify-content-center align-items-center w-100" style="max-width: 400px; background-color: #89ADA3;">
                     <div class="card shadow-lg rounded-4 p-4 opacity-90 w-100">
-                        <h2 class="text-center mb-4">Customer Login</h2>
-                        <form onsubmit="handleSubmit(event)">
-                            <div class="mb-3">
-                                <label class="form-label">User Name:</label>
-                                <input type="text" class="form-control" id="username" placeholder="Enter your name" required>
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label">Email:</label>
-                                <input type="email" class="form-control" id="email" placeholder="Enter your email" required>
-                            </div>
-                            <button type="submit" class="btn w-100" style="background-color: #C9991B; color: black;">Login</button>
-                        </form>
+                      <h2 class="text-center mb-4">Customer Login</h2>
+                      <form action="/login" method="POST">
+                        <div class="mb-3">
+                          <label class="form-label">User Name:</label>
+                          <input type="text" class="form-control" id="username" name="userId" placeholder="Enter your name" required>
+                        </div>
+                        <div class="mb-3">
+                          <label class="form-label">Email:</label>
+                          <input type="email" class="form-control" id="email" name="email" placeholder="Enter your email" required>
+                        </div>
+                        <button type="submit" class="btn w-100" style="background-color: #C9991B; color: black;">Login</button>
+                      </form>
                     </div>
-                </div>
+                  </div>
+                  
             </div>
         </div>
     </div>
     
-    <script>
-        function handleSubmit(event) {
-            event.preventDefault();
-            const username = document.getElementById('username').value;
-            const email = document.getElementById('email').value;
-    
-            if (username && email) {
-                window.location.href = '/userdashboard';
-            } else {
-                alert('Please fill in all fields');
-            }
-        }
-    </script>
+
     
     <!-- login End -->
 

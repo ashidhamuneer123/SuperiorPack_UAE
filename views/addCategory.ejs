@@ -50,45 +50,50 @@
         </div>
     </nav>
 
-    <!-- Add User Form -->
+    <!-- Add category Form -->
     <div class="container mt-4">
-        <h2>Add New User</h2>
-        <form action="/admin/add" method="POST" enctype="multipart/form-data" class="mb-4">
-            <div class="mb-3">
-                <label for="username" class="form-label">Username</label>
-                <input type="text" id="username" name="username" class="form-control" required>
-            </div>
-            <div class="mb-3">
-                <label for="email" class="form-label">Email</label>
-                <input type="email" id="email" name="email" class="form-control" required>
-            </div>
-            <div id="productFields" class="mb-3">
-                <label class="form-label">Product Details</label>
-                <div class="input-group mb-2">
-                    <input type="text" name="products[]" placeholder="Product Name" class="form-control" required>
-                    <input type="number" name="moqs[]" placeholder="MOQ" class="form-control" required>
-                    <input type="file" name="productImages" multiple class="form-control" required>
-                </div>
-            </div>
-            <button type="button" class="btn btn-primary" onclick="addProduct()">Add Another Product</button>
-            <button type="submit" class="btn btn-success">Add User</button>
+        <h2>Add New Category</h2>
+        <form action="/admin/addCategory" method="POST" enctype="multipart/form-data">
+          <input type="text" name="name" placeholder="Category Name" required />
+          <input type="file" name="productImages" required />
+          <button type="submit">Add Category</button>
         </form>
-    </div>
+      
+        <hr>
+      
+        <h3>Categories List</h3>
+        <table border="1" cellpadding="10">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Image</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% categories.forEach(category => { %>
+              <tr>
+                <td><%= category.name %></td>
+                <td>
+                  <% category.image.forEach(img => { %>
+                    <img src="/<%= img %>" width="60" />
+                  <% }) %>
+                </td>
+                <td>
+                  <a href="/admin/category/edit/<%= category._id %>">Edit</a>
+                  |
+                  <a href="/admin/category/delete/<%= category._id %>" onclick="return confirm('Are you sure?')">Delete</a>
+                </td>
+              </tr>
+            <% }) %>
+          </tbody>
+        </table>
+      </div>
+      
 
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script>
-        function addProduct() {
-            const productFields = document.getElementById('productFields');
-            const newProductField = document.createElement('div');
-            newProductField.classList.add('input-group', 'mb-2');
-            newProductField.innerHTML = `
-                <input type="text" name="products[]" placeholder="Product Name" class="form-control" required>
-                <input type="number" name="moqs[]" placeholder="MOQ" class="form-control" required>
-                <input type="file" name="productImages" multiple class="form-control" required>
-            `;
-            productFields.appendChild(newProductField);
-        }
-    </script>
+  
+  
 </body>
 </html>
