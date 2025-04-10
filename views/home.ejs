@@ -511,6 +511,51 @@
     </div>
     <!-- Vendor End -->
 
+    <!-- Testimonials Section -->
+<div class="container-fluid pt-5 team">
+    <div class="row px-xl-5">
+        <div class="col">
+            <div class="text-center mb-4" data-aos="fade-up">
+                <h2 class="section-title px-5"><span class="px-2">Stories of Satisfaction</span></h2>
+                <p style="color: black;">
+                    Our clients’ satisfaction is our top priority. Don’t just take our word for it—
+                    hear from those who have experienced our services firsthand. Their stories and 
+                    feedback reflect our commitment to excellence and quality.
+                </p>
+            </div>
+
+            <div class="owl-carousel testimonial-carousel">
+                <% const testimonials = [
+                    { name: "Walter White", company: "Waffries", image: "userAssets/img/team-1.jpg", feedback: "Exceptional service! The team was professional, responsive, and delivered exactly what we needed. Highly recommended!" },
+                    { name: "Sarah Jhonson", company: "Kidzania", image: "userAssets/img/user.jpg", feedback: "From start to finish, the process was smooth and hassle-free. Great team, great service!" },
+                    { name: "William Anderson", company: "Chili's", image: "userAssets/img/team-2.jpg", feedback: "Reliable, efficient, and top-notch quality." },
+                    { name: "Amanda Jepson", company: "Frango", image: "userAssets/img/team-3.jpg", feedback: "They understood our requirements perfectly and exceeded our expectations!" },
+                    { name: "David Paul", company: "Gloria Foods", image: "userAssets/img/team-4.jpg", feedback: "Professional and consistent, with timely delivery and attention to detail." },
+                    { name: "Rita Allen", company: "BakeMe", image: "userAssets/img/user.jpg", feedback: "Creative solutions, and very customer-focused. Would work with them again!" }
+                ]; %>
+
+                <% testimonials.forEach(member => { %>
+                    <div class="vendor-item border p-4 text-center testimonial-card" data-aos="fade-up">
+    <div class="member position-relative overflow-hidden">
+        <img src="<%= member.image %>" class="img-fluid rounded-circle mb-3 testimonial-img" alt="<%= member.name %>">
+        <div class="member-info">
+            <div class="member-info-content">
+                <h4 style="color: white;"><%= member.name %></h4>
+                <span style="color: goldenrod;"><%= member.company %></span>
+                <p class="mt-2 text-light testimonial-text"><%= member.feedback %></p>
+            </div>
+        </div>
+    </div>
+</div>
+
+                <% }) %>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
 
     <!-- Footer Start -->
     <div class="container-fluid bg-secondary text-dark mt-5 pt-5">
@@ -605,6 +650,22 @@
         });
         
       </script>
+      <script>
+  $(document).ready(function(){
+    $(".owl-carousel").owlCarousel({
+      loop: true,
+      margin: 20,
+      autoplay: true,
+      autoplayTimeout: 5000,
+      autoplayHoverPause: true,
+      responsive:{
+        0:{ items:1 },
+        768:{ items:2 },
+        992:{ items:3 }
+      }
+    });
+  });
+</script>
       
     <!-- Template Javascript -->
     <script src="userAssets/js/main.js"></script>

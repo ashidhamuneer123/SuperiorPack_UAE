@@ -108,7 +108,7 @@
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
-                    
+                    <li class="nav-item"><a class="nav-link" href="/admin/addUser">Add User</a></li>
                     <li class="nav-item"><a class="nav-link" href="/admin/addProduct">Add Product</a></li>
                     <li class="nav-item"><a class="nav-link" href="#">Manage Orders</a></li>
                     <li class="nav-item"><a class="nav-link" href="/admin/addCategory">Add Category</a></li>
@@ -118,56 +118,54 @@
         </div>
     </nav>
 
-    <div class="container">
-        <h2>Customized Product Users</h2>
-        <div class="table-responsive">
-            <table class="table table-striped table-bordered">
+    
+        <div class="container">
+            <h2>Customized Product Users</h2>
+            <div class="table-responsive">
+              <table class="table table-striped table-bordered">
                 <thead class="table-dark">
-                  <tr>
-                    <th>UserId</th>
-                    <th>Username</th>
-                    <th>Email</th>
-                    <th>Products</th>
-                    <th>Action</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <% usersWithCustomizedProducts.forEach(user => { %>
                     <tr>
-                        <td><%= user.userId %></td>
-                      <td><%= user.userName %></td>
-                      <td><%= user.userEmail %></td>
-                      <td>
-                        <% if (user.products.length > 0) { %>
-                          <ul>
-                            <% user.products.forEach(product => { %>
-                              <li>
-                                <strong><%= product.name %></strong> (MOQ: <%= product.moq %>)<br/>
-                                <% if (product.image && product.image.length > 0) { %>
-                                  <img src="/uploads/<%= product.image[0] %>" alt="Product Image" style="max-width: 100px; margin: 5px; border-radius: 8px;" />
-                                <% } %>
-                              </li>
-                            <% }) %>
-                          </ul>
-                        <% } else { %>
-                          No products
-                        <% } %>
-                      </td>
-                      
-                      <td>
-                        <!--  Block button -->
-                        
-                        <form action="/admin/block-user/<%= user.userId %>" method="POST" style="display:inline;">
-                          <button type="submit" class="btn btn-sm btn-danger">Block</button>
-                        </form>
-                      </td>
+                      <th>User ID</th>
+                      <th>Name</th>
+                      <th>Email</th>
+                     
+                      <th>Products</th>
+                     
                     </tr>
-                  <% }) %>
-                </tbody>
+                  </thead>
+                  <tbody>
+                    <% usersWithCustomizedProducts.forEach(user => { %>
+                      <tr>
+                        <td><%= user.userId %></td>
+                        <td><%= user.userName %></td>
+                        <td><%= user.userEmail %></td>
+                        <td>
+                          <% if (user.products.length > 0) { %>
+                            <ul>
+                              <% user.products.forEach(product => { %>
+                                <li>
+                                  <strong><%= product.name %></strong> (MOQ: <%= product.moq %>)<br />
+                                  <% if (product.image && product.image.length > 0) { %>
+                                    <img src="/uploads/<%= product.image[0] %>" alt="Product Image"
+                                      style="max-width: 100px; margin: 5px; border-radius: 8px;" />
+                                  <% } %>
+                                </li>
+                              <% }) %>
+                            </ul>
+                          <% } else { %>
+                            No products
+                          <% } %>
+                        </td>
+                       
+                      </tr>
+                    <% }) %>
+                  </tbody>
+             
               </table>
-              
-        </div>
-      </div>
+            </div>
+          </div>
+          
+     
       
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>

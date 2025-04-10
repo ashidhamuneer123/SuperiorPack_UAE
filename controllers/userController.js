@@ -4,7 +4,7 @@ import nodemailer from "nodemailer";
 
 export const loadHome = async (req, res) => {
   try {
-   
+  
 
  // fetch categories and products for rendering
     const categories = await Category.find({ isDeleted: false });

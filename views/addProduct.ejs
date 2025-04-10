@@ -50,59 +50,69 @@
         </div>
     </nav>
 
-    <!-- Add Product Form -->
-    <div class="container mt-4">
-        <h2>Add New Product</h2>
-        <form action="/admin/addProduct" method="POST" enctype="multipart/form-data">
-          
-          <input type="text" name="prod_id" placeholder="Product ID" required />
-          <input type="text" name="name" placeholder="Product Name" required />
-          <textarea name="description" placeholder="Product Description" required></textarea>
-          <input type="text" name="material" placeholder="Material" required />
-         
-          <input type="text" name="function" placeholder="Function" required />
-          <input type="text" name="size" placeholder="Size" required />
-          <input type="text" name="leadTime" placeholder="Lead Time" required />
+   <!-- Add Product Form -->
+<div class="container mt-4">
+    <h2>Add New Product</h2>
+    <form action="/admin/addProduct" method="POST" enctype="multipart/form-data">
       
-          <label>Select Category:</label>
-          <select name="catId" required>
-            <option value="">-- Select Category --</option>
-            <% categories.forEach(category => { %>
-              <option value="<%= category._id %>"><%= category.name %></option>
-            <% }); %>
-          </select>
-      
-          <label>MOQ:</label>
-          <input type="text" name="moq" placeholder="MOQ" required />
-      
-          <label>Upload Product Images:</label>
-          <input type="file" name="productImages" multiple required />
-      
-          <label for="isCustomized">Is this product customized?</label>
-          <select name="isCustomized" id="isCustomized" onchange="toggleUserFields(this.value)">
-            <option value="false">Common</option>
-            <option value="true">Customized</option>
-          </select>
-      
-          <div id="userFields" style="display: none;">
-            <label>User ID:</label>
-            <input type="text" name="userId" />
-            <label>User Name:</label>
-            <input type="text" name="userName" />
-            <label>User Email:</label>
-            <input type="email" name="userEmail" />
-          </div>
-      
-          <button type="submit">Add Product</button>
-        </form>
+      <input type="text" name="prod_id" placeholder="Product ID" required />
+      <input type="text" name="name" placeholder="Product Name" required />
+      <textarea name="description" placeholder="Product Description" required></textarea>
+      <input type="text" name="material" placeholder="Material" required />
+      <input type="text" name="function" placeholder="Function" required />
+      <input type="text" name="size" placeholder="Size" required />
+      <input type="text" name="leadTime" placeholder="Lead Time" required />
+  
+      <label>Select Category:</label>
+      <select name="catId" required>
+        <option value="">-- Select Category --</option>
+        <% categories.forEach(category => { %>
+          <option value="<%= category._id %>"><%= category.name %></option>
+        <% }); %>
+      </select>
+  
+      <label>MOQ:</label>
+      <input type="text" name="moq" placeholder="MOQ" required />
+  
+      <label>Upload Product Images:</label>
+      <input type="file" name="productImages" multiple required />
+  
+      <label for="isCustomized">Is this product customized?</label>
+      <select name="isCustomized" id="isCustomized" onchange="toggleUserFields(this)">
+        <option value="false">Common</option>
+        <option value="true">Customized</option>
+      </select>
+  
+      <div id="userFields" style="display: none;">
+        <label>User ID:</label>
+        <input type="text" name="userId" id="userIdInput" />
       </div>
+  
+      <button type="submit">Add Product</button>
+    </form>
+  </div>
 
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        function toggleUserFields(value) {
-          document.getElementById("userFields").style.display = value === "true" ? "block" : "none";
+        function toggleUserFields(selectElement) {
+          const userFields = document.getElementById("userFields");
+          const userIdInput = document.getElementById("userIdInput");
+      
+          if (selectElement.value === "true") {
+            userFields.style.display = "block";
+            userIdInput.setAttribute("required", "required");
+          } else {
+            userFields.style.display = "none";
+            userIdInput.removeAttribute("required");
+          }
         }
+      
+        // To handle edit case if the page reloads with value
+        window.addEventListener('DOMContentLoaded', () => {
+          const select = document.getElementById("isCustomized");
+          toggleUserFields(select);
+        });
       </script>
   
 </body>
