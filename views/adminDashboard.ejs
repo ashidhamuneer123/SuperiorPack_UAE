@@ -146,7 +146,7 @@
                                 <li>
                                   <strong><%= product.name %></strong> (MOQ: <%= product.moq %>)<br />
                                   <% if (product.image && product.image.length > 0) { %>
-                                    <img src="/uploads/<%= product.image[0] %>" alt="Product Image"
+                                    <img src="<%= product.image[0] %>" alt="Product Image"
                                       style="max-width: 100px; margin: 5px; border-radius: 8px;" />
                                   <% } %>
                                 </li>

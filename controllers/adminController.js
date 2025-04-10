@@ -95,7 +95,7 @@ export const addCategory = async (req, res) => {
   try {
     const { name } = req.body;
     const productImages = req.files?.productImages
-      ? req.files.productImages.map(file => file.filename)
+      ? req.files.productImages.map(file => file.path)
       : [];
 
     const category = new Category({
@@ -234,7 +234,7 @@ export const addProduct = async (req, res) => {
       isCustomized, userId, prod_id, catId
     } = req.body;
 
-    const productImages = req.files?.productImages?.map(file => file.filename) || [];
+    const productImages = req.files?.productImages?.map(file => file.path) || [];
 
     let userRef = null;
 

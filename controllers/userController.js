@@ -1,7 +1,7 @@
 import Product from "../models/Product.js";
 import Category from "../models/Category.js";
 import nodemailer from "nodemailer";
-
+import User from "../models/User.js";
 export const loadHome = async (req, res) => {
   try {
   
@@ -12,12 +12,15 @@ export const loadHome = async (req, res) => {
 
     const categoryProductsMap = {};
     productsByCategory.forEach(product => {
-      const categoryId = product.catId._id.toString();
-      if (!categoryProductsMap[categoryId]) {
-        categoryProductsMap[categoryId] = [];
+      if (product.catId) {
+        const categoryId = product.catId._id.toString();
+        if (!categoryProductsMap[categoryId]) {
+          categoryProductsMap[categoryId] = [];
+        }
+        categoryProductsMap[categoryId].push(product);
       }
-      categoryProductsMap[categoryId].push(product);
     });
+    
     const products = await Product.find().limit(8).sort({ timestamp: -1 }); 
     const custProducts = await Product.find({isCustomized:true}).limit(8).sort({ timestamp: -1 }); 
     res.render("home", { categories, categoryProductsMap ,products,custProducts});
@@ -44,11 +47,10 @@ export const instantQuote = async (req, res) => {
         const { name, contact, email, message} = req.body;
         const products = Array.isArray(req.body.products) ? req.body.products.join(', ') : req.body.products;
 
-        // Handle uploaded files (both product images and logo)
         const logos = req.files?.logo ? req.files.logo.map(file => ({
-            filename: file.originalname,
-            path: file.path,
-        })) : [];
+          filename: file.originalname,
+          url: file.path, // Cloudinary returns the URL in `file.path`
+      })) : [];
 
         const transporter = nodemailer.createTransport({
             service: 'gmail',
@@ -59,18 +61,21 @@ export const instantQuote = async (req, res) => {
         });
 
         const mailOptions = {
-            from: process.env.EMAIL_USER,
-            to: 'ashidhagithub@gmail.com',
-            subject: `New Quote Request from ${name} - ${new Date().toLocaleString()}`,
-            html: `
-                <p><strong>Name:</strong> ${name}</p>
-                <p><strong>Contact:</strong> ${contact}</p>
-                <p><strong>Email:</strong> ${email}</p>
-                <p><strong>Products:</strong> ${products}</p>
-                <p><strong>Message:</strong> ${message}</p>
-            `,
-            attachments: logos,
-        };
+          from: process.env.EMAIL_USER,
+          to: 'ashidhagithub@gmail.com',
+          subject: `New Quote Request from ${name} - ${new Date().toLocaleString()}`,
+          html: `
+              <p><strong>Name:</strong> ${name}</p>
+              <p><strong>Contact:</strong> ${contact}</p>
+              <p><strong>Email:</strong> ${email}</p>
+              <p><strong>Products:</strong> ${products}</p>
+              <p><strong>Message:</strong> ${message}</p>
+          `,
+          attachments: logos.map(logo => ({
+              filename: logo.filename,
+              path: logo.url, // cloudinary image path
+          })),
+      };
 
         await transporter.sendMail(mailOptions);
         res.json({ success: true, message: 'Quote submitted successfully!' });
@@ -93,12 +98,16 @@ export const productDetailPage = async (req, res) => {
     const categoryProductsMap = {};
 
     productsByCategory.forEach(product => {
-      const categoryId = product.catId._id.toString();
-      if (!categoryProductsMap[categoryId]) {
-        categoryProductsMap[categoryId] = [];
+      if (product.catId) {
+        const categoryId = product.catId._id.toString();
+        if (!categoryProductsMap[categoryId]) {
+          categoryProductsMap[categoryId] = [];
+        }
+        categoryProductsMap[categoryId].push(product);
       }
-      categoryProductsMap[categoryId].push(product);
     });
+
+  
     res.render("productDetail",{ product,categories, categoryProductsMap });
   } catch (error) {
     console.error("Error fetching users:", error);
@@ -119,20 +128,20 @@ export const userLogin = async (req, res) => {
   try {
     const { userId, email } = req.body;
 
-    // Check if there's a product matching this userId and email
-    const product = await Product.findOne({ userId, userEmail: email });
+    // Check for matching user
+    const user = await User.findOne({ userId, email });
 
-    if (!product) {
+    if (!user) {
       return res.status(404).send("Invalid credentials. Please try again.");
     }
 
-    // ✅ Save user info to session
+    // ✅ Save the actual MongoDB _id to session
     req.session.user = {
-      id: userId,
-      email,
+      _id: user._id,       // this is the key change
+      userId: user.userId,
+      email: user.email,
     };
 
-    // ✅ Redirect to dashboard
     res.redirect("/userdashboard");
   } catch (error) {
     console.error("Error in login:", error);
@@ -144,13 +153,13 @@ export const userLogin = async (req, res) => {
 // Fetch products for the user in the dashboard
 export const userDashboard = async (req, res) => {
   try {
-    const { id, email } = req.session.user; // Session-based values
+    const { _id, userId, email } = req.session.user;
 
-    // Fetch products associated with this user
-    const products = await Product.find({ userId: id, userEmail: email });
+    // Directly fetch products using stored MongoDB _id
+    const products = await Product.find({ user: _id });
 
     res.render("userDashboard", {
-      userId: id,
+      userId,
       userEmail: email,
       products,
     });
@@ -159,6 +168,7 @@ export const userDashboard = async (req, res) => {
     res.status(500).send("Internal Server Error");
   }
 };
+
 
 
   export const aboutUs = async (req, res) => {
