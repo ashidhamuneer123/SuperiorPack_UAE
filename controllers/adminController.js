@@ -38,40 +38,14 @@ export const handleAdminLogout = (req, res) => {
 
 // Show admin dashboard
 export const showAdminDashboard = async (req, res) => {
+  const currentPage = parseInt(req.query.page) || 1;
+  const perPage = 4; // Number of products per page
   try {
-    // Fetch all customized products with user info
-    const customizedProducts = await Product.find({
-      isCustomized: true,
-      user: { $ne: null }
-    })
-      .populate('user')
-      .lean();
-
-    // Group products by userId
-    const usersWithCustomizedProducts = [];
-
-    customizedProducts.forEach(product => {
-      const user = product.user;
-      if (!user) return;
-
-      const existingUser = usersWithCustomizedProducts.find(
-        u => u.userId === user.userId
-      );
-
-      if (existingUser) {
-        existingUser.products.push(product);
-      } else {
-        usersWithCustomizedProducts.push({
-          userId: user.userId,
-          userName: user.name,           // Use "name" from schema
-          userEmail: user.email,
-          status: user.status,
-          products: [product]
-        });
-      }
-    });
-
-    res.render("adminDashboard", { usersWithCustomizedProducts });
+  
+    const categories = await Category.find()
+    const products = await Product.find()
+    const users = await User.find()
+    res.render("adminDashboard", { categories ,products,users});
   } catch (error) {
     console.error("Error fetching customized product users:", error);
     res.status(500).send("Internal Server Error");
@@ -83,8 +57,8 @@ export const showAdminDashboard = async (req, res) => {
 // Show category page
 export const showAddCategoryPage = async (req, res) => {
   try {
-    const categories = await Category.find({ isDeleted: false });
-    res.render("addCategory", { categories });
+    
+    res.render("addCategory");
   } catch (error) {
     console.error("Error fetching categories:", error);
     res.status(500).send("Internal Server Error");
@@ -104,17 +78,27 @@ export const addCategory = async (req, res) => {
     });
 
     await category.save();
-    res.redirect('/admin/addCategory');
+    res.redirect('/admin/viewCategories');
   } catch (error) {
     console.error("Error saving category:", error);
     res.status(500).send("Internal Server Error");
   }
 };
 
+export const viewCategories = async (req, res) => {
+
+  try {
+    const categories = await Category.find({ isDeleted: false });
+   res.render('viewCategories',{categories})
+  } catch (err) {
+    res.status(500).send('Failed to block user');
+  }
+};
+
 export const deleteCategory = async (req, res) => {
   try {
     await Category.findByIdAndUpdate(req.params.id, { isDeleted: true });
-    res.redirect('/admin/addCategory');
+    res.redirect('/admin/viewCategories');
   } catch (error) {
     console.error("Error deleting category:", error);
     res.status(500).send("Internal Server Error");
@@ -141,7 +125,7 @@ export const updateCategory = async (req, res) => {
     if (image) updateData.image = image;
 
     await Category.findByIdAndUpdate(req.params.id, updateData);
-    res.redirect('/admin/addCategory');
+    res.redirect('/admin/viewCategories');
   } catch (error) {
     console.error("Error updating category:", error);
     res.status(500).send("Internal Server Error");
@@ -150,8 +134,8 @@ export const updateCategory = async (req, res) => {
 
 export const showAddUserPage = async (req, res) => {
   try {
-    const users = await User.find().sort({ createdAt: -1 }); // Fetch all users
-    res.render("addUser", { users }); // Pass to view
+    
+    res.render("addUser"); // Pass to view
   } catch (error) {
     console.error("Error fetching users:", error);
     res.status(500).send("Internal Server Error");
@@ -165,12 +149,41 @@ export const createUser = async (req, res) => {
     const { userId, name, email } = req.body;
     const user = new User({ userId, name, email });
     await user.save();
-    res.redirect('/admin/addUser');
+    res.redirect('/admin/viewUsers');
   } catch (error) {
     console.error("Error creating user:", error);
     res.status(500).send("Internal Server Error");
   }
 };
+
+export const viewUsers = async (req, res) => {
+  try {
+    const currentPage = parseInt(req.query.page) || 1;
+    const itemsPerPage = 5;
+
+    const totalUsers = await User.countDocuments();
+    const totalPages = Math.ceil(totalUsers / itemsPerPage);
+
+    const users = await User.find()
+      .sort({ createdAt: -1 })
+      .skip((currentPage - 1) * itemsPerPage)
+      .limit(itemsPerPage);
+
+    res.render("viewUsers", {
+      users,
+      currentPage,
+      totalPages,
+      itemsPerPage,
+    });
+  } catch (error) {
+    console.error("Error fetching users:", error);
+    res.status(500).send("Internal Server Error");
+  }
+};
+
+
+
+
 
 export const showEditUserPage = async (req, res) => {
   try {
@@ -191,7 +204,7 @@ export const editUser = async (req, res) => {
     const { id } = req.params;
     const { name, email } = req.body;
     await User.findByIdAndUpdate(id, { name, email });
-    res.redirect('/admin/addUser');
+    res.redirect('/admin/viewUsers');
   } catch (error) {
     console.error("Error updating user:", error);
     res.status(500).send("Internal Server Error");
@@ -204,7 +217,7 @@ export const toggleUserStatus = async (req, res) => {
     const user = await User.findById(id);
     user.status = user.status === 'active' ? 'blocked' : 'active';
     await user.save();
-    res.redirect('/admin/addUser');
+    res.redirect('/admin/viewUsers');
   } catch (error) {
     console.error("Error toggling user status:", error);
     res.status(500).send("Internal Server Error");
@@ -262,12 +275,70 @@ export const addProduct = async (req, res) => {
     });
 
     await product.save();
-    res.redirect('/admin');
+    res.redirect('/admin/viewProducts');
   } catch (error) {
     console.error("Error saving product:", error);
     res.status(500).send("Internal Server Error");
   }
 };
+
+export const viewProducts = async (req, res) => {
+  const currentPage = parseInt(req.query.page) || 1;
+  const perPage = 1; // 1 user per page (showing all their products)
+  const skip = (currentPage - 1) * perPage;
+
+  try {
+    // Fetch all customized products with user info
+    const customizedProducts = await Product.find({
+      isCustomized: true,
+      user: { $ne: null }
+    })
+      .populate('user')
+      .lean();
+
+    // Group products by userId
+    const usersWithCustomizedProducts = [];
+
+    customizedProducts.forEach(product => {
+      const user = product.user;
+      if (!user) return;
+
+      const existingUser = usersWithCustomizedProducts.find(
+        u => u.userId === user.userId
+      );
+
+      if (existingUser) {
+        existingUser.products.push(product);
+      } else {
+        usersWithCustomizedProducts.push({
+          userId: user.userId,
+          userName: user.name,  // User name from schema
+          userEmail: user.email,
+          status: user.status,
+          products: [product]
+        });
+      }
+    });
+
+    // Get the total number of users
+    const totalUsers = usersWithCustomizedProducts.length;
+    const totalPages = Math.ceil(totalUsers / perPage);
+
+    // Get the user for the current page (slice)
+    const userForPage = usersWithCustomizedProducts.slice(skip, skip + perPage);
+
+    // Pass data to the view (single user, pagination info, etc.)
+    res.render('viewProducts', {
+      userWithProducts: userForPage[0], // Pass the first user of the current page
+      currentPage,
+      totalPages,
+      totalUsers
+    });
+  } catch (err) {
+    res.status(500).send('Failed to load Products');
+  }
+};
+
 
 
 

@@ -1,6 +1,6 @@
 import express from "express";
 import upload from "../middlewares/multerConfig.js"; 
-import { showAdminDashboard,showLoginPage, handleAdminLogin, handleAdminLogout,showAddUserPage,createUser,showEditUserPage,editUser,toggleUserStatus,showAddProductPage,addProduct,blockUser,showAddCategoryPage,addCategory,showEditCategoryPage,updateCategory,deleteCategory} from "../controllers/adminController.js";
+import { showAdminDashboard,showLoginPage, handleAdminLogin, handleAdminLogout,showAddUserPage,createUser,showEditUserPage,editUser,toggleUserStatus,showAddProductPage,addProduct,blockUser,showAddCategoryPage,addCategory,viewCategories,showEditCategoryPage,updateCategory,deleteCategory, viewProducts, viewUsers} from "../controllers/adminController.js";
 import { adminAuth } from "../middlewares/authMiddleware.js";
 const router = express.Router();
 
@@ -14,12 +14,14 @@ router.get("/",adminAuth, showAdminDashboard);
 
 router.get("/addCategory", adminAuth, showAddCategoryPage);
 router.post("/addCategory", adminAuth, upload, addCategory);
+router.get("/viewCategories", adminAuth, viewCategories);
 router.get("/category/edit/:id", adminAuth, showEditCategoryPage);
 router.post("/category/edit/:id", adminAuth, upload, updateCategory);
 router.get("/category/delete/:id", adminAuth, deleteCategory);
 
 router.get("/addUser", adminAuth, showAddUserPage);
 router.post("/addUser", adminAuth, createUser );
+router.get("/viewUsers",adminAuth,viewUsers)
 router.get("/user/edit/:id", adminAuth, showEditUserPage);
 router.post('/user/edit/:id', editUser);
 router.get('/user/toggle-status/:id', toggleUserStatus);
@@ -27,6 +29,7 @@ router.get('/user/toggle-status/:id', toggleUserStatus);
 router.get("/addProduct", adminAuth, showAddProductPage);
 
 router.post("/addProduct", adminAuth,upload,addProduct );
+router.get("/viewProducts", adminAuth, viewProducts);
 
 // Block user
 router.post('/block-user/:userId', adminAuth,blockUser);

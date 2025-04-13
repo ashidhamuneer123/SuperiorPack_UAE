@@ -1,173 +1,511 @@
 <!DOCTYPE html>
 <html lang="en">
+<!-- Mirrored from wp.alithemes.com/html/evara/evara-backend/index.html by HTTrack Website Copier/3.x [XR&CO'2014], Sun, 01 Aug 2021 15:32:35 GMT -->
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Dashboard</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
-    <style>
-        body, html {
-            height: 100%;
-            margin: 0;
-            font-family: 'Arial', sans-serif;
-            background: url('/userAssets/img/bg-2.jpg') no-repeat center center fixed;
-            background-size: cover;
-            color: #fff;
-        }
+  <meta charset="utf-8" />
+  <title>Superior Pack UAE</title>
+  <meta http-equiv="x-ua-compatible" content="ie=edge" />
+  <meta name="description" content="" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta property="og:title" content="" />
+  <meta property="og:type" content="" />
+  <meta property="og:url" content="" />
+  <meta property="og:image" content="" />
+  <!-- Favicon -->
+  <link rel="shortcut icon" type="image/x-icon" href="/admin-assets/imgs/theme/titlelogo.jpg">
+  <!-- Template CSS -->
+  <link href="/admin-assets/css/main.css" rel="stylesheet" type="text/css" />
+<style>
+  .card-body {
+  padding: 1.5rem;
+  background-color: #fff;
+  border-radius: 0.25rem;
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+}
 
-        .container {
-            background-color: rgba(0, 0, 0, 0.7);
-            border-radius: 12px;
-            padding: 20px;
-            margin-top: 20px;
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
-        }
+.card-title {
+  font-size: 1.25rem;
+  font-weight: 500;
+  margin-bottom: 1rem;
+}
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+}
 
-        h2 {
-            text-align: center;
-            margin-bottom: 20px;
-            font-size: 24px;
-        }
+.container {
+    max-width: 8000px;
+    margin: 50px auto;
+}
 
-        .navbar {
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-        }
+.chart-container {
+    width: 1000px;
+    height: 500px;
+    border: 1px solid #e0e0e0;
+}
 
-        .table-responsive {
-            overflow-x: auto;
-        }
+.chart-canvas {
+    width: 100px;
+    height: 100px;
+}
 
-        table {
-            background-color: rgba(255, 255, 255, 0.1);
-            color: #fff;
-        }
-
-        table th, table td {
-            text-align: center;
-            vertical-align: middle;
-        }
-
-        .table-dark {
-            background-color: rgba(0, 0, 0, 0.8);
-        }
-
-        .btn-warning, .btn-danger {
-            transition: 0.3s;
-            color: #fff;
-        }
-
-        .btn-warning:hover {
-            background-color: #d4a60c;
-        }
-
-        .btn-danger:hover {
-            background-color: #cc0000;
-        }
-
-        .navbar-brand, .nav-link {
-            color: #fff !important;
-            font-size: 16px;
-            transition: color 0.3s;
-        }
-
-        .nav-link:hover {
-            color: #f1f1f1 !important;
-        }
-
-        img {
-            border-radius: 8px;
-            transition: transform 0.3s ease;
-            max-width: 80px;
-            height: auto;
-        }
-
-        img:hover {
-            transform: scale(1.1);
-        }
-
-        @media (max-width: 768px) {
-            .container {
-                padding: 15px;
-            }
-            h2 {
-                font-size: 20px;
-            }
-            .btn {
-                padding: 5px 10px;
-                font-size: 14px;
-            }
-        }
-    </style>
+#myChart {
+  max-width: 1000px;
+}
+</style>
 </head>
+
 <body>
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-        <div class="container-fluid">
-            <a class="navbar-brand" href="/admin">Admin Dashboard</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
-                    <li class="nav-item"><a class="nav-link" href="/admin/addUser">Add User</a></li>
-                    <li class="nav-item"><a class="nav-link" href="/admin/addProduct">Add Product</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#">Manage Orders</a></li>
-                    <li class="nav-item"><a class="nav-link" href="/admin/addCategory">Add Category</a></li>
-                    <li class="nav-item"><a class="nav-link" href="/admin/logout">Log Out</a></li>
+  <div class="screen-overlay"></div>
+  <aside class="navbar-aside" id="offcanvas_aside">
+    <div class="aside-top">
+        <a href="/admin/dashboard" class="brand-wrap">
+            <img src="/admin-assets/imgs/theme/mainlogo.jpg" class="logo" alt="Superior Pack Dashboard">
+        </a>
+        <div>
+            <button class="btn btn-icon btn-aside-minimize"> <i class="text-muted material-icons md-menu_open"></i> </button>
+        </div>
+    </div>
+    <nav>
+        <ul class="menu-aside">
+            <li class="menu-item active">
+                <a class="menu-link" href="/admin"> <i class="icon material-icons md-home"></i>
+                    <span class="text">Dashboard</span>
+                </a>
+            </li>
+            <li class="menu-item has-submenu">
+                <a class="menu-link" href="#"> <i class="icon material-icons md-shopping_bag"></i>
+                    <span class="text">Products</span>
+                </a>
+                <div class="submenu">
+                    <a href="/admin/addProduct">Add Product</a>
+                    <a href="/admin/viewProducts">View Products</a>
+                </div>
+            </li>
+
+            <li class="menu-item has-submenu">
+                <a class="menu-link" href="#"> <i class="icon material-icons md-shopping_bag"></i>
+                    <span class="text">Categories</span>
+                </a>
+                <div class="submenu">
+                    <a href="/admin/addCategory">Add Category</a>
+                    <a href="/admin/viewCategories">View Categories</a>
+                </div>
+            </li>
+            <li class="menu-item has-submenu">
+                <a class="menu-link" href="#"> <i class="icon material-icons md-shopping_cart"></i>
+                    <span class="text">Orders</span>
+                </a>
+                <div class="submenu">
+                    <a href="/admin/order">Order list</a>
+                    
+                </div>
+            </li>
+            <li class="menu-item has-submenu">
+                <a class="menu-link" href=""> <i class="icon material-icons md-store"></i>
+                    <span class="text">Users</span>
+                </a>
+                <div class="submenu">
+                    <a href="/admin/addUser">Add User</a>
+                    <a href="/admin/viewUsers">View Users</a>
+                </div>
+            </li>
+        </ul>
+        <br>
+        <br>
+    </nav>
+</aside>
+    <main class="main-wrap">
+        <header class="main-header navbar">
+            
+            <div class="col-nav">
+                <button class="btn btn-icon btn-mobile me-auto" data-trigger="#offcanvas_aside"> <i class="material-icons md-apps"></i> </button>
+                <ul class="nav">
+                    
+                    <li class="nav-item">
+                        <a class="nav-link btn-icon darkmode" href="#"> <i class="material-icons md-nights_stay"></i> </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="requestfullscreen nav-link btn-icon"><i class="material-icons md-cast"></i></a>
+                    </li>
+                   
+                    <li class="dropdown nav-item">
+                        <a class="dropdown-toggle" data-bs-toggle="dropdown" href="#" id="dropdownAccount" aria-expanded="false">Admin</a>
+                        <div class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownAccount">
+                            <div class="dropdown-divider"></div>
+                            <a class="dropdown-item text-danger" href="/admin/logout"><i class="material-icons md-exit_to_app"></i>Logout</a>
+                        </div>
+                    </li>
                 </ul>
             </div>
-        </div>
-    </nav>
-
-    
-        <div class="container">
-            <h2>Customized Product Users</h2>
-            <div class="table-responsive">
-              <table class="table table-striped table-bordered">
-                <thead class="table-dark">
-                    <tr>
-                      <th>User ID</th>
-                      <th>Name</th>
-                      <th>Email</th>
-                     
-                      <th>Products</th>
-                     
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <% usersWithCustomizedProducts.forEach(user => { %>
-                      <tr>
-                        <td><%= user.userId %></td>
-                        <td><%= user.userName %></td>
-                        <td><%= user.userEmail %></td>
-                        <td>
-                          <% if (user.products.length > 0) { %>
-                            <ul>
-                              <% user.products.forEach(product => { %>
-                                <li>
-                                  <strong><%= product.name %></strong> (MOQ: <%= product.moq %>)<br />
-                                  <% if (product.image && product.image.length > 0) { %>
-                                    <img src="<%= product.image[0] %>" alt="Product Image"
-                                      style="max-width: 100px; margin: 5px; border-radius: 8px;" />
-                                  <% } %>
-                                </li>
-                              <% }) %>
-                            </ul>
-                          <% } else { %>
-                            No products
-                          <% } %>
-                        </td>
-                       
-                      </tr>
-                    <% }) %>
-                  </tbody>
-             
-              </table>
+        </header>
+        <section class="content-main">
+          <div class="content-header">
+            <div>
+              <h2 class="content-title card-title">Dashboard</h2>
+              <p>Whole data about your business here</p>
+            </div>
+            <div>
+              <a href="#" class="btn btn-primary"><i class="text-muted material-icons md-post_add"></i>Sales
+                Report</a>
             </div>
           </div>
-          
-     
-      
+          <div class="row">
+            <%if(users){%>
+              <div class="col-lg-3">
+                  <div class="card card-body mb-4">
+                      <article class="icontext">
+                          <span class="icon icon-sm rounded-circle bg-primary-light"><i class="text-primary material-icons md-groups"></i></span>
+                          <div class="text">
+                              <h6 class="mb-1 card-title">Clients</h6>
+                              
+                              
+                              <span><%=users.length%></span>
+                              <!-- <span class="text-sm"> Shipping fees are not included </span> -->
+                          </div>
+                      </article>
+                  </div>
+              </div>
+              <%}%>
+          <div class="col-lg-3">
+            <div class="card card-body mb-4">
+                <article class="icontext">
+                    <span class="icon icon-sm rounded-circle bg-success-light"><i class="text-success material-icons md-local_shipping"></i></span>
+                    <div class="text">
+                        <h6 class="mb-1 card-title">Orders</h6>
+                        <span>1000</span>
+                        <!-- <span class="text-sm"> Excluding orders in transit </span> -->
+                    </div>
+                </article>
+            </div>
+        </div>
+        <%if(products){%>
+        <div class="col-lg-3">
+            <div class="card card-body mb-4">
+                <article class="icontext">
+                    <span class="icon icon-sm rounded-circle bg-warning-light"><i class="text-warning material-icons md-shopping_bag"></i></span>
+                    <div class="text">
+                        <h6 class="mb-1 card-title">Products</h6>
+                        <span><%=products.length%></span>
+                    </div>
+                </article>
+            </div>
+        </div>
+        <%}%>
+        <%if(categories){%>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-</body>
+              <div class="col-lg-3">
+                <div class="card card-body mb-4">
+                  <article class="icontext">
+                    <span class="icon icon-sm rounded-circle bg-info-light"><i
+                        class="text-info material-icons md-category"></i></span>
+                    <div class="text">
+                      <h6 class="mb-1 card-title">Categories</h6>
+                      <span><%=categories.length%></span>
+                      <!-- <span class="text-sm"> Based in your local time. </span> -->
+                    </div>
+                  </article>
+                </div>
+              </div>
+              <%}%>
+          </div>
+
+          
+
+
+
+      
+          <!-- Include Chart.js -->
+          <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        </head>
+        
+        <body>
+          
+        
+          <div class="container">
+          <div class="filter-container" style="margin-bottom: 20px; font-family: Arial, sans-serif;">
+    <label for="timeFilter" style="margin-right: 10px; font-size: 18px; font-weight: bold; color: #333;">Time Filter:</label>
+    <select id="timeFilter" onchange="updateChart()" style="padding: 8px 12px; font-size: 16px; border: 1px solid #ccc; border-radius: 4px; transition: border-color 0.3s;">
+        <option value="monthly" selected style="font-size: 16px;">Monthly</option>
+        <option value="yearly" style="font-size: 16px;">Yearly</option>
+    </select>
+</div>
+
+            <div class="chart-container">
+                <canvas id="myChart" class="chart-canvas"></canvas>
+            </div>
+        </div>
+        
+        
+      
+      </html>
+
+        
+         <% if (products && products.length > 0) { %>
+    <div class="col-lg-9">
+        <div class="card mb-4">
+            <article class="card-body">
+                <h5 class="card-title">Best Selling Products</h5>
+                <table id="bestSellingProductsTable" class="table">
+                    <thead>
+                        <tr>
+                            <th>Product</th>
+                            <th>Minimum Order Quantity</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% products.forEach(product => { %>
+                            <tr>
+                                <td><%= product.name %></td>
+                                <td><%= product.moq %></td>
+                            </tr>
+                        <% }); %>
+                    </tbody>
+                </table>
+            </article>
+        </div>
+        <div class="card mb-4">
+            <article class="card-body">
+                <h5 class="card-title">Best Selling Categories</h5>
+                <table id="bestSellingCategoriesTable" class="table">
+                    <thead>
+                        <tr>
+                            <th>Category</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% categories.forEach(category => { %>
+                            <tr>
+                                <td><%= category.name %></td> 
+                                <td></td>
+                            </tr>
+                        <% }); %>
+                    </tbody>
+                </table>
+            </article>
+        </div>
+    </div>
+<% } %>
+      
+        
+
+
+
+
+    </div>
+
+          <div class="pagination-area mt-30 mb-50">
+            <nav aria-label="Page navigation example">
+              <ul class="pagination justify-content-start">
+
+              </ul>
+            </nav>
+          </div>
+        </section>
+        <!-- content-main end// -->
+        <footer class="main-footer font-xs">
+          <div class="row pb-30 pt-15">
+            <div class="col-sm-6">
+              <script>
+                document.write(new Date().getFullYear());
+              </script>
+              ©SuperiorPack
+            </div>
+            <div class="col-sm-6">
+              <div class="text-sm-end">All rights reserved</div>
+            </div>
+          </div>
+        </footer>
+    </main>
+    <script src="/admin-assets/js/vendors/jquery-3.6.0.min.js"></script>
+    <script src="/admin-assets/js/vendors/bootstrap.bundle.min.js"></script>
+    <script src="/admin-assets/js/vendors/select2.min.js"></script>
+    <script src="/admin-assets/js/vendors/perfect-scrollbar.js"></script>
+    <script src="/admin-assets/js/vendors/jquery.fullscreen.min.js"></script>
+    <script src="/admin-assets/js/vendors/chart.js"></script>
+    <!-- Main Script -->
+    <script src="/admin-assets/js/main.js" type="text/javascript"></script>
+    
+   
+<script>
+  // Initial data
+ 
+    
+
+
+  // Initialize chart
+  const ctx = document.getElementById('myChart').getContext('2d');
+let salesChart = new Chart(ctx, {
+    type: 'line',
+    data: {
+        labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+        datasets: [{
+            label: 'Order Counts',
+            data: 7654,
+            borderColor: 'rgba(75, 192, 192, 1)',
+            borderWidth: 3,
+            pointBackgroundColor: 'rgba(75, 192, 192, 1)',
+            pointBorderColor: 'rgba(255, 255, 255, 1)',
+            pointBorderWidth: 2,
+            pointRadius: 5,
+            pointHoverRadius: 7,
+            fill: {
+                target: 'origin',
+                above: 'rgba(75, 192, 192, 0.4)',
+                below: 'rgba(75, 192, 192, 0)',
+            },
+        },
+        {
+            label: 'Product Counts',
+            data: 87654,
+            borderColor: 'rgba(255, 99, 132, 1)',
+            borderWidth: 3,
+            pointBackgroundColor: 'rgba(255, 99, 132, 1)',
+            pointBorderColor: 'rgba(255, 255, 255, 1)',
+            pointBorderWidth: 2,
+            pointRadius: 5,
+            pointHoverRadius: 7,
+            fill: {
+                target: 'origin',
+                above: 'rgba(255, 99, 132, 0.4)',
+                below: 'rgba(255, 99, 132, 0)',
+            },
+        },
+        {
+            label: 'Total Amount',
+            data: 87666,  // Assuming you have totalAmountByMonth array
+            borderColor: 'rgba(255, 205, 86, 1)',  // Yellow color for total amount
+            borderWidth: 3,
+            pointBackgroundColor: 'rgba(255, 205, 86, 1)',
+            pointBorderColor: 'rgba(255, 255, 255, 1)',
+            pointBorderWidth: 2,
+            pointRadius: 5,
+            pointHoverRadius: 7,
+            fill: {
+                target: 'origin',
+                above: 'rgba(255, 205, 86, 0.4)',
+                below: 'rgba(255, 205, 86, 0)',
+            },
+        }],
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+            y: {
+                beginAtZero: true,
+                ticks: {
+                    stepSize: 2,
+                    max: 20,
+                    font: {
+                        size: 14,
+                    },
+                },
+                grid: {
+                    display: true,
+                    color: 'rgba(0, 0, 0, 0.05)',
+                    borderWidth: 1,
+                    borderDash: [5, 5],
+                },
+            },
+            x: {
+                grid: {
+                    display: false,
+                },
+            },
+        },
+        plugins: {
+            title: {
+                display: true,
+                text: 'Sales Statistics',
+                font: {
+                    size: 24,
+                    weight: 'bold',
+                },
+            },
+            legend: {
+                display: true,
+                position: 'bottom',
+                labels: {
+                    font: {
+                        size: 16,
+                    },
+                },
+            },
+            tooltip: {
+                enabled: true,
+                mode: 'nearest',
+                intersect: false,
+            },
+        },
+    },
+});
+
+
+function updateChart() {
+    const timeFilter = document.getElementById('timeFilter').value;
+    let newData;
+
+    if (timeFilter === 'monthly') {
+        newData = {
+            orderCounts: 1000,
+            productCounts: 500,
+            totalAmount: 9876655,  
+            labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+        };
+    } else if (timeFilter === 'yearly') {
+        newData = {
+            orderCounts: 9876544,
+            productCounts: 8765433,
+            totalAmount: 556778888,  
+            labels: ['2019', '2020', '2021', '2022', '2023', '2024', '2025', '2026', '2027', '2028', '2029', '2030']
+        };
+    }
+
+    salesChart.data.datasets[0].data = newData.orderCounts;
+    salesChart.data.datasets[1].data = newData.productCounts;
+    salesChart.data.datasets[2].data = newData.totalAmount;  
+    salesChart.data.labels = newData.labels;
+
+    salesChart.update();
+}
+  function computeYearlyData(monthlyData) {
+    let yearlyData = [];
+    let sum = 0;
+    let monthCount = 0;
+
+    for (let i = 0; i < monthlyData.length; i++) {
+        sum += monthlyData[i];
+        monthCount++;
+
+        if (monthCount === 12 || i === monthlyData.length - 1) { 
+            yearlyData.push(sum);
+            sum = 0;
+            monthCount = 0;
+        }
+    }
+
+    return yearlyData;
+}
+
+  function computeYearlyLabels() {
+      let currentYear = new Date().getFullYear();
+      let labels = [];
+
+      for (let i = currentYear - 5; i <= currentYear + 6; i++) {
+          labels.push(i.toString());
+      }
+
+      return labels;
+  }
+</script>  
+
+
+</body> 
+
+<!-- Mirrored from wp.alithemes.com/html/evara/evara-backend/index.html by HTTrack Website Copier/3.x [XR&CO'2014], Sun, 01 Aug 2021 15:32:57 GMT -->
+
 </html>
