@@ -9599,101 +9599,55 @@ a.text-dark:hover, a.text-dark:focus {
   border-radius: 5px; /* Optional: Adds rounded corners */
 }
 
-/* Basic Styles for the Section */
-.how-we-work .service-item {
-  display: flex;
-  flex-direction: column;
-  margin-bottom: 30px;
-  transition: all 0.3s ease;
-}
-
-.how-we-work .service-item .image-container {
-  width: 100%;
-  max-height: 400px;
-  overflow: hidden;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.how-we-work .service-item .image-container img {
-  width: 100%;
-  height: auto;
-  object-fit: cover;
-}
-
-.how-we-work .service-item .content {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  padding-left: 20px;
-}
-
-.how-we-work .service-item .title {
-  font-weight: 700;
-  font-size: 22px;
-  margin-bottom: 15px;
-}
-
-.how-we-work .service-item .content p {
-  font-size: 16px;
-  line-height: 1.5;
-}
-
-.how-we-work .service-item:hover {
-  transform: scale(1.05);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-}
-
-.how-we-work .service-item[data-aos="fade-up"] {
-  opacity: 0;
-  transform: translateY(50px);
-  transition: opacity 0.5s ease, transform 0.5s ease;
-}
-
-.how-we-work .service-item[data-aos="fade-up"].aos-animate {
-  opacity: 1;
-  transform: translateY(0);
-}
-
-/* For larger screens (desktop), keep content on opposite sides */
-@media (min-width: 768px) {
-  .how-we-work .service-item {
-      flex-direction: row;
-      margin-bottom: 50px;
-  }
-
-  .how-we-work .service-item .content {
-      padding-left: 30px;
-  }
-
-  .how-we-work .service-item .image-container {
-      max-height: none;
-  }
-}
-
-/* For smaller screens (mobile/tablets), stack the content */
-@media (max-width: 767px) {
-  .how-we-work .service-item {
-      flex-direction: column;
-  }
-
-  .how-we-work .service-item .content {
-      padding-left: 0;
-      padding-top: 20px;
-  }
-}
 
 
-.owl-carousel .item {
-  padding: 10px;
-}
+
+
 
 .member {
   background: #222;
-  border-radius: 8px;
-  overflow: hidden;
-  box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+  border-radius: 10px;
+  padding: 15px;
+  box-shadow: 0 2px 15px rgba(0,0,0,0.15);
 }
 
 
+/* Smaller card size */
+.testimonial-card {
+  max-width: 300px;     /* Adjust as needed */
+  margin: 0 auto;        /* Center the card */
+  padding: 20px 15px;    /* Reduced padding */
+}
+
+/* Image size reduced */
+.testimonial-img {
+  width: 80px;
+  height: 80px;
+  object-fit: cover;
+  border: 2px solid goldenrod;
+  border-radius: 50%;
+}
+
+/* Adjust testimonial text */
+.testimonial-text {
+  font-size: 0.9rem;
+  line-height: 1.4;
+}
+
+
+
+/* Use this if not already present */
+:root {
+  --accent-color: #FFD700; /* or your brand accent */
+  --surface-color: #fff;
+  --heading-color: #212529;
+  --contrast-color: #fff;
+}
+
+.icon:hover {
+  background: var(--surface-color) !important;
+}
+
+.icon:hover i {
+  color: var(--accent-color) !important;
+}
