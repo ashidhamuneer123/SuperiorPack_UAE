@@ -34,7 +34,19 @@ export const loadHome = async (req, res) => {
 
 export const instantQuote = async (req, res) => {
     try {
-      res.render("quote");
+      const categories = await Category.find({ isDeleted: false }).lean();
+      const productsByCategory = await Product.find().populate('catId');
+      const categoryProductsMap = {};
+      productsByCategory.forEach(product => {
+        if (product.catId) {
+          const categoryId = product.catId._id.toString();
+          if (!categoryProductsMap[categoryId]) {
+            categoryProductsMap[categoryId] = [];
+          }
+          categoryProductsMap[categoryId].push(product);
+        }
+      });
+      res.render("quote",{categories,categoryProductsMap});
     } catch (error) {
       console.error("Error fetching users:", error);
       res.status(500).send("Internal Server Error");
@@ -45,7 +57,7 @@ export const instantQuote = async (req, res) => {
   export const sendQuote = async (req, res) => {
     try {
         const { name, contact, email, message} = req.body;
-        const products = Array.isArray(req.body.products) ? req.body.products.join(', ') : req.body.products;
+        const categories = Array.isArray(req.body.categories) ? req.body.categories.join(', ') : req.body.categories;
 
         const logos = req.files?.logo ? req.files.logo.map(file => ({
           filename: file.originalname,
@@ -68,7 +80,7 @@ export const instantQuote = async (req, res) => {
               <p><strong>Name:</strong> ${name}</p>
               <p><strong>Contact:</strong> ${contact}</p>
               <p><strong>Email:</strong> ${email}</p>
-              <p><strong>Products:</strong> ${products}</p>
+              <p><strong>categories:</strong> ${categories}</p>
               <p><strong>Message:</strong> ${message}</p>
           `,
           attachments: logos.map(logo => ({
@@ -117,7 +129,20 @@ export const productDetailPage = async (req, res) => {
 
 export const userLoginPage = async (req, res) => {
   try {
-    res.render("userLogin");
+    const categories = await Category.find({ isDeleted: false });
+    const productsByCategory = await Product.find().populate('catId');
+
+  const categoryProductsMap = {};
+  productsByCategory.forEach(product => {
+    if (product.catId) {
+      const categoryId = product.catId._id.toString();
+      if (!categoryProductsMap[categoryId]) {
+        categoryProductsMap[categoryId] = [];
+      }
+      categoryProductsMap[categoryId].push(product);
+    }
+  });
+    res.render("userLogin",{categories,categoryProductsMap});
   } catch (error) {
     console.error("Error fetching users:", error);
     res.status(500).send("Internal Server Error");
@@ -153,16 +178,51 @@ export const userLogin = async (req, res) => {
 // Fetch products for the user in the dashboard
 export const userDashboard = async (req, res) => {
   try {
-    const { _id, userId, email } = req.session.user;
+    const { _id} = req.session.user;
+    const categories = await Category.find({ isDeleted: false });
+    const productsByCategory = await Product.find().populate('catId');
 
-    // Directly fetch products using stored MongoDB _id
-    const products = await Product.find({ user: _id });
+  const categoryProductsMap = {};
+  productsByCategory.forEach(product => {
+    if (product.catId) {
+      const categoryId = product.catId._id.toString();
+      if (!categoryProductsMap[categoryId]) {
+        categoryProductsMap[categoryId] = [];
+      }
+      categoryProductsMap[categoryId].push(product);
+    }
+  });
+    // Get user and their active embedded products
+    const user = await User.findById(_id).lean();
+    if (!user) return res.status(404).send("User not found");
+
+    const activeProducts = user.products.filter(p => p.status === 'active');
+
+    // Collect all prodIDs to lookup in main Product collection
+    const prodIds = activeProducts.map(p => p.prodID);
+
+    // Find full product details for those IDs
+    const mainProducts = await Product.find({ prod_id: { $in: prodIds } }).lean();
+
+    // Merge product name from Product schema into embedded products
+    const enrichedProducts = activeProducts.map(product => {
+      const matching = mainProducts.find(p => p.prod_id === product.prodID);
+      return {
+        ...product,
+        name: matching ? matching.name : 'Unknown Product',
+      };
+    });
 
     res.render("userDashboard", {
-      userId,
-      userEmail: email,
-      products,
+      session: req.session,
+      userId: user.userId,
+      userEmail: user.email,
+      userName: user.name,
+      products: enrichedProducts,
+      categories,
+      categoryProductsMap
     });
+
   } catch (error) {
     console.error("Error fetching dashboard data:", error);
     res.status(500).send("Internal Server Error");
@@ -173,7 +233,20 @@ export const userDashboard = async (req, res) => {
 
   export const aboutUs = async (req, res) => {
     try {
-      res.render("about");
+      const categories = await Category.find({ isDeleted: false });
+      const productsByCategory = await Product.find().populate('catId');
+
+    const categoryProductsMap = {};
+    productsByCategory.forEach(product => {
+      if (product.catId) {
+        const categoryId = product.catId._id.toString();
+        if (!categoryProductsMap[categoryId]) {
+          categoryProductsMap[categoryId] = [];
+        }
+        categoryProductsMap[categoryId].push(product);
+      }
+    });
+      res.render("about",{categories,categoryProductsMap});
     } catch (error) {
       res.status(500).send("Internal Server Error");
     }
@@ -187,5 +260,83 @@ export const userDashboard = async (req, res) => {
       }
       res.redirect('/login');
     });
+  };
+
+  export const searchProducts = async (req, res) => {
+    try {
+      const query = req.query.query?.trim();
+  
+      if (!query) {
+        return res.render("searchResults", { products: [], searchTerm: "" });
+      }
+  
+      // Case-insensitive search for product name
+      const products = await Product.find({
+        name: { $regex: query, $options: 'i' },
+      }).lean();
+  
+      res.render("searchResults", {
+        products,
+        searchTerm: query,
+      });
+  
+    } catch (error) {
+      console.error("Error during search:", error);
+      res.status(500).send("Internal Server Error");
+    }
+  };
+  
+
+  export const contactUs = async (req, res) => {
+    try {
+      const categories = await Category.find({ isDeleted: false }).lean();
+      const productsByCategory = await Product.find().populate('catId');
+      const categoryProductsMap = {};
+      productsByCategory.forEach(product => {
+        if (product.catId) {
+          const categoryId = product.catId._id.toString();
+          if (!categoryProductsMap[categoryId]) {
+            categoryProductsMap[categoryId] = [];
+          }
+          categoryProductsMap[categoryId].push(product);
+        }
+      });
+      res.render("contact",{categories,categoryProductsMap});
+    } catch (error) {
+      console.error("Error fetching users:", error);
+      res.status(500).send("Internal Server Error");
+    }
+  };
+
+  export const contactUsMail = async (req, res) => {
+    try {
+      const { name, email, phone, message } = req.body;
+  
+      const transporter = nodemailer.createTransport({
+        service: 'gmail',
+        auth: {
+          user: process.env.EMAIL_USER,
+          pass: process.env.EMAIL_PASS,
+        },
+      });
+  
+      const mailOptions = {
+        from: process.env.EMAIL_USER,
+        to: 'ashidhaa@gmail.com',
+        subject: `New Contact Message from ${name} - ${new Date().toLocaleString()}`,
+        html: `
+          <p><strong>Name:</strong> ${name}</p>
+          <p><strong>Email:</strong> ${email}</p>
+          <p><strong>Phone:</strong> ${phone}</p>
+          <p><strong>Message:</strong> ${message}</p>
+        `,
+      };
+  
+      await transporter.sendMail(mailOptions);
+      res.json({ success: true, message: 'Message sent successfully!' });
+    } catch (error) {
+      console.error('Error sending contact message:', error);
+      res.status(500).json({ success: false, message: 'Error sending message' });
+    }
   };
   

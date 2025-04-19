@@ -24,7 +24,7 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css">
 
     <!-- Customized Bootstrap Stylesheet -->
-    <link href="userAssets/css/style.css" rel="stylesheet">
+    <link href="/userAssets/css/style.css" rel="stylesheet">
 </head>
 
 <body>
@@ -147,11 +147,7 @@
                         <div class="navbar-nav ml-auto py-0">
                             <a href="https://heyzine.com/flip-book/c3143e1818.html" target="_blank" class="nav-item nav-link">E-Brochure</a>
                             <a href='/quote' class="nav-item nav-link">Instant Quote</a>
-                            <% if (session && session.user) { %>
-                                <a href="/logout" class="nav-item nav-link">Logout</a>
-                              <% } else { %>
-                                <a href="/login" class="nav-item nav-link">Login</a>
-                              <% } %>
+                            <a href="/login" class="nav-item nav-link">Login</a>
                         </div>
                     </div>
                 </nav>
@@ -186,57 +182,47 @@
     <!-- Page Header Start -->
     <div class="container-fluid bg-secondary mb-5">
         <div class="d-flex flex-column align-items-center justify-content-center" style="min-height: 300px">
-            <h1 class="font-weight-semi-bold text-uppercase mb-3"> Welcome, <%= userName %>!</h1>
+            <h1 class="font-weight-semi-bold text-uppercase mb-3">Blog</h1>
             <div class="d-inline-flex">
                 <p class="m-0"><a href="/">Home</a></p>
                 <p class="m-0 px-2">-</p>
-                <p class="m-0">Dashboard</p>
+                <p class="m-0">Blog</p>
             </div>
         </div>
     </div>
     <!-- Page Header End -->
 
-
-    <div class="container mt-4">
-        <h2 class="mb-4">Your Products</h2>
-      
-        <% if (products.length === 0) { %>
-          <div class="alert alert-info">You haven't added any products yet.</div>
-        <% } else { %>
-          <div class="row">
-            <% products.forEach(function(product) { %>
-              <div class="col-md-4 mb-4">
-                <div class="card h-100">
-                  
-                  <!-- Image container with centering -->
-                  <div class="d-flex justify-content-center align-items-center" style="height: 200px; background-color: #f9f9f9;">
-                    <img 
-                      src="<%= product.productImage || 'default.jpg' %>" 
-                      alt="Product Image" 
-                      class="img-fluid"
-                      style="max-height: 180px; object-fit: contain;"
-                    />
-                  </div>
-      
-                  <!-- Product details -->
-                  <div class="card-body d-flex flex-column">
-                    <h5 class="card-title text-center"><%= product.name %></h5>
-                    <p class="card-text text-center">Product ID: <%= product.prodID %></p>
-                    <p class="card-text text-center">MOQ: <%= product.customizedMOQ %></p>
-                    <p class="card-text text-center">Size: <%= product.size %></p>
-                    <button class="btn btn-primary mt-auto">Add to Cart</button>
-                  </div>
-                </div>
-              </div>
-            <% }) %>
+<!-- Blog Details Start -->
+<div class="container-fluid pt-5">
+    <div class="container">
+      <div class="row gy-4 align-items-start">
+        
+        <!-- Blog Image Section -->
+        <div class="col-lg-6">
+          <% if (blog.image && blog.image.length > 0 && blog.image[0] !== '') { %>
+            <img src="<%= blog.image[0] %>" alt="Blog Image" class="img-fluid rounded w-100" style="max-height: 450px; object-fit: cover;">
+          <% } else { %>
+            <img src="https://dummyimage.com/900x400/dee2e6/6c757d.jpg" alt="Default Image" class="img-fluid rounded w-100" style="max-height: 450px; object-fit: cover;">
+          <% } %>
+        </div>
+  
+        <!-- Blog Content Section -->
+        <div class="col-lg-6">
+          <div class="content" style="font-family: 'Poppins', sans-serif;">
+            <h2 class="fw-bolder mb-3"><%= blog.title %></h2>
+            <div class="text-muted fst-italic mb-3">Posted on: <%= blog.createdAt.toDateString() %></div>
+            <p class="fs-5"><%= blog.content %></p>
           </div>
-        <% } %>
+        </div>
+  
       </div>
-    
-    
-    <!-- About End -->
+    </div>
+  </div>
+  
+<!-- Blog Details End -->
 
 
+ 
     <!-- Footer Start -->
     <div class="container-fluid bg-secondary text-dark mt-5 pt-5">
         <div class="row px-xl-5 pt-5 ">

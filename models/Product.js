@@ -10,9 +10,14 @@ const productSchema = new mongoose.Schema({
   leadTime: { type: String, required: true },
   image: [String],
   isCustomized: { type: Boolean, default: false },
-  user: { type: mongoose.Schema.Types.ObjectId, ref: 'User', default: null },
   prod_id: { type: String, required: true },
   catId: { type: mongoose.Schema.Types.ObjectId, ref: 'Category', required: true },
+  printing: { type: String },
+  ingredients: { type: String },
+  minOrderWithPrinting: { type: String },
+  minOrderWithoutPrinting: { type: String },
+  quality: { type: String },
+  color: { type: String },
   timestamp: { type: Date, default: Date.now }
 });
 

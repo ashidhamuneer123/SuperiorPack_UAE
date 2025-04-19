@@ -22,12 +22,16 @@ const storage = new CloudinaryStorage({
       folder = 'logos';
     } else if (file.fieldname === 'productImages') {
       folder = 'products';
+    } else if (file.fieldname === 'customProductImages') {
+      folder = 'customProducts';
+    } else if (file.fieldname === 'blogImage') {
+      folder = 'blogs';
     }
 
     return {
       folder: folder,
       format: file.originalname.split('.').pop(), // Allow the format to match the file extension
-      public_id: `${Date.now()}-${file.originalname.split('.')[0]}`, // Unique public ID with timestamp
+      public_id: `${Date.now()}-${file.originalname.split('.')[0].replace(/\s+/g, '-').toLowerCase()}`, // Unique public ID with timestamp
     };
   },
 });
@@ -38,6 +42,8 @@ const upload = multer({
 }).fields([
   { name: 'productImages', maxCount: 5 },
   { name: 'logo', maxCount: 1 },
+  { name: 'customProductImages', maxCount: 10 },
+  { name: 'blogImage', maxCount: 1 }
 ]);
 
 export default upload;

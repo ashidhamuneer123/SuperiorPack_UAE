@@ -65,7 +65,7 @@
                     
                 </div>
             </li>
-            <li class="menu-item has-submenu active">
+            <li class="menu-item has-submenu">
                 <a class="menu-link" href=""> <i class="icon material-icons md-store"></i>
                     <span class="text">Users</span>
                 </a>
@@ -74,15 +74,15 @@
                     <a href="/admin/viewUsers">View Users</a>
                 </div>
             </li>
-            <li class="menu-item has-submenu">
-              <a class="menu-link" href=""> <i class="icon material-icons md-store"></i>
-                  <span class="text">Blogs</span>
-              </a>
-              <div class="submenu">
-                  <a href="/admin/addBlog">Add Blog</a>
-                  <a href="/admin/viewBlogs">View Blogs</a>
-              </div>
-          </li>
+            <li class="menu-item has-submenu active">
+                <a class="menu-link" href=""> <i class="icon material-icons md-store"></i>
+                    <span class="text">Blogs</span>
+                </a>
+                <div class="submenu">
+                    <a href="/admin/addBlog">Add Blog</a>
+                    <a href="/admin/viewBlogs">View Blogs</a>
+                </div>
+            </li>
         </ul>
         <br>
         <br>
@@ -116,7 +116,7 @@
             <div class="content-header">
     
                 <div>
-                    <h2 class="content-title card-title">Customers List</h2>
+                    <h2 class="content-title card-title">Blogs List</h2>
                     <p></p>
                 </div> 
             </div>
@@ -126,113 +126,48 @@
                     <div class="object-fit-contain mt-3"> 
                       <div class="header d-flex justify-content-between" style="float: right;"> 
                        
-                        <h3><a href="/admin/addUser" class="btn add-btn" style="height:40px; color: green;"><b>Add New user</b></a><br></h3>
+                        <h3><a href="/admin/addBlog" class="btn add-btn" style="height:40px; color: green;"><b>Add New Blog</b></a><br></h3>
                       </div>
-                      <% if (users && users.length > 0) { %>
+                    
                         <table style="width: 70vw;" id="example" class="table table-striped table-bordered table-sm" cellspacing="0" width="100%">
-                          <thead>
-                            <tr>
-                              <th>Sr Num</th>
-                              <th>User ID</th>
-                              <th>Name</th>
-                              <th>Email</th>
-                              <th>Phone</th>
-                              <th>Status</th>
-                              <th>Products</th>
-                              <th>Actions</th>
-                            </tr>
-                          </thead>
-                          <tbody>
-                            <% let serialNumber = (currentPage - 1) * itemsPerPage + 1; %>
-                            <% users.forEach((user, index) => { %>
-                              <tr>
-                                <td><%= serialNumber + index %></td>
-                                <td><%= user.userId %></td>
-                                <td><%= user.name %></td>
-                                <td><%= user.email %></td>
-                                <td><%= user.phone %></td>
-                                <td>
-                                  <span class="badge <%= user.status === 'active' ? 'bg-success' : 'bg-danger' %>">
-                                    <%= user.status %>
-                                  </span>
-                                </td>
-                                <td>
-                                  <% if (user.products && user.products.length > 0) { %>
-                                   
-                                    <% user.products.forEach(product => { %>
-                                      <% if (product.status === 'active') { %>
-                                      <div class="mb-2">
-                                        <strong>ID:</strong> <%= product.prodID %><br>
-                                        <% if (product.productImage) { %>
-                                          <img src="<%= product.productImage %>" alt="Product Image" style="width: 60px; height: auto;">
-                                          
-                                        <% } else { %>
-                                          <span class="text-muted">No image</span>
-                                        <% } %>
-                                      </div>
-                                      <% } %>
-                                        
-                                    <% }) %>
-                                    
-                                  <% } else { %>
-                                    <span class="text-muted">No products</span>
-                                  <% } %>
-                                </td>
-                                <td>
-                                  <a href="/admin/user/edit/<%= user._id %>" class="btn btn-sm btn-warning">Edit</a>
-                                  <a href="/admin/user/toggle-status/<%= user._id %>" class="btn btn-sm <%= user.status === 'active' ? 'btn-danger' : 'btn-success' %>">
-                                    <%= user.status === 'active' ? 'Block User' : 'Unblock' %>
-                                  </a>
-                                  <a href="/admin/user/add-product/<%= user._id %>" class="btn btn-sm btn-info">Add Product</a>
-                                </td>
-                              </tr>
+                        <thead>
+                          <tr>
+                            
+                            <th class="th-sm">Title</th>
+                            <th class="th-sm">Image</th>
+                            <th class="th-sm">Actions</th>
+                            
+                          </tr>
+                        </thead>
+                        <tbody>
+                           
+                            <% blogs.forEach(blog => { %>
+                                <tr>
+                                    <td><%= blog.title %></td>
+                                    <td>
+                                      <% blog.image.forEach(img => { %>
+                                        <img src="<%= img %>" width="60" />
+                                      <% }) %>
+                                    </td>
+                                    <td>
+                                      <a class="ms-3" href="/admin/blog/edit/<%= blog._id %>">Edit</a>
+                                      |
+                                      <a class="text-danger ms-2" href="/admin/blog/delete/<%= blog._id %>" onclick="return confirm('Are you sure you want to delete this Blog?')">Delete</a>
+                                    </td>
+                                  </tr>
+                                
+                           
                             <% }) %>
-                          </tbody>
-                        </table>
+                          
+                        </tbody>
+                      
+                      
                         
-
-                     
-
-                      <% } else { %>
-                        <p class="text-muted mt-3">No users added yet.</p>
-                      <% } %>
+                      </table>
                     </div>
                     
                   </section>
                   
- <!-- Pagination Block -->
- <% if (totalPages > 1) { %>
-    <div class="pagination-area mt-15 mb-50">
-      <nav aria-label="Page navigation example">
-        <ul class="pagination justify-content-start">
-          <% if (currentPage > 1) { %>
-            <li class="page-item">
-              <a class="page-link" href="?page=<%= currentPage - 1 %>">
-                <i class="material-icons md-chevron_left"></i>
-              </a>
-            </li>
-          <% } %>
-  
-          <% for (let i = 1; i <= totalPages; i++) { %>
-            <li class="page-item <%= currentPage === i ? 'active' : '' %>">
-              <a class="page-link" href="?page=<%= i %>"><%= i %></a>
-            </li>
-          <% } %>
-  
-          <% if (currentPage < totalPages) { %>
-            <li class="page-item">
-              <a class="page-link" href="?page=<%= currentPage + 1 %>">
-                <i class="material-icons md-chevron_right"></i>
-              </a>
-            </li>
-          <% } %>
-        </ul>
-      </nav>
-    </div>
-  <% } %>
-  
-  
-  
 
 
                 

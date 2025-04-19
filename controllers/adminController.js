@@ -1,4 +1,5 @@
 
+import Blog from "../models/Blog.js";
 import Category from "../models/Category.js";
 import Product from "../models/Product.js"
 import User from '../models/User.js';
@@ -146,8 +147,40 @@ export const showAddUserPage = async (req, res) => {
 
 export const createUser = async (req, res) => {
   try {
-    const { userId, name, email } = req.body;
-    const user = new User({ userId, name, email });
+    const { userId, name, email, phone, countryCode} = req.body;
+
+    // Ensure values are arrays even if one input is given
+    const prodIDs = Array.isArray(req.body.prodID) ? req.body.prodID : [req.body.prodID];
+    const moqs = Array.isArray(req.body.customizedMOQ) ? req.body.customizedMOQ : [req.body.customizedMOQ];
+    const sizes = Array.isArray(req.body.size) ? req.body.size : [req.body.size];
+    const images = req.files?.customProductImages || [];
+
+    // ✅ Validate all prodIDs exist in the Product collection
+    const existingProducts = await Product.find({ prod_id: { $in: prodIDs } });
+    const existingProdIDs = existingProducts.map(prod => prod.prod_id);
+
+    const invalidProdIDs = prodIDs.filter(id => !existingProdIDs.includes(id));
+    if (invalidProdIDs.length > 0) {
+      return res.status(400).send(`Invalid product IDs: ${invalidProdIDs.join(", ")}`);
+    }
+
+    // Map valid product data
+    const products = prodIDs.map((id, index) => ({
+      prodID: id,
+      customizedMOQ: moqs[index],
+      size: sizes[index],
+      productImage: images[index]?.path || "",
+      status: 'active'
+    }));
+
+    const user = new User({
+      userId,
+      name,
+      email,
+      phone: `${countryCode}${phone}`,
+      products
+    });
+
     await user.save();
     res.redirect('/admin/viewUsers');
   } catch (error) {
@@ -167,7 +200,8 @@ export const viewUsers = async (req, res) => {
     const users = await User.find()
       .sort({ createdAt: -1 })
       .skip((currentPage - 1) * itemsPerPage)
-      .limit(itemsPerPage);
+      .limit(itemsPerPage)
+      .lean();
 
     res.render("viewUsers", {
       users,
@@ -181,8 +215,54 @@ export const viewUsers = async (req, res) => {
   }
 };
 
+export const showAddProductForm = async (req, res) => {
+  try {
+    const user = await User.findById(req.params.userId);
+    const allProducts = await Product.find(); // to show product options
 
+    if (!user) return res.status(404).send("User not found");
 
+    res.render("addProductToUser", {
+      user,
+      allProducts
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Internal Server Error");
+  }
+};
+
+export const addProductToUser = async (req, res) => {
+  try {
+    const { prodID, customizedMOQ, size } = req.body;
+    const userId = req.params.userId;
+
+    // Get the image URL from cloudinary upload
+    const imageFile = req.files?.customProductImages?.[0];
+    const productImage = imageFile?.path || '';
+
+    const newProduct = {
+      prodID,
+      customizedMOQ,
+      size,
+      productImage,
+      status: 'active'
+    };
+
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).send('User not found');
+    }
+
+    user.products.push(newProduct);
+    await user.save();
+
+    res.redirect('/admin/viewUsers');
+  } catch (error) {
+    console.error('Error adding product to user:', error);
+    res.status(500).send('Internal Server Error');
+  }
+};
 
 
 export const showEditUserPage = async (req, res) => {
@@ -198,18 +278,47 @@ export const showEditUserPage = async (req, res) => {
   }
 };
 
-
 export const editUser = async (req, res) => {
   try {
     const { id } = req.params;
-    const { name, email } = req.body;
-    await User.findByIdAndUpdate(id, { name, email });
+    const { name, email, phone, countryCode } = req.body;
+
+    const user = await User.findById(id);
+    if (!user) return res.status(404).send('User not found');
+
+    user.name = name;
+    user.email = email;
+    user.phone = `${countryCode}${phone}`; // 👈 Combine country code with number
+
+    await user.save();
+
     res.redirect('/admin/viewUsers');
   } catch (error) {
     console.error("Error updating user:", error);
     res.status(500).send("Internal Server Error");
   }
 };
+export const deactivateUserProduct = async (req, res) => {
+  try {
+    const { id, index } = req.params;
+
+    const user = await User.findById(id);
+    if (!user) return res.status(404).send("User not found");
+
+    if (user.products && user.products[index]) {
+      user.products[index].status = 'inactive';
+      await user.save();
+    }
+
+    res.redirect('/admin/viewUsers');
+  } catch (error) {
+    console.error("Error updating product status:", error);
+    res.status(500).send("Internal Server Error");
+  }
+};
+
+
+
 
 export const toggleUserStatus = async (req, res) => {
   try {
@@ -242,102 +351,91 @@ export const showAddProductPage =async (req, res) => {
 export const addProduct = async (req, res) => {
   try {
     const {
-      name, moq, description, material,
-      function: func, size, leadTime,
-      isCustomized, userId, prod_id, catId
+      name, moq, description, material, function: productFunction, size,
+      leadTime, isCustomized, prod_id, catId, printing, ingredients,
+      minOrderWithPrinting, minOrderWithoutPrinting, quality, color
     } = req.body;
 
-    const productImages = req.files?.productImages?.map(file => file.path) || [];
+    const imageFiles = req.files?.productImages?.map(file => file.path) || [];
 
-    let userRef = null;
-
-    if (isCustomized === "true") {
-      const existingUser = await User.findOne({ userId });
-      if (!existingUser) {
-        return res.send(`<script>alert('User with ID ${userId} does not exist. Please add user first.'); window.history.back();</script>`);
-      }
-      userRef = existingUser._id;
-    }
-
-    const product = new Product({
+    const newProduct = new Product({
       name,
       moq,
       description,
       material,
-      function: func,
+      function: productFunction,
       size,
       leadTime,
-      image: productImages,
-      isCustomized: isCustomized === "true",
-      user: userRef,
+      image: imageFiles,
+      isCustomized: isCustomized === 'true',
       prod_id,
-      catId
+      catId,
+      printing,
+      ingredients,
+      minOrderWithPrinting,
+      minOrderWithoutPrinting,
+      quality,
+      color
     });
 
-    await product.save();
-    res.redirect('/admin/viewProducts');
-  } catch (error) {
-    console.error("Error saving product:", error);
-    res.status(500).send("Internal Server Error");
+    await newProduct.save();
+res.redirect('/admin/viewProducts')
+  } catch (err) {
+    console.error(err);
+    res.status(500).send('Error saving product');
   }
 };
+
+
+
 
 export const viewProducts = async (req, res) => {
   const currentPage = parseInt(req.query.page) || 1;
-  const perPage = 1; // 1 user per page (showing all their products)
+  const perPage = 5;
   const skip = (currentPage - 1) * perPage;
 
   try {
-    // Fetch all customized products with user info
-    const customizedProducts = await Product.find({
-      isCustomized: true,
-      user: { $ne: null }
-    })
-      .populate('user')
+    // Get total number of products
+    const totalProducts = await Product.countDocuments();
+    const totalPages = Math.ceil(totalProducts / perPage);
+
+    // Fetch products with pagination
+    const products = await Product.find()
+      .sort({ timestamp: -1 }) // optional: newest first
+      .skip(skip)
+      .limit(perPage)
       .lean();
 
-    // Group products by userId
-    const usersWithCustomizedProducts = [];
+    // Get all users who have customized any product
+    const users = await User.find({}, 'name userId products').lean();
 
-    customizedProducts.forEach(product => {
-      const user = product.user;
-      if (!user) return;
+    // Map products with customized users
+    const productsWithUsers = products.map(product => {
+      const customizedUsers = users.filter(user =>
+        user.products.some(p => p.prodID === product.prod_id)
+      ).map(user => ({
+        userId: user.userId,
+        name: user.name
+      }));
 
-      const existingUser = usersWithCustomizedProducts.find(
-        u => u.userId === user.userId
-      );
-
-      if (existingUser) {
-        existingUser.products.push(product);
-      } else {
-        usersWithCustomizedProducts.push({
-          userId: user.userId,
-          userName: user.name,  // User name from schema
-          userEmail: user.email,
-          status: user.status,
-          products: [product]
-        });
-      }
+      return {
+        ...product,
+        customizedUsers
+      };
     });
 
-    // Get the total number of users
-    const totalUsers = usersWithCustomizedProducts.length;
-    const totalPages = Math.ceil(totalUsers / perPage);
-
-    // Get the user for the current page (slice)
-    const userForPage = usersWithCustomizedProducts.slice(skip, skip + perPage);
-
-    // Pass data to the view (single user, pagination info, etc.)
     res.render('viewProducts', {
-      userWithProducts: userForPage[0], // Pass the first user of the current page
+      products: productsWithUsers,
       currentPage,
-      totalPages,
-      totalUsers
+      totalPages
     });
+
   } catch (err) {
-    res.status(500).send('Failed to load Products');
+    console.error(err);
+    res.status(500).send('Failed to load products');
   }
 };
+
 
 
 
@@ -353,6 +451,86 @@ export const blockUser = async (req, res) => {
     res.redirect('/admin');
   } catch (err) {
     res.status(500).send('Failed to block user');
+  }
+};
+
+
+// Show category page
+export const showAddBlogPage = async (req, res) => {
+  try {
+    
+    res.render("addBlog");
+  } catch (error) {
+    console.error("Error fetching Blogs:", error);
+    res.status(500).send("Internal Server Error");
+  }
+};
+
+export const addBlog = async (req, res) => {
+  try {
+    const { title,content } = req.body;
+    const blogImage = req.files?.blogImage
+      ? req.files.blogImage.map(file => file.path)
+      : [];
+
+    const blog = new Blog({
+      title,
+      content,
+      image: blogImage
+    });
+
+    await blog.save();
+    res.redirect('/admin/viewBlogs');
+  } catch (error) {
+    console.error("Error saving blog:", error);
+    res.status(500).send("Internal Server Error");
+  }
+};
+
+export const viewBlogs = async (req, res) => {
+
+  try {
+    const blogs = await Blog.find({isDeleted:false});
+   res.render('viewBlogs',{blogs})
+  } catch (err) {
+    res.status(500).send('Failed to remove Blog');
+  }
+};
+
+export const deleteBlog = async (req, res) => {
+  try {
+    await Blog.findByIdAndUpdate(req.params.id, { isDeleted: true });
+    res.redirect('/admin/viewBlogs');
+  } catch (error) {
+    console.error("Error deleting Blog:", error);
+    res.status(500).send("Internal Server Error");
+  }
+};
+export const showEditBlogPage = async (req, res) => {
+  try {
+    const blog = await Blog.findById(req.params.id);
+    res.render("editBlog", { blog });
+  } catch (error) {
+    console.error("Error fetching blog:", error);
+    res.status(500).send("Internal Server Error");
+  }
+};
+
+export const updateBlog = async (req, res) => {
+  try {
+    const { title,content } = req.body;
+    const image = req.files?.blogImage
+      ? req.files.blogImage.map(file => file.path)
+      : undefined;
+
+    const updateData = { title,content };
+    if (image) updateData.image = image;
+
+    await Blog.findByIdAndUpdate(req.params.id, updateData);
+    res.redirect('/admin/viewBlogs');
+  } catch (error) {
+    console.error("Error updating blog:", error);
+    res.status(500).send("Internal Server Error");
   }
 };
 

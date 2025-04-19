@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="utf-8">
-    <title>EShopper - Bootstrap Shop Template</title>
+    <title>Superior Pack UAE</title>
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
     <meta content="Free HTML Templates" name="keywords">
     <meta content="Free HTML Templates" name="description">
@@ -33,28 +33,27 @@
         <div class="row bg-secondary py-2 px-xl-5">
             <div class="col-lg-6 d-none d-lg-block">
                 <div class="d-inline-flex align-items-center">
-                    <a class="text-dark" href="">FAQs</a>
+                    <span class="text-muted px-2">Call Us:</span>
+                    <a class="text-dark" href="tel:+971564219630">+971564219630</a>
                     <span class="text-muted px-2">|</span>
-                    <a class="text-dark" href="">Help</a>
-                    <span class="text-muted px-2">|</span>
-                    <a class="text-dark" href="">Support</a>
+                    <span class="text-muted px-2">Email:</span>
+                    <a class="text-dark" href="mailto:info@superiorpackuae.com">info@superiorpackuae.com</a>
+                   
                 </div>
             </div>
             <div class="col-lg-6 text-center text-lg-right">
                 <div class="d-inline-flex align-items-center">
-                    <a class="text-dark px-2" href="">
+                    <a class="text-dark px-2" target="_blank" href="https://www.facebook.com/superiorpackuae?mibextid=ZbWKwL">
                         <i class="fab fa-facebook-f"></i>
                     </a>
-                    <a class="text-dark px-2" href="">
-                        <i class="fab fa-twitter"></i>
-                    </a>
-                    <a class="text-dark px-2" href="">
+                   
+                    <a class="text-dark px-2" target="_blank" href="https://www.linkedin.com/company/superior-pack-uae/">
                         <i class="fab fa-linkedin-in"></i>
                     </a>
-                    <a class="text-dark px-2" href="">
+                    <a class="text-dark px-2" target="_blank" href="https://www.instagram.com/superiorpack_uae">
                         <i class="fab fa-instagram"></i>
                     </a>
-                    <a class="text-dark pl-2" href="">
+                    <a class="text-dark pl-2" target="_blank" href="https://www.youtube.com/@superiorpackuae">
                         <i class="fab fa-youtube"></i>
                     </a>
                 </div>
@@ -68,23 +67,21 @@
                 </a>
             </div>
             <div class="col-lg-6 col-6 text-left">
-                <form action="">
+                <form action="/search" method="get">
                     <div class="input-group">
-                        <input type="text" class="form-control" placeholder="Search for products">
-                        <div class="input-group-append">
-                            <span class="input-group-text bg-transparent" style="color: #98d5ca;">
-                                <i class="fa fa-search"></i>
-                            </span>
-                        </div>
+                      <input type="text" name="query" class="form-control" placeholder="Search for products">
+                      <div class="input-group-append">
+                        <button type="submit" class="btn btn-primary" style="background-color: #98d5ca; border-color: #98d5ca;">
+                          Search
+                        </button>
+                      </div>
                     </div>
-                </form>
+                  </form>
+                  
             </div>
             <div class="col-lg-3 col-6 text-right">
-                <a href="" class="btn border">
-                    <i class="fas fa-heart" style="color: #98d5ca;"></i>
-                    <span class="badge">0</span>
-                </a>
-                <a href="" class="btn border">
+               
+                <a href="/cart" class="btn border">
                     <i class="fas fa-shopping-cart" style="color: #98d5ca;"></i>
                     <span class="badge">0</span>
                 </a>
@@ -131,7 +128,7 @@
             
             <div class="col-lg-9">
                 <nav class="navbar navbar-expand-lg bg-light navbar-light py-3 py-lg-0 px-0">
-                    <a href="" class="text-decoration-none d-block d-lg-none">
+                    <a href="/" class="text-decoration-none d-block d-lg-none">
                         <img src="/userAssets/img/sp.jpg" alt="Logo" style="max-width: 150px; height: auto;">
                     </a>
                     <button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#navbarCollapse">
@@ -141,15 +138,11 @@
                         <div class="navbar-nav mr-auto py-0">
                             <a href="/" class="nav-item nav-link active">Home</a>
                             <a href="/about" class="nav-item nav-link">About</a>
-                            <a href="detail.html" class="nav-item nav-link">Services</a>
-                            <div class="nav-item dropdown">
-                                <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">Products</a>
-                                <div class="dropdown-menu rounded-0 m-0">
-                                    <a href="cart.html" class="dropdown-item">Shopping Cart</a>
-                                    <a href="checkout.html" class="dropdown-item">Checkout</a>
-                                </div>
-                            </div>
-                            <a href="contact.html" class="nav-item nav-link">Contact</a>
+                            <a href="/blogs" class="nav-item nav-link">Blogs</a>
+                           
+                            <a href="/allProducts" class="nav-item nav-link" >Products</a>
+                          
+                            <a href="/contact" class="nav-item nav-link">Contact</a>
                         </div>
                         <div class="navbar-nav ml-auto py-0">
                             <a href="https://heyzine.com/flip-book/c3143e1818.html" target="_blank" class="nav-item nav-link">E-Brochure</a>
@@ -259,20 +252,20 @@
           <h2 class="section-title px-5"><span class="px-2">Our categories</span></h2>
         </div>
         <div class="row px-xl-5 pb-3">
-          <% categories.forEach(category => { 
-               const categoryId = category._id.toString();
-               const productCount = categoryProductsMap[categoryId] ? categoryProductsMap[categoryId].length : 0;
-          %>
-            <div class="col-lg-4 col-md-6 pb-1">
-              <div class="cat-item d-flex flex-column border mb-4" style="padding: 30px;">
-                <p class="text-right"><%= productCount %> Products</p>
-                <a href="/products/category/<%= categoryId %>" class="cat-img position-relative overflow-hidden mb-3">
-                  <img class="img-fluid" src="<%= category.image[0] %>" alt="<%= category.name %>">
-                </a>
-                <h5 class="font-weight-semi-bold m-0"><%= category.name %></h5>
-              </div>
-            </div>
-          <% }) %>
+            <% categories.forEach(category => { %>
+                <div class="col-lg-4 col-md-6 pb-1">
+                  <div class="cat-item d-flex flex-column border mb-4" style="padding: 30px;">
+                    <p class="text-right">
+                      <%= categoryProductsMap[category._id.toString()] ? categoryProductsMap[category._id.toString()].length : 0 %> Products
+                    </p>
+                    <a href="/products/category/<%= category._id %>" class="cat-img position-relative overflow-hidden mb-3">
+                      <img class="img-fluid" src="<%= category.image[0] %>" alt="<%= category.name %>">
+                    </a>
+                    <h5 class="font-weight-semi-bold m-0"><%= category.name %></h5>
+                  </div>
+                </div>
+              <% }) %>
+              
         </div>
     </div>
       
@@ -372,7 +365,8 @@
     <!-- Step 3 -->
     <div class="col-md-6 d-flex step-box" data-aos="fade-up" data-aos-delay="300">
       <div class="step-icon me-3 mt-1">
-        <i class="bi bi-truck"></i>
+        <i class="bi bi-check-circle"></i>
+        
       </div>
       <div>
         <h5 class="fw-bold mb-2 text-center">Fast Production</h5>
@@ -383,7 +377,7 @@
     <!-- Step 4 -->
     <div class="col-md-6 d-flex step-box" data-aos="fade-up" data-aos-delay="400">
       <div class="step-icon me-3 mt-1">
-        <i class="bi bi-check-circle"></i>
+        <i class="bi bi-truck"></i>
       </div>
       <div>
         <h5 class="fw-bold mb-2 text-center">Delivery & Satisfaction</h5>
@@ -579,71 +573,68 @@
 
     <!-- Footer Start -->
     <div class="container-fluid bg-secondary text-dark mt-5 pt-5">
-        <div class="row px-xl-5 pt-5">
-            <div class="col-lg-4 col-md-12 mb-5 pr-3 pr-xl-5">
-                <a href="" class="text-decoration-none">
-                    <h1 class="mb-4 display-5 font-weight-semi-bold"><span class="text-primary font-weight-bold border border-white px-3 mr-1">E</span>Shopper</h1>
-                </a>
-                <p>Dolore erat dolor sit lorem vero amet. Sed sit lorem magna, ipsum no sit erat lorem et magna ipsum dolore amet erat.</p>
-                <p class="mb-2"><i class="fa fa-map-marker-alt text-primary mr-3"></i>123 Street, New York, USA</p>
-                <p class="mb-2"><i class="fa fa-envelope text-primary mr-3"></i>info@example.com</p>
-                <p class="mb-0"><i class="fa fa-phone-alt text-primary mr-3"></i>+012 345 67890</p>
+        <div class="row px-xl-5 pt-5 ">
+            <!-- Get In Touch -->
+            <div class="col-lg-6 col-md-12 mb-4">
+              <h5 class="font-weight-bold text-dark mb-4">Get In Touch</h5>
+              <p>
+                Office # 04, 10th Floor, Inside Unique Business Centre Building AB Plaza 08,<br>
+                Al Mamzar, Dubai
+              </p>
+              <p class="mb-2"><i class="fa fa-phone-alt text-primary mr-2"></i>+971564219630</p>
+              <p class="mb-2"><i class="fa fa-envelope text-primary mr-2"></i>info@superiorpackuae.com</p>
+              <p class="mb-2"><strong>Opening Time:</strong><br>Open: 9:00 AM – Close: 6:00 PM<br>Monday – Saturday</p>
             </div>
-            <div class="col-lg-8 col-md-12">
-                <div class="row">
-                    <div class="col-md-4 mb-5">
-                        <h5 class="font-weight-bold text-dark mb-4">Quick Links</h5>
-                        <div class="d-flex flex-column justify-content-start">
-                            <a class="text-dark mb-2" href="index.html"><i class="fa fa-angle-right mr-2"></i>Home</a>
-                            <a class="text-dark mb-2" href="shop.html"><i class="fa fa-angle-right mr-2"></i>Our Shop</a>
-                            <a class="text-dark mb-2" href="detail.html"><i class="fa fa-angle-right mr-2"></i>Shop Detail</a>
-                            <a class="text-dark mb-2" href="cart.html"><i class="fa fa-angle-right mr-2"></i>Shopping Cart</a>
-                            <a class="text-dark mb-2" href="checkout.html"><i class="fa fa-angle-right mr-2"></i>Checkout</a>
-                            <a class="text-dark" href="contact.html"><i class="fa fa-angle-right mr-2"></i>Contact Us</a>
-                        </div>
-                    </div>
-                    <div class="col-md-4 mb-5">
-                        <h5 class="font-weight-bold text-dark mb-4">Quick Links</h5>
-                        <div class="d-flex flex-column justify-content-start">
-                            <a class="text-dark mb-2" href="index.html"><i class="fa fa-angle-right mr-2"></i>Home</a>
-                            <a class="text-dark mb-2" href="shop.html"><i class="fa fa-angle-right mr-2"></i>Our Shop</a>
-                            <a class="text-dark mb-2" href="detail.html"><i class="fa fa-angle-right mr-2"></i>Shop Detail</a>
-                            <a class="text-dark mb-2" href="cart.html"><i class="fa fa-angle-right mr-2"></i>Shopping Cart</a>
-                            <a class="text-dark mb-2" href="checkout.html"><i class="fa fa-angle-right mr-2"></i>Checkout</a>
-                            <a class="text-dark" href="contact.html"><i class="fa fa-angle-right mr-2"></i>Contact Us</a>
-                        </div>
-                    </div>
-                    <div class="col-md-4 mb-5">
-                        <h5 class="font-weight-bold text-dark mb-4">Newsletter</h5>
-                        <form action="">
-                            <div class="form-group">
-                                <input type="text" class="form-control border-0 py-4" placeholder="Your Name" required="required" />
-                            </div>
-                            <div class="form-group">
-                                <input type="email" class="form-control border-0 py-4" placeholder="Your Email"
-                                    required="required" />
-                            </div>
-                            <div>
-                                <button class="btn btn-primary btn-block border-0 py-3" type="submit">Subscribe Now</button>
-                            </div>
-                        </form>
-                    </div>
+          
+            <!-- Links + Social -->
+            <div class="col-lg-6 col-md-12 mb-4">
+              <div class="row justify-content-center">
+                <!-- Quick Links -->
+                <div class="col-md-6 mb-4">
+                  <h5 class="font-weight-bold text-dark mb-4">Quick Links</h5>
+                  <div class="d-flex flex-column">
+                    <a class="text-dark mb-2" href="/"><i class="fa fa-angle-right mr-2"></i>Home</a>
+                    <a class="text-dark mb-2" href="/allProducts"><i class="fa fa-angle-right mr-2"></i>Our Products</a>
+                    <a class="text-dark mb-2" href="/contact"><i class="fa fa-angle-right mr-2"></i>Contact Us</a>
+                    <a class="text-dark mb-2" href="/quote"><i class="fa fa-angle-right mr-2"></i>Get a Quote</a>
+                  </div>
                 </div>
+          
+              <!-- Social Media -->
+<div class="col-md-6 mb-4 text-center">
+    <h5 class="font-weight-bold text-dark mb-4">Follow Us</h5>
+    <div class="d-flex justify-content-center gap-3">
+      <a class="text-primary fs-4 px-2" target="_blank" href="https://www.facebook.com/superiorpackuae?mibextid=ZbWKwL" style="color: #3b5998;">
+        <i class="fab fa-facebook-f"></i>
+      </a>
+      <a class="text-primary fs-4 px-2" target="_blank" href="https://www.linkedin.com/company/superior-pack-uae/" style="color: #0e76a8;">
+        <i class="fab fa-linkedin-in"></i>
+      </a>
+      <a class="text-primary fs-4 px-2" target="_blank" href="https://www.instagram.com/superiorpack_uae" style="color: #e4405f;">
+        <i class="fab fa-instagram"></i>
+      </a>
+      <a class="text-primary fs-4 px-2" target="_blank" href="https://www.youtube.com/@superiorpackuae" style="color: #ff0000;">
+        <i class="fab fa-youtube"></i>
+      </a>
+    </div>
+  </div>
+  
+              </div>
+            </div>
+          </div>
+          
+          
+        <div class="row border-top border-light mx-xl-5 py-4 justify-content-center">
+            <div class="col-12 text-center text-dark">
+              <p class="mb-2">
+                &copy; <a class="text-dark font-weight-semi-bold" href="#">Superior Pack UAE</a>. All Rights Reserved.
+              </p>
+              <p class="mb-0">
+                Developed By <a href="https://www.linkedin.com/in/ashidha-muneer-35618b13a/" target="_blank">Ashidha Muneer</a>
+              </p>
             </div>
         </div>
-        <div class="row border-top border-light mx-xl-5 py-4">
-            <div class="col-md-6 px-xl-0">
-                <p class="mb-md-0 text-center text-md-left text-dark">
-                    &copy; <a class="text-dark font-weight-semi-bold" href="#">Your Site Name</a>. All Rights Reserved. Designed
-                    by
-                    <a class="text-dark font-weight-semi-bold" href="https://htmlcodex.com">HTML Codex</a><br>
-                    Distributed By <a href="https://themewagon.com" target="_blank">ThemeWagon</a>
-                </p>
-            </div>
-            <div class="col-md-6 px-xl-0 text-center text-md-right">
-                <img class="img-fluid" src="userAssets/img/payments.png" alt="">
-            </div>
-        </div>
+          
     </div>
     <!-- Footer End -->
 
