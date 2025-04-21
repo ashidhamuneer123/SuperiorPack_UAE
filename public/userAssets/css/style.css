@@ -5862,6 +5862,8 @@ a.close.disabled {
   transition: transform 0.6s ease-in-out;
 }
 
+
+
 @media (prefers-reduced-motion: reduce) {
   .carousel-item {
     transition: none;
@@ -9658,3 +9660,71 @@ a.text-dark:hover, a.text-dark:focus {
 .icon:hover i {
   color: var(--accent-color) !important;
 }
+
+.stats-section {
+  position: relative;
+  padding: 120px 0;
+  background-color: #000;
+}
+
+.stats-section .bg-img {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: 1;
+}
+
+.stats-section .bg-overlay {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.6); /* translucent black overlay */
+  z-index: 2;
+}
+
+.stats-section .container {
+  z-index: 3;
+}
+
+.stats-item {
+  position: relative;
+  z-index: 3;
+  padding: 30px;
+}
+
+.stats-item span {
+  font-size: 48px;
+  font-weight: 700;
+  color: #fff;
+  display: block;
+}
+
+.stats-item p {
+  font-size: 16px;
+  font-weight: 700;
+  margin: 0;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+@font-face {
+  font-family: 'Annisa';
+  src: url('/fonts/Annisa.ttf') format('truetype');
+}
+
+.annisa-font {
+  font-family: 'Annisa', cursive;
+  font-size: 2.5rem;     /* adjust size as needed */
+  font-weight: bold;
+  color: #ffdf7e;        /* elegant goldish tone (optional) */
+  letter-spacing: 1px;
+}
+.pl-custom {
+  padding-left: 100px; /* adjust this value as needed */
+}
+
+
+
+

@@ -2,6 +2,7 @@ import Product from "../models/Product.js";
 import Category from "../models/Category.js";
 import nodemailer from "nodemailer";
 import User from "../models/User.js";
+import Enquiry from '../models/Enquiry.js';
 export const loadHome = async (req, res) => {
   try {
   
@@ -338,5 +339,168 @@ export const userDashboard = async (req, res) => {
       console.error('Error sending contact message:', error);
       res.status(500).json({ success: false, message: 'Error sending message' });
     }
+  };
+
+  export const allProducts = async (req, res) => {
+    try {
+      const categories = await Category.find({ isDeleted: false });
+      const productsByCategory = await Product.find().populate('catId');
+      const products = await Product.find().limit(9).sort({ timestamp: -1 }); 
+    const categoryProductsMap = {};
+    productsByCategory.forEach(product => {
+      if (product.catId) {
+        const categoryId = product.catId._id.toString();
+        if (!categoryProductsMap[categoryId]) {
+          categoryProductsMap[categoryId] = [];
+        }
+        categoryProductsMap[categoryId].push(product);
+      }
+    });
+      res.render("allProducts",{categories,categoryProductsMap,products});
+    } catch (error) {
+      res.status(500).send("Internal Server Error");
+    }
+  };
+
+  export const addToEnquiry = async (req, res) => {
+    try {
+      const categories = await Category.find({ isDeleted: false });
+      const productsByCategory = await Product.find().populate('catId');
+    // Fetch enquiry based on session
+    const enquiry = await Enquiry.findOne({ sessionId: req.session.id });
+
+    const enquiryProducts = enquiry ? enquiry.products : [];
+
+    const categoryProductsMap = {};
+    productsByCategory.forEach(product => {
+      if (product.catId) {
+        const categoryId = product.catId._id.toString();
+        if (!categoryProductsMap[categoryId]) {
+          categoryProductsMap[categoryId] = [];
+        }
+        categoryProductsMap[categoryId].push(product);
+      }
+    });
+      res.render("enquiry",{categories,categoryProductsMap,enquiryProducts});
+    } catch (error) {
+      res.status(500).send("Internal Server Error");
+    }
+  };
+
+  export const addProductToEnquiry = async (req, res) => {
+    try {
+      const productId = req.params.id;
+      const product = await Product.findById(productId);
+  
+      if (!product) return res.status(404).json({ message: 'Product not found' });
+  
+      // Check for an existing enquiry document in session (or create new)
+      let enquiry = await Enquiry.findOne({ sessionId: req.session.id });
+  
+      if (!enquiry) {
+        enquiry = new Enquiry({
+          sessionId: req.session.id,
+          products: [],
+          customer: {}
+        });
+      }
+  
+      const alreadyExists = enquiry.products.some(p => p.prod_id === product.prod_id);
+  
+      if (!alreadyExists) {
+        enquiry.products.push({
+          prod_id: product.prod_id,
+          name: product.name,
+          moq: product.moq,
+          size: '',
+          message: ''
+        });
+  
+        await enquiry.save();
+      }
+  
+      return res.status(200).json({ message: 'Product added to enquiry' });
+  
+    } catch (error) {
+      console.error('Error adding to enquiry:', error);
+      res.status(500).json({ message: 'Internal Server Error' });
+    }
+  };
+
+  export const addToEnquirySession = async (req, res) => {
+    try {
+      const productId = req.params.id;
+  
+      const product = await Product.findById(productId);
+  
+      if (!product) {
+        return res.status(404).send("Product not found");
+      }
+  
+      // Initialize enquiryProducts session array if not present
+      if (!req.session.enquiryProducts) {
+        req.session.enquiryProducts = [];
+      }
+  
+      // Check if product already exists in the session
+      const exists = req.session.enquiryProducts.find(p => p.prod_id === product.prod_id);
+      if (!exists) {
+        req.session.enquiryProducts.push({
+          prod_id: product.prod_id,
+          name: product.name,
+          moq: product.moq,
+          size: "",
+          message: ""
+        });
+      }
+  
+      req.session.save(() => {
+        res.status(200).send("Added to enquiry");
+      });
+    } catch (error) {
+      console.error("Error adding to enquiry:", error);
+      res.status(500).send("Internal Server Error");
+    }
+  };
+  
+  export const showEnquiryCart = async (req, res) => {
+    try {
+      const enquiryProducts = req.session.enquiryProducts || [];
+  
+      // For navbar (categories)
+      const categories = await Category.find({ isDeleted: false });
+      const productsByCategory = await Product.find().populate('catId');
+  
+      const categoryProductsMap = {};
+      productsByCategory.forEach(product => {
+        if (product.catId) {
+          const categoryId = product.catId._id.toString();
+          if (!categoryProductsMap[categoryId]) {
+            categoryProductsMap[categoryId] = [];
+          }
+          categoryProductsMap[categoryId].push(product);
+        }
+      });
+     
+
+  
+      res.render("enquiry", { enquiryProducts, categories, categoryProductsMap });
+    } catch (error) {
+      res.status(500).send("Internal Server Error");
+    }
+  };
+  
+  export const removeFromEnquiry = async (req, res) => {
+    const productId = req.params.prodId;
+  
+    // Your logic for removing the product from the session or database
+    if (req.session.enquiryProducts) {
+      req.session.enquiryProducts = req.session.enquiryProducts.filter(
+        (product) => product.prod_id !== productId
+      );
+    }
+  
+    // Send a response back to the client
+    res.status(200).send({ message: 'Product removed from enquiry' });
   };
   

@@ -10,7 +10,7 @@
 
     <!-- Favicon -->
     <link href="userAssets/img/favicon.ico" rel="icon">
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
     <!-- Google Web Fonts -->
     <link rel="preconnect" href="https://fonts.gstatic.com">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet"> 
@@ -20,11 +20,10 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
     <!-- Libraries Stylesheet -->
     <link href="userAssets/lib/owlcarousel/assets/owl.carousel.min.css" rel="stylesheet">
-<!-- AOS CSS -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css">
+
 
     <!-- Customized Bootstrap Stylesheet -->
-    <link href="userAssets/css/style.css" rel="stylesheet">
+    <link href="/userAssets/css/style.css" rel="stylesheet">
 </head>
 
 <body>
@@ -178,218 +177,199 @@
     </div>
     <!-- Navbar End -->
 
-    <!-- Contact section start -->
-
-    
-    <!-- Page Header Start -->
-    <div class="container-fluid bg-secondary mb-5">
-        <div class="d-flex flex-column align-items-center justify-content-center" style="min-height: 300px">
-            <h1 class="font-weight-semi-bold text-uppercase mb-3">Contact Us</h1>
-            <div class="d-inline-flex">
-                <p class="m-0"><a href="">Home</a></p>
-                <p class="m-0 px-2">-</p>
-                <p class="m-0">Contact</p>
-            </div>
+ <!-- Page Header Start -->
+ <div class="container-fluid bg-secondary mb-5">
+    <div class="d-flex flex-column align-items-center justify-content-center" style="min-height: 300px">
+        <h1 class="font-weight-semi-bold text-uppercase mb-3">Enquiry Cart</h1>
+        <div class="d-inline-flex">
+            <p class="m-0"><a href="">Home</a></p>
+            <p class="m-0 px-2">-</p>
+            <p class="m-0">Enquiry</p>
         </div>
     </div>
-    <!-- Page Header End -->
+</div>
+<!-- Page Header End -->
 
 
-    <!-- Contact Start -->
-    <div class="container-fluid pt-5">
-        <div class="text-center mb-4">
-            <h2 class="section-title px-5"><span class="px-2">Send a Message</span></h2>
-        </div>
-        <div class="row px-xl-5">
-            <div class="col-lg-7 mb-5">
-                <div class="contact-form">
-                    <div id="success"></div>
-                    <form  action="/contact" method="post" id="contactForm">
-                        <div class="form-group">
-                            <input type="text" name="name" class="form-control" placeholder="Enter Your Name" required>
-                        </div>
-                        <div class="form-group">
-                            <input type="email" name="email" class="form-control" placeholder="Enter Your email" required>
-                        </div>
-                        <div class="form-group">
-                            <input type="text" name="phone" class="form-control" placeholder="Enter Your Phone Number" required>
-                        </div>
-                        <div class="form-group">
-                            <textarea name="message" class="form-control" placeholder="Please Enter your requirement" rows="4"></textarea>
-                        </div>
-                        <div>
-                            <button class="btn btn-primary py-2 px-4" type="submit">Send
-                                Message</button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-            <div class="col-lg-5 mb-5">
-                <h5 class="font-weight-semi-bold mb-3">Contact Us</h5>
-                <p>We are full-service printing house Packaging Solution In Dubai UAE. We have people working at the printing house with passion, professionalism and right attitude.</p>
-                <div class="d-flex flex-column mb-3">
-                    <h5 class="font-weight-semi-bold mb-3">Our Address</h5>
-                    <p class="mb-2"><i class="fa fa-map-marker-alt text-primary mr-3"></i> <p>
-                        Office # 04, 10th Floor, Inside Unique Business Centre <br> Building AB Plaza 08,<br>
-                        Al Mamzar, Dubai
-                      </p></p>
-                    <p class="mb-2"><i class="fa fa-envelope text-primary mr-3"></i>info@superiorpackuae.com</p>
-                    <p class="mb-2"><i class="fa fa-phone-alt text-primary mr-3"></i>+971564219630</p>
-                </div>
-               
-            </div>
-        </div>
+<form id="enquiryForm" method="POST" action="/submit-enquiry">
+    <table class="table table-bordered text-center mb-0">
+      <thead class="bg-secondary text-dark">
+        <tr>
+          <th>Product ID</th>
+          <th>Product Name</th>
+          <th>Quantity</th>
+          <th>Size</th>
+          <th>Message</th>
+          <th>Remove</th>
+        </tr>
+      </thead>
+      <tbody id="enquiry-table-body" class="align-middle">
+        <% enquiryProducts.forEach((product, index) => { %>
+          <tr>
+            <td><%= product.prod_id %></td>
+            <td><%= product.name %></td>
+            <td><input type="text" name="products[<%= index %>][moq]" value="<%= product.moq %>" class="form-control" /></td>
+            <td><input type="text" name="products[<%= index %>][size]" value="<%= product.size %>" class="form-control" /></td>
+            <td><textarea name="products[<%= index %>][message]" class="form-control"><%= product.message %></textarea></td>
+            <td>
+                <button type="button" class="btn btn-danger btn-sm remove-btn" data-prod-id="<%= product.prod_id %>">Remove</button>
+              </td>
+          </tr>
+        <% }) %>
+      </tbody>
+      
+      
+      
+      
+      
+    </table>
+    <input type="hidden" name="products" id="productsInput" value='<%- JSON.stringify(enquiryProducts) %>' />
+
+    <div class="mt-4">
+      <h5>Customer Details</h5>
+      <input type="text" name="name" placeholder="Your Name" required class="form-control mb-2">
+      <input type="email" name="email" placeholder="Your Email" required class="form-control mb-2">
+      <input type="text" name="phone" placeholder="Phone Number" required class="form-control mb-2">
+      <textarea name="additionalMessage" class="form-control" placeholder="Additional Message"></textarea>
     </div>
-    <!-- Contact End -->
-
-      <!-- Contact section End -->
-
-      <!-- Footer Start -->
-    <div class="container-fluid bg-secondary text-dark mt-5 pt-5">
-        <div class="row px-xl-5 pt-5 ">
-            <!-- Get In Touch -->
-            <div class="col-lg-6 col-md-12 mb-4">
-              <h5 class="font-weight-bold text-dark mb-4">Get In Touch</h5>
-              <p>
-                Office # 04, 10th Floor, Inside Unique Business Centre Building AB Plaza 08,<br>
-                Al Mamzar, Dubai
-              </p>
-              <p class="mb-2"><i class="fa fa-phone-alt text-primary mr-2"></i>+971564219630</p>
-              <p class="mb-2"><i class="fa fa-envelope text-primary mr-2"></i>info@superiorpackuae.com</p>
-              <p class="mb-2"><strong>Opening Time:</strong><br>Open: 9:00 AM – Close: 6:00 PM<br>Monday – Saturday</p>
-            </div>
-          
-            <!-- Links + Social -->
-            <div class="col-lg-6 col-md-12 mb-4">
-              <div class="row justify-content-center">
-                <!-- Quick Links -->
-                <div class="col-md-6 mb-4">
-                  <h5 class="font-weight-bold text-dark mb-4">Quick Links</h5>
-                  <div class="d-flex flex-column">
-                    <a class="text-dark mb-2" href="/"><i class="fa fa-angle-right mr-2"></i>Home</a>
-                    <a class="text-dark mb-2" href="/allProducts"><i class="fa fa-angle-right mr-2"></i>Our Products</a>
-                    <a class="text-dark mb-2" href="/contact"><i class="fa fa-angle-right mr-2"></i>Contact Us</a>
-                    <a class="text-dark mb-2" href="/quote"><i class="fa fa-angle-right mr-2"></i>Get a Quote</a>
-                  </div>
-                </div>
-          
-              <!-- Social Media -->
-<div class="col-md-6 mb-4 text-center">
-    <h5 class="font-weight-bold text-dark mb-4">Follow Us</h5>
-    <div class="d-flex justify-content-center gap-3">
-      <a class="text-primary fs-4 px-2" target="_blank" href="https://www.facebook.com/superiorpackuae?mibextid=ZbWKwL" style="color: #3b5998;">
-        <i class="fab fa-facebook-f"></i>
-      </a>
-      <a class="text-primary fs-4 px-2" target="_blank" href="https://www.linkedin.com/company/superior-pack-uae/" style="color: #0e76a8;">
-        <i class="fab fa-linkedin-in"></i>
-      </a>
-      <a class="text-primary fs-4 px-2" target="_blank" href="https://www.instagram.com/superiorpack_uae" style="color: #e4405f;">
-        <i class="fab fa-instagram"></i>
-      </a>
-      <a class="text-primary fs-4 px-2" target="_blank" href="https://www.youtube.com/@superiorpackuae" style="color: #ff0000;">
-        <i class="fab fa-youtube"></i>
-      </a>
-    </div>
-  </div>
   
+    <button type="submit" class="btn btn-primary mt-3">Submit Enquiry</button>
+  </form>
+  
+
+  
+
+
+
+     <!-- Footer Start -->
+ <div class="container-fluid bg-secondary text-dark mt-5 pt-5">
+    <div class="row px-xl-5 pt-5 ">
+        <!-- Get In Touch -->
+        <div class="col-lg-6 col-md-12 mb-4">
+          <h5 class="font-weight-bold text-dark mb-4">Get In Touch</h5>
+          <p>
+            Office # 04, 10th Floor, Inside Unique Business Centre Building AB Plaza 08,<br>
+            Al Mamzar, Dubai
+          </p>
+          <p class="mb-2"><i class="fa fa-phone-alt text-primary mr-2"></i>+971564219630</p>
+          <p class="mb-2"><i class="fa fa-envelope text-primary mr-2"></i>info@superiorpackuae.com</p>
+          <p class="mb-2"><strong>Opening Time:</strong><br>Open: 9:00 AM – Close: 6:00 PM<br>Monday – Saturday</p>
+        </div>
+      
+        <!-- Links + Social -->
+        <div class="col-lg-6 col-md-12 mb-4">
+          <div class="row justify-content-center">
+            <!-- Quick Links -->
+            <div class="col-md-6 mb-4">
+              <h5 class="font-weight-bold text-dark mb-4">Quick Links</h5>
+              <div class="d-flex flex-column">
+                <a class="text-dark mb-2" href="/"><i class="fa fa-angle-right mr-2"></i>Home</a>
+                <a class="text-dark mb-2" href="/allProducts"><i class="fa fa-angle-right mr-2"></i>Our Products</a>
+                <a class="text-dark mb-2" href="/contact"><i class="fa fa-angle-right mr-2"></i>Contact Us</a>
+                <a class="text-dark mb-2" href="/quote"><i class="fa fa-angle-right mr-2"></i>Get a Quote</a>
               </div>
             </div>
+      
+          <!-- Social Media -->
+<div class="col-md-6 mb-4 text-center">
+<h5 class="font-weight-bold text-dark mb-4">Follow Us</h5>
+<div class="d-flex justify-content-center gap-3">
+  <a class="text-primary fs-4 px-2" target="_blank" href="https://www.facebook.com/superiorpackuae?mibextid=ZbWKwL" style="color: #3b5998;">
+    <i class="fab fa-facebook-f"></i>
+  </a>
+  <a class="text-primary fs-4 px-2" target="_blank" href="https://www.linkedin.com/company/superior-pack-uae/" style="color: #0e76a8;">
+    <i class="fab fa-linkedin-in"></i>
+  </a>
+  <a class="text-primary fs-4 px-2" target="_blank" href="https://www.instagram.com/superiorpack_uae" style="color: #e4405f;">
+    <i class="fab fa-instagram"></i>
+  </a>
+  <a class="text-primary fs-4 px-2" target="_blank" href="https://www.youtube.com/@superiorpackuae" style="color: #ff0000;">
+    <i class="fab fa-youtube"></i>
+  </a>
+</div>
+</div>
+
           </div>
-          
-          
-        <div class="row border-top border-light mx-xl-5 py-4 justify-content-center">
-            <div class="col-12 text-center text-dark">
-              <p class="mb-2">
-                &copy; <a class="text-dark font-weight-semi-bold" href="#">Superior Pack UAE</a>. All Rights Reserved.
-              </p>
-              <p class="mb-0">
-                Developed By <a href="https://www.linkedin.com/in/ashidha-muneer-35618b13a/" target="_blank">Ashidha Muneer</a>
-              </p>
-            </div>
         </div>
-          
+      </div>
+      
+      
+    <div class="row border-top border-light mx-xl-5 py-4 justify-content-center">
+        <div class="col-12 text-center text-dark">
+          <p class="mb-2">
+            &copy; <a class="text-dark font-weight-semi-bold" href="#">Superior Pack UAE</a>. All Rights Reserved.
+          </p>
+          <p class="mb-0">
+            Developed By <a href="https://www.linkedin.com/in/ashidha-muneer-35618b13a/" target="_blank">Ashidha Muneer</a>
+          </p>
+        </div>
     </div>
-    <!-- Footer End -->
+      
+</div>
+<!-- Footer End -->
 
 
-    <!-- Back to Top -->
-    <a href="#" class="btn btn-primary back-to-top"><i class="fa fa-angle-double-up"></i></a>
+<!-- Back to Top -->
+<a href="#" class="btn btn-primary back-to-top"><i class="fa fa-angle-double-up"></i></a>
 
 
-    <!-- JavaScript Libraries -->
-    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.bundle.min.js"></script>
-    <script src="userAssets/lib/easing/easing.min.js"></script>
-    <script src="userAssets/lib/owlcarousel/owl.carousel.min.js"></script>
+<!-- JavaScript Libraries -->
+<script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.bundle.min.js"></script>
+<script src="userAssets/lib/easing/easing.min.js"></script>
+<script src="userAssets/lib/owlcarousel/owl.carousel.min.js"></script>
 
-    <!-- Contact Javascript File -->
-    <script src="userAssets/mail/jqBootstrapValidation.min.js"></script>
-    <script src="userAssets/mail/contact.js"></script>
+<!-- Contact Javascript File -->
+<script src="userAssets/mail/jqBootstrapValidation.min.js"></script>
 
-    <script>
-        const contactForm = document.getElementById('contactForm');
-    
-        contactForm.addEventListener('submit', async (e) => {
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+    document.querySelectorAll(".remove-btn").forEach((removeBtn) => {
+        removeBtn.addEventListener("click", async (e) => {
             e.preventDefault();
-    
-            const name = contactForm.name.value;
-            const email = contactForm.email.value;
-            const phone = contactForm.phone.value;
-            const message = contactForm.message.value;
+            const productId = removeBtn.getAttribute("data-prod-id");
 
-             // Show loader immediately
-  Swal.fire({
-    title: 'Please wait...',
-    text: 'Sending your message...',
-    icon: 'info',
-    allowOutsideClick: false,
-    showConfirmButton: false,
-    didOpen: () => {
-      Swal.showLoading();
-    }
-  });
-    
+            // Remove from sessionStorage
+            let stored = JSON.parse(sessionStorage.getItem("enquiryClicked")) || [];
+            stored = stored.filter((id) => id !== productId);
+            sessionStorage.setItem("enquiryClicked", JSON.stringify(stored));
+
+            // Remove row from DOM
+            const productRow = document.getElementById(`product-${productId}`);
+            if (productRow) productRow.remove();
+
             try {
-                const response = await fetch('/contact', {
+                const response = await fetch(`/remove-from-enquiry/${productId}`, {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ name, email, phone, message })
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ prod_id: productId }),
                 });
-    
-                const result = await response.json();
-    
-                if (result.success) {
-                    Swal.fire({
-                        title: 'Success!',
-                        text: result.message,
-                        icon: 'success',
-                        timer: 1500,
-                        showConfirmButton: false
-                    });
-    
-                    setTimeout(() => {
-                        window.location.href = '/';
-                    }, 1000);
+
+                if (response.ok) {
+                    console.log("Product removed from enquiry.");
+                    window.location.reload(); // Optional refresh
                 } else {
-                    alert('Something went wrong. Please try again.');
+                    console.error("Failed to remove from server session.");
                 }
-            } catch (error) {
-                alert('Error submitting quote: ' + error.message);
+            } catch (err) {
+                console.error("Error removing from server:", err);
             }
         });
-    </script>
-    
-  
+    });
+});
+
+</script>
 
 
-    <!-- Template Javascript -->
-    <script src="userAssets/js/main.js"></script>
-    
- 
-    
-    
+
+
+
+<!-- Template Javascript -->
+<script src="userAssets/js/main.js"></script>
+
+
+
+
 </body>
 
 </html>
