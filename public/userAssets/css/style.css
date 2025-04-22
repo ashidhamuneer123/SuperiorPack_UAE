@@ -9709,10 +9709,7 @@ a.text-dark:hover, a.text-dark:focus {
   color: rgba(255, 255, 255, 0.7);
 }
 
-@font-face {
-  font-family: 'Annisa';
-  src: url('/fonts/Annisa.ttf') format('truetype');
-}
+
 
 .annisa-font {
   font-family: 'Annisa', cursive;
@@ -9723,6 +9720,15 @@ a.text-dark:hover, a.text-dark:focus {
 }
 .pl-custom {
   padding-left: 100px; /* adjust this value as needed */
+}
+.enquiry-icon-inner {
+  color: #0d6efd; /* Default blue */
+  transition: color 0.3s ease, transform 0.3s ease;
+}
+
+.enquiry-cart-icon:hover .enquiry-icon-inner {
+  color: #198754; /* Green on hover */
+  transform: scale(1.2);
 }
 
 

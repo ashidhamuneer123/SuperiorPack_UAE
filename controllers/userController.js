@@ -2,7 +2,7 @@ import Product from "../models/Product.js";
 import Category from "../models/Category.js";
 import nodemailer from "nodemailer";
 import User from "../models/User.js";
-import Enquiry from '../models/Enquiry.js';
+
 export const loadHome = async (req, res) => {
   try {
   
@@ -343,89 +343,48 @@ export const userDashboard = async (req, res) => {
 
   export const allProducts = async (req, res) => {
     try {
+      const page = parseInt(req.query.page) || 1;
+      const limit = 9;
+      const skip = (page - 1) * limit;
+  
       const categories = await Category.find({ isDeleted: false });
+      const totalProducts = await Product.countDocuments();
+      const totalPages = Math.ceil(totalProducts / limit);
+  
+      const products = await Product.find()
+        .sort({ timestamp: -1 })
+        .skip(skip)
+        .limit(limit)
+        .populate('catId');
+  
+      // For mapping all products by category (optional, depending on how you're using it)
       const productsByCategory = await Product.find().populate('catId');
-      const products = await Product.find().limit(9).sort({ timestamp: -1 }); 
-    const categoryProductsMap = {};
-    productsByCategory.forEach(product => {
-      if (product.catId) {
-        const categoryId = product.catId._id.toString();
-        if (!categoryProductsMap[categoryId]) {
-          categoryProductsMap[categoryId] = [];
+      const categoryProductsMap = {};
+      productsByCategory.forEach(product => {
+        if (product.catId) {
+          const categoryId = product.catId._id.toString();
+          if (!categoryProductsMap[categoryId]) {
+            categoryProductsMap[categoryId] = [];
+          }
+          categoryProductsMap[categoryId].push(product);
         }
-        categoryProductsMap[categoryId].push(product);
-      }
-    });
-      res.render("allProducts",{categories,categoryProductsMap,products});
+      });
+  
+      res.render("allProducts", {
+        categories,
+        products,
+        categoryProductsMap,
+        currentPage: page,
+        totalPages,
+      });
     } catch (error) {
+      console.error(error);
       res.status(500).send("Internal Server Error");
     }
   };
+  
 
-  export const addToEnquiry = async (req, res) => {
-    try {
-      const categories = await Category.find({ isDeleted: false });
-      const productsByCategory = await Product.find().populate('catId');
-    // Fetch enquiry based on session
-    const enquiry = await Enquiry.findOne({ sessionId: req.session.id });
 
-    const enquiryProducts = enquiry ? enquiry.products : [];
-
-    const categoryProductsMap = {};
-    productsByCategory.forEach(product => {
-      if (product.catId) {
-        const categoryId = product.catId._id.toString();
-        if (!categoryProductsMap[categoryId]) {
-          categoryProductsMap[categoryId] = [];
-        }
-        categoryProductsMap[categoryId].push(product);
-      }
-    });
-      res.render("enquiry",{categories,categoryProductsMap,enquiryProducts});
-    } catch (error) {
-      res.status(500).send("Internal Server Error");
-    }
-  };
-
-  export const addProductToEnquiry = async (req, res) => {
-    try {
-      const productId = req.params.id;
-      const product = await Product.findById(productId);
-  
-      if (!product) return res.status(404).json({ message: 'Product not found' });
-  
-      // Check for an existing enquiry document in session (or create new)
-      let enquiry = await Enquiry.findOne({ sessionId: req.session.id });
-  
-      if (!enquiry) {
-        enquiry = new Enquiry({
-          sessionId: req.session.id,
-          products: [],
-          customer: {}
-        });
-      }
-  
-      const alreadyExists = enquiry.products.some(p => p.prod_id === product.prod_id);
-  
-      if (!alreadyExists) {
-        enquiry.products.push({
-          prod_id: product.prod_id,
-          name: product.name,
-          moq: product.moq,
-          size: '',
-          message: ''
-        });
-  
-        await enquiry.save();
-      }
-  
-      return res.status(200).json({ message: 'Product added to enquiry' });
-  
-    } catch (error) {
-      console.error('Error adding to enquiry:', error);
-      res.status(500).json({ message: 'Internal Server Error' });
-    }
-  };
 
   export const addToEnquirySession = async (req, res) => {
     try {
@@ -503,4 +462,83 @@ export const userDashboard = async (req, res) => {
     // Send a response back to the client
     res.status(200).send({ message: 'Product removed from enquiry' });
   };
+
+
+  export const sendEnquiryEmail = async (req, res) => {
+    const { name, email, phone, additionalMessage, products } = req.body;
   
+    let parsedProducts = [];
+    try {
+      parsedProducts = typeof products === 'string' ? JSON.parse(products) : products;
+    } catch (error) {
+      return res.status(400).json({ success: false, message: 'Invalid product data' });
+    }
+  
+    const productRows = parsedProducts.map(prod => `
+      <tr>
+        <td>${prod.prod_id || ''}</td>
+        <td>${prod.name || ''}</td>
+        <td>${prod.moq || ''}</td>
+        <td>${prod.size || ''}</td>
+        <td>${prod.message || ''}</td>
+      </tr>
+    `).join('');
+  
+    const htmlContent = `
+      <h3>New Product Enquiry</h3>
+      <h4>Customer Details</h4>
+      <p><strong>Name:</strong> ${name}</p>
+      <p><strong>Email:</strong> ${email}</p>
+      <p><strong>Phone:</strong> ${phone}</p>
+      <p><strong>Message:</strong> ${additionalMessage}</p>
+  
+      <h4>Product Enquiry</h4>
+      <table border="1" cellpadding="8" cellspacing="0" style="border-collapse: collapse; width: 100%;">
+        <thead style="background-color: #f2f2f2;">
+          <tr>
+            <th>Product ID</th>
+            <th>Product Name</th>
+            <th>Quantity</th>
+            <th>Size</th>
+            <th>Message</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${productRows}
+        </tbody>
+      </table>
+    `;
+  
+    try {
+      const transporter = nodemailer.createTransport({
+        service: 'gmail',
+        auth: {
+          user: process.env.EMAIL_USER,
+          pass: process.env.EMAIL_PASS,
+        },
+      });
+  
+      await transporter.sendMail({
+        from: `"Enquiry Bot" <${process.env.EMAIL_USER}>`,
+        to: 'ashidhaa@gmail.com',
+        subject: 'New Product Enquiry',
+        html: htmlContent,
+      });
+  
+      // ✅ Clear session cart after successful email
+    req.session.enquiryProducts = [];
+    req.session.save(() => {
+      res.status(200).json({ success: true, message: 'Enquiry submitted successfully' });
+    });
+
+    } catch (error) {
+      console.error('Error sending email:', error);
+      return res.status(500).json({ success: false, message: 'Failed to send email' });
+    }
+  };
+  
+  // Add this to your controller
+export const getEnquiryCount = (req, res) => {
+  const count = req.session.enquiryProducts?.length || 0;
+  res.status(200).json({ count });
+};

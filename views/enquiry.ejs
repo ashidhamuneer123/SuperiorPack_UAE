@@ -20,7 +20,7 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
     <!-- Libraries Stylesheet -->
     <link href="userAssets/lib/owlcarousel/assets/owl.carousel.min.css" rel="stylesheet">
-
+    
 
     <!-- Customized Bootstrap Stylesheet -->
     <link href="/userAssets/css/style.css" rel="stylesheet">
@@ -189,54 +189,64 @@
     </div>
 </div>
 <!-- Page Header End -->
-
-
-<form id="enquiryForm" method="POST" action="/submit-enquiry">
-    <table class="table table-bordered text-center mb-0">
-      <thead class="bg-secondary text-dark">
-        <tr>
-          <th>Product ID</th>
-          <th>Product Name</th>
-          <th>Quantity</th>
-          <th>Size</th>
-          <th>Message</th>
-          <th>Remove</th>
-        </tr>
-      </thead>
-      <tbody id="enquiry-table-body" class="align-middle">
-        <% enquiryProducts.forEach((product, index) => { %>
-          <tr>
-            <td><%= product.prod_id %></td>
-            <td><%= product.name %></td>
-            <td><input type="text" name="products[<%= index %>][moq]" value="<%= product.moq %>" class="form-control" /></td>
-            <td><input type="text" name="products[<%= index %>][size]" value="<%= product.size %>" class="form-control" /></td>
-            <td><textarea name="products[<%= index %>][message]" class="form-control"><%= product.message %></textarea></td>
-            <td>
-                <button type="button" class="btn btn-danger btn-sm remove-btn" data-prod-id="<%= product.prod_id %>">Remove</button>
-              </td>
-          </tr>
-        <% }) %>
-      </tbody>
-      
-      
-      
-      
-      
-    </table>
-    <input type="hidden" name="products" id="productsInput" value='<%- JSON.stringify(enquiryProducts) %>' />
-
-    <div class="mt-4">
-      <h5>Customer Details</h5>
-      <input type="text" name="name" placeholder="Your Name" required class="form-control mb-2">
-      <input type="email" name="email" placeholder="Your Email" required class="form-control mb-2">
-      <input type="text" name="phone" placeholder="Phone Number" required class="form-control mb-2">
-      <textarea name="additionalMessage" class="form-control" placeholder="Additional Message"></textarea>
-    </div>
+<div class="container pt-5 px-3 px-md-5">
+    <form id="enquiryForm" method="POST" action="/submit-enquiry">
+      <div class="table-responsive">
+        <table class="table table-bordered text-center mb-0">
+          <thead class="bg-secondary text-dark">
+            <tr>
+              <th>Product ID</th>
+              <th>Product Name</th>
+              <th>Quantity</th>
+              <th>Size</th>
+              <th>Message</th>
+              <th>Remove</th>
+            </tr>
+          </thead>
+          <tbody id="enquiry-table-body" class="align-middle">
+            <% enquiryProducts.forEach((product, index) => { %>
+              <tr>
+                <td>
+                    <%= product.prod_id %>
+                    <input type="hidden" name="products[<%= index %>][prod_id]" value="<%= product.prod_id %>" />
+                  </td>
+                  <td>
+                    <%= product.name %>
+                    <input type="hidden" name="products[<%= index %>][name]" value="<%= product.name %>" />
+                  </td>
+                <td style="max-width: 100px;">
+                  <input type="text" name="products[<%= index %>][moq]" value="<%= product.moq %>" class="form-control form-control-sm" style="max-width: 90px; margin: auto;" />
+                </td>
+                <td style="max-width: 80px;">
+                  <input type="text" name="products[<%= index %>][size]" value="<%= product.size %>" class="form-control form-control-sm" style="max-width: 70px; margin: auto;" />
+                </td>
+                <td>
+                  <textarea name="products[<%= index %>][message]" class="form-control form-control-sm"><%= product.message %></textarea>
+                </td>
+                <td>
+                  <button type="button" class="btn btn-outline-danger btn-sm remove-btn" data-prod-id="<%= product.prod_id %>">
+                    <i class="fas fa-times"></i>
+                  </button>
+                </td>
+              </tr>
+            <% }) %>
+          </tbody>
+        </table>
+      </div>
   
-    <button type="submit" class="btn btn-primary mt-3">Submit Enquiry</button>
-  </form>
+    
   
-
+      <div class="mt-4">
+        <h5>Customer Details</h5>
+        <input type="text" name="name" placeholder="Your Name" required class="form-control mb-2">
+        <input type="email" name="email" placeholder="Your Email" required class="form-control mb-2">
+        <input type="text" name="phone" placeholder="Phone Number" required class="form-control mb-2">
+        <textarea name="additionalMessage" class="form-control" placeholder="Additional Message"></textarea>
+      </div>
+  
+      <button type="submit" class="btn btn-primary mt-3">Submit Enquiry</button>
+    </form>
+  </div>
   
 
 
@@ -348,6 +358,8 @@
                 if (response.ok) {
                     console.log("Product removed from enquiry.");
                     window.location.reload(); // Optional refresh
+                    await updateCartCount(); // ✅ Update cart count immediately
+                   
                 } else {
                     console.error("Failed to remove from server session.");
                 }
@@ -361,8 +373,98 @@
 </script>
 
 
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
+<script>
+  const enquiryForm = document.getElementById('enquiryForm');
 
+  enquiryForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    // Extract form values
+    const formData = new FormData(enquiryForm);
+    const payload = {
+      products: [],
+      name: formData.get('name'),
+      email: formData.get('email'),
+      phone: formData.get('phone'),
+      additionalMessage: formData.get('additionalMessage')
+    };
+
+    // Collect product rows
+    const tableRows = document.querySelectorAll('#enquiry-table-body tr');
+    tableRows.forEach((row, index) => {
+      const prod_id = row.querySelector('td:nth-child(1)')?.innerText.trim();
+      const name = row.querySelector('td:nth-child(2)')?.innerText.trim();
+      const moq = row.querySelector('input[name^="products["][name$="[moq]"]')?.value.trim();
+      const size = row.querySelector('input[name^="products["][name$="[size]"]')?.value.trim();
+      const message = row.querySelector('textarea[name^="products["][name$="[message]"]')?.value.trim();
+
+      if (prod_id && name) {
+        payload.products.push({ prod_id, name, moq, size, message });
+      }
+    });
+
+    // Show loading alert
+    Swal.fire({
+      title: 'Please wait...',
+      text: 'Submitting your enquiry...',
+      icon: 'info',
+      allowOutsideClick: false,
+      showConfirmButton: false,
+      didOpen: () => {
+        Swal.showLoading();
+      }
+    });
+
+    try {
+      const response = await fetch('/submit-enquiry', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(payload)
+      });
+
+      const result = await response.json();
+
+      if (result.success) {
+        Swal.fire({
+          title: 'Enquiry Sent!',
+          text: result.message,
+          icon: 'success',
+          timer: 1500,
+          showConfirmButton: false
+        });
+
+        setTimeout(() => {
+          window.location.href = '/';
+        }, 1000);
+      } else {
+        Swal.fire('Oops!', 'Something went wrong. Please try again.', 'error');
+      }
+    } catch (error) {
+      Swal.fire('Error', error.message, 'error');
+    }
+  });
+</script>
+
+<script>
+    // Add this function inside your enquiry.ejs <script>
+async function updateCartCount() {
+  try {
+    const res = await fetch('/enquiry-count');
+    const data = await res.json();
+    const badge = document.getElementById('cart-count');
+    if (badge) {
+      badge.textContent = data.count;
+    }
+  } catch (error) {
+    console.error('Error fetching cart count:', error);
+  }
+}
+
+</script>
 
 <!-- Template Javascript -->
 <script src="userAssets/js/main.js"></script>

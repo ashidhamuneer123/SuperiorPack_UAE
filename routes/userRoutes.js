@@ -1,5 +1,5 @@
 import express from "express";
-import { loadHome , instantQuote ,sendQuote,userDashboard,contactUs,contactUsMail,showEnquiryCart,userLoginPage,userLogin,aboutUs,userLogout,productDetailPage,searchProducts, allProducts, addToEnquiry, addProductToEnquiry, addToEnquirySession, removeFromEnquiry} from "../controllers/userController.js";
+import { loadHome , instantQuote ,sendQuote,userDashboard,contactUs,contactUsMail,showEnquiryCart,userLoginPage,userLogin,aboutUs,userLogout,productDetailPage,searchProducts, allProducts,  addToEnquirySession, removeFromEnquiry,sendEnquiryEmail,getEnquiryCount} from "../controllers/userController.js";
 import upload from "../middlewares/multerConfig.js"; 
 import { userAuth } from "../middlewares/authMiddleware.js";
 import { getAllBlogs,getBlogDetails } from '../controllers/blogController.js';
@@ -24,6 +24,7 @@ router.get('/allProducts', allProducts);
 router.get('/add-to-enquiry/:id', addToEnquirySession);
 router.get('/enquiry-cart',showEnquiryCart)
 router.post('/remove-from-enquiry/:prodId',removeFromEnquiry)
-
+router.post('/submit-enquiry', sendEnquiryEmail);
+router.get('/enquiry-count', getEnquiryCount);
 
 export default router;

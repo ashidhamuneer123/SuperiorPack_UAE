@@ -81,10 +81,17 @@
             </div>
             <div class="col-lg-3 col-6 text-right">
                
-                <a href="/enquiry-cart" class="btn border">
-                    <i class="fas fa-shopping-cart" style="color: #98d5ca;"></i>
-                    <span class="badge">0</span>
-                </a>
+              <a href="/enquiry-cart"
+              class="btn border"
+              data-toggle="tooltip"
+              data-placement="bottom"
+              title="View Enquiry List">
+             <i class="fas fa-shopping-cart" style="color: #98d5ca;"></i>
+             <span id="cart-count" class="badge">0</span>
+           </a>
+           
+           
+            
             </div>
         </div>
     </div>
@@ -776,6 +783,7 @@
       
       <script>
         document.addEventListener("DOMContentLoaded", function () {
+          $('[data-toggle="tooltip"]').tooltip();
           document.querySelectorAll(".add-to-enquiry").forEach((button) => {
             button.addEventListener("click", async (e) => {
               e.preventDefault();
@@ -786,6 +794,7 @@
       
                 if (response.ok) {
                   button.innerHTML = "Added to Enquiry"; // Optional: show feedback
+                  await updateCartCount(); 
                 } else {
                   console.error("Failed to add to enquiry.");
                 }
@@ -797,7 +806,24 @@
         });
       </script>
       
-
+      <script>
+        async function updateCartCount() {
+          try {
+            const res = await fetch('/enquiry-count');
+            const data = await res.json();
+            const badge = document.getElementById('cart-count');
+            if (badge) {
+              badge.textContent = data.count;
+            }
+          } catch (error) {
+            console.error('Error fetching cart count:', error);
+          }
+        }
+      
+        // Call it once page is loaded
+        document.addEventListener('DOMContentLoaded', updateCartCount);
+      </script>
+      
 </body>
 
 </html>
