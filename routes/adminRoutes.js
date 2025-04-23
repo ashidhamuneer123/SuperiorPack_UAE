@@ -1,7 +1,10 @@
 import express from "express";
 import upload from "../middlewares/multerConfig.js"; 
-import { showAdminDashboard,showLoginPage, handleAdminLogin, handleAdminLogout,showAddUserPage,showAddBlogPage,addBlog,createUser,deactivateUserProduct,showAddProductForm,addProductToUser,showEditUserPage,editUser,toggleUserStatus,showAddProductPage,addProduct,blockUser,showAddCategoryPage,addCategory,viewCategories,showEditCategoryPage,updateCategory,deleteCategory, viewProducts, viewUsers, deleteBlog, updateBlog, showEditBlogPage, viewBlogs} from "../controllers/adminController.js";
+import { showAdminDashboard,showLoginPage, handleAdminLogin, handleAdminLogout,showAddUserPage,createUser,deactivateUserProduct,showAddProductForm,addProductToUser,showEditUserPage,editUser,toggleUserStatus,blockUser, viewUsers, } from "../controllers/adminController.js";
 import { adminAuth } from "../middlewares/authMiddleware.js";
+import {showAddCategoryPage,addCategory,viewCategories,showEditCategoryPage,updateCategory,deleteCategory, } from '../controllers/categoryController.js';
+import {showAddProductPage,addProduct,viewProducts,} from '../controllers/productController.js';
+import {showAddBlogPage,addBlog,deleteBlog, updateBlog, showEditBlogPage, viewBlogs} from '../controllers/blogController.js'
 const router = express.Router();
 
 // Admin login routes

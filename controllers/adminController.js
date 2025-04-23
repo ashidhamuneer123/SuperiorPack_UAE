@@ -1,5 +1,5 @@
 
-import Blog from "../models/Blog.js";
+
 import Category from "../models/Category.js";
 import Product from "../models/Product.js"
 import User from '../models/User.js';
@@ -55,83 +55,7 @@ export const showAdminDashboard = async (req, res) => {
 
 
 
-// Show category page
-export const showAddCategoryPage = async (req, res) => {
-  try {
-    
-    res.render("addCategory");
-  } catch (error) {
-    console.error("Error fetching categories:", error);
-    res.status(500).send("Internal Server Error");
-  }
-};
 
-export const addCategory = async (req, res) => {
-  try {
-    const { name } = req.body;
-    const productImages = req.files?.productImages
-      ? req.files.productImages.map(file => file.path)
-      : [];
-
-    const category = new Category({
-      name,
-      image: productImages
-    });
-
-    await category.save();
-    res.redirect('/admin/viewCategories');
-  } catch (error) {
-    console.error("Error saving category:", error);
-    res.status(500).send("Internal Server Error");
-  }
-};
-
-export const viewCategories = async (req, res) => {
-
-  try {
-    const categories = await Category.find({ isDeleted: false });
-   res.render('viewCategories',{categories})
-  } catch (err) {
-    res.status(500).send('Failed to block user');
-  }
-};
-
-export const deleteCategory = async (req, res) => {
-  try {
-    await Category.findByIdAndUpdate(req.params.id, { isDeleted: true });
-    res.redirect('/admin/viewCategories');
-  } catch (error) {
-    console.error("Error deleting category:", error);
-    res.status(500).send("Internal Server Error");
-  }
-};
-export const showEditCategoryPage = async (req, res) => {
-  try {
-    const category = await Category.findById(req.params.id);
-    res.render("editCategory", { category });
-  } catch (error) {
-    console.error("Error fetching category:", error);
-    res.status(500).send("Internal Server Error");
-  }
-};
-
-export const updateCategory = async (req, res) => {
-  try {
-    const { name } = req.body;
-    const image = req.files?.productImages
-      ? req.files.productImages.map(file => file.path)
-      : undefined;
-
-    const updateData = { name };
-    if (image) updateData.image = image;
-
-    await Category.findByIdAndUpdate(req.params.id, updateData);
-    res.redirect('/admin/viewCategories');
-  } catch (error) {
-    console.error("Error updating category:", error);
-    res.status(500).send("Internal Server Error");
-  }
-};
 
 export const showAddUserPage = async (req, res) => {
   try {
@@ -298,6 +222,7 @@ export const editUser = async (req, res) => {
     res.status(500).send("Internal Server Error");
   }
 };
+
 export const deactivateUserProduct = async (req, res) => {
   try {
     const { id, index } = req.params;
@@ -335,113 +260,6 @@ export const toggleUserStatus = async (req, res) => {
 
 
 
-
-// Show product page
-export const showAddProductPage =async (req, res) => {
-  try {
-    const categories = await Category.find(); 
-    res.render("addProduct",{ categories });
-  } catch (error) {
-    console.error("Error saving product:", error);
-    res.status(500).send("Internal Server Error");
-  }
- 
-};
-
-export const addProduct = async (req, res) => {
-  try {
-    const {
-      name, moq, description, material, function: productFunction, size,
-      leadTime, isCustomized, prod_id, catId, printing, ingredients,
-      minOrderWithPrinting, minOrderWithoutPrinting, quality, color
-    } = req.body;
-
-    const imageFiles = req.files?.productImages?.map(file => file.path) || [];
-
-    const newProduct = new Product({
-      name,
-      moq,
-      description,
-      material,
-      function: productFunction,
-      size,
-      leadTime,
-      image: imageFiles,
-      isCustomized: isCustomized === 'true',
-      prod_id,
-      catId,
-      printing,
-      ingredients,
-      minOrderWithPrinting,
-      minOrderWithoutPrinting,
-      quality,
-      color
-    });
-
-    await newProduct.save();
-res.redirect('/admin/viewProducts')
-  } catch (err) {
-    console.error(err);
-    res.status(500).send('Error saving product');
-  }
-};
-
-
-
-
-export const viewProducts = async (req, res) => {
-  const currentPage = parseInt(req.query.page) || 1;
-  const perPage = 5;
-  const skip = (currentPage - 1) * perPage;
-
-  try {
-    // Get total number of products
-    const totalProducts = await Product.countDocuments();
-    const totalPages = Math.ceil(totalProducts / perPage);
-
-    // Fetch products with pagination
-    const products = await Product.find()
-      .sort({ timestamp: -1 }) // optional: newest first
-      .skip(skip)
-      .limit(perPage)
-      .lean();
-
-    // Get all users who have customized any product
-    const users = await User.find({}, 'name userId products').lean();
-
-    // Map products with customized users
-    const productsWithUsers = products.map(product => {
-      const customizedUsers = users.filter(user =>
-        user.products.some(p => p.prodID === product.prod_id)
-      ).map(user => ({
-        userId: user.userId,
-        name: user.name
-      }));
-
-      return {
-        ...product,
-        customizedUsers
-      };
-    });
-
-    res.render('viewProducts', {
-      products: productsWithUsers,
-      currentPage,
-      totalPages
-    });
-
-  } catch (err) {
-    console.error(err);
-    res.status(500).send('Failed to load products');
-  }
-};
-
-
-
-
-
-
-
 export const blockUser = async (req, res) => {
   const userId = req.params.userId;
 
@@ -455,83 +273,6 @@ export const blockUser = async (req, res) => {
 };
 
 
-// Show category page
-export const showAddBlogPage = async (req, res) => {
-  try {
-    
-    res.render("addBlog");
-  } catch (error) {
-    console.error("Error fetching Blogs:", error);
-    res.status(500).send("Internal Server Error");
-  }
-};
 
-export const addBlog = async (req, res) => {
-  try {
-    const { title,content } = req.body;
-    const blogImage = req.files?.blogImage
-      ? req.files.blogImage.map(file => file.path)
-      : [];
-
-    const blog = new Blog({
-      title,
-      content,
-      image: blogImage
-    });
-
-    await blog.save();
-    res.redirect('/admin/viewBlogs');
-  } catch (error) {
-    console.error("Error saving blog:", error);
-    res.status(500).send("Internal Server Error");
-  }
-};
-
-export const viewBlogs = async (req, res) => {
-
-  try {
-    const blogs = await Blog.find({isDeleted:false});
-   res.render('viewBlogs',{blogs})
-  } catch (err) {
-    res.status(500).send('Failed to remove Blog');
-  }
-};
-
-export const deleteBlog = async (req, res) => {
-  try {
-    await Blog.findByIdAndUpdate(req.params.id, { isDeleted: true });
-    res.redirect('/admin/viewBlogs');
-  } catch (error) {
-    console.error("Error deleting Blog:", error);
-    res.status(500).send("Internal Server Error");
-  }
-};
-export const showEditBlogPage = async (req, res) => {
-  try {
-    const blog = await Blog.findById(req.params.id);
-    res.render("editBlog", { blog });
-  } catch (error) {
-    console.error("Error fetching blog:", error);
-    res.status(500).send("Internal Server Error");
-  }
-};
-
-export const updateBlog = async (req, res) => {
-  try {
-    const { title,content } = req.body;
-    const image = req.files?.blogImage
-      ? req.files.blogImage.map(file => file.path)
-      : undefined;
-
-    const updateData = { title,content };
-    if (image) updateData.image = image;
-
-    await Blog.findByIdAndUpdate(req.params.id, updateData);
-    res.redirect('/admin/viewBlogs');
-  } catch (error) {
-    console.error("Error updating blog:", error);
-    res.status(500).send("Internal Server Error");
-  }
-};
 
 

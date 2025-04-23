@@ -537,7 +537,7 @@ export const userDashboard = async (req, res) => {
     }
   };
   
-  // Add this to your controller
+ 
 export const getEnquiryCount = (req, res) => {
   const count = req.session.enquiryProducts?.length || 0;
   res.status(200).json({ count });
