@@ -9761,5 +9761,142 @@ a.text-dark:hover, a.text-dark:focus {
 }
 
 
+.timeline-container {
+  padding: 40px 20px;
+  position: relative;
+}
 
+.timeline-title {
+  text-align: center;
+  font-size: 28px;
+  font-weight: 700;
+  margin-bottom: 50px;
+}
+
+.timeline {
+  position: relative;
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.timeline-line {
+  position: absolute;
+  left: 50%;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background-color: #00aa4f;
+  transform: translateX(-50%);
+  z-index: 0;
+}
+
+.timeline-item {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 80px;
+}
+
+.timeline-card {
+  background: #fff;
+  border-radius: 12px;
+  padding: 30px;
+  width: 45%;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+  z-index: 1;
+}
+
+.timeline-card.left {
+  margin-right: auto;
+}
+
+.timeline-card.right {
+  margin-left: auto;
+}
+
+.timeline-card .icon {
+  font-size: 24px;
+  color: #00aa4f;
+  margin-bottom: 10px;
+}
+
+.step-circle {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background-color: #00aa4f;
+  color: white;
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  z-index: 2;
+}
+
+.step-left {
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.step-left::after {
+  content: "";
+  position: absolute;
+  left: 100%;
+  top: 50%;
+  width: 40px;
+  height: 1px;
+  background-color: #00aa4f;
+}
+
+.step-right {
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.step-right::after {
+  content: "";
+  position: absolute;
+  right: 100%;
+  top: 50%;
+  width: 40px;
+  height: 1px;
+  background-color: #00aa4f;
+}
+
+/* Responsive Styling */
+@media (max-width: 768px) {
+  .timeline-item {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .timeline-card {
+    width: 90%;
+    text-align: center;
+  }
+
+  .timeline-card.left,
+  .timeline-card.right {
+    margin: 0 auto;
+  }
+
+  .step-left,
+  .step-right {
+    left: 50%;
+    transform: translateX(-50%);
+  }
+
+  .step-left::after,
+  .step-right::after {
+    display: none;
+  }
+
+  .timeline-line {
+    left: 50%;
+  }
+}
 

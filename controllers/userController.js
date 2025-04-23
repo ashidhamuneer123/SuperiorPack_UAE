@@ -74,7 +74,7 @@ export const instantQuote = async (req, res) => {
         });
 
         const mailOptions = {
-          from: process.env.EMAIL_USER,
+          from: `"Instant Quote Mail" <${process.env.EMAIL_USER}>`,
           to: 'ashidhagithub@gmail.com',
           subject: `New Quote Request from ${name} - ${new Date().toLocaleString()}`,
           html: `
@@ -322,7 +322,7 @@ export const userDashboard = async (req, res) => {
       });
   
       const mailOptions = {
-        from: process.env.EMAIL_USER,
+        from: `"Contact Mail" <${process.env.EMAIL_USER}>`,
         to: 'ashidhaa@gmail.com',
         subject: `New Contact Message from ${name} - ${new Date().toLocaleString()}`,
         html: `
@@ -519,8 +519,8 @@ export const userDashboard = async (req, res) => {
       });
   
       await transporter.sendMail({
-        from: `"Enquiry Bot" <${process.env.EMAIL_USER}>`,
-        to: 'ashidhaa@gmail.com',
+        from: `"Enquiry Mail" <${process.env.EMAIL_USER}>`,
+        to: 'ashidhagithub@gmail.com',
         subject: 'New Product Enquiry',
         html: htmlContent,
       });
