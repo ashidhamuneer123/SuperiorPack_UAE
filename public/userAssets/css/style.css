@@ -9759,6 +9759,8 @@ a.text-dark:hover, a.text-dark:focus {
   color: #198754; /* Green on hover */
   transform: scale(1.2);
 }
+
+
 .timeline-container {
   padding: 60px 20px;
   background-color: #f4f4f4;
@@ -9830,8 +9832,8 @@ a.text-dark:hover, a.text-dark:focus {
   transform: translate(-50%, -50%);
   background-color: #00aa4f;
   color: white;
-  width: 70px;
-  height: 70px;
+  width: 90px;
+  height: 90px;
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -9910,4 +9912,47 @@ a.text-dark:hover, a.text-dark:focus {
   justify-content: center;
   align-items: center;
   width: 100%;
+}
+
+/* Desktop view: emulate margin-left/right of 800px */
+@media (min-width: 1400px) {
+  .timeline-item.left .timeline-card {
+    margin-right: 800px;
+    margin-left: 0 !important;
+  }
+
+  .timeline-item.right .timeline-card {
+    margin-left: 800px;
+    margin-right: 0 !important;
+  }
+}
+
+@media (max-width: 768px) {
+  .step-circle {
+    top: 0;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    margin-bottom: 10px;
+  }
+
+  .timeline-item.left .timeline-card,
+  .timeline-item.right .timeline-card {
+    margin-left: 0;
+    margin-right: 0;
+    margin-top: 40px; /* push down the card a bit from the circle */
+  }
+}
+
+#faqAccordion .btn-link {
+  font-weight: 600;
+  font-size: 18px;
+  color: #000; /* Change color if you want */
+  text-decoration: none;
+}
+#faqAccordion .btn-link:hover {
+  text-decoration: none;
+}
+.toggle-icon {
+  font-size: 24px;
+  font-weight: bold;
 }

@@ -542,3 +542,26 @@ export const getEnquiryCount = (req, res) => {
   const count = req.session.enquiryProducts?.length || 0;
   res.status(200).json({ count });
 };
+
+export const faqPage = async (req, res) => {
+  try {
+    const categories = await Category.find({ isDeleted: false });
+    const productsByCategory = await Product.find().populate('catId');
+
+    const categoryProductsMap = {};
+    productsByCategory.forEach(product => {
+      if (product.catId) {
+        const categoryId = product.catId._id.toString();
+        if (!categoryProductsMap[categoryId]) {
+          categoryProductsMap[categoryId] = [];
+        }
+        categoryProductsMap[categoryId].push(product);
+      }
+    });
+
+    res.render("faq", { categories, categoryProductsMap });
+  } catch (error) {
+    res.status(500).send("Internal Server Error");
+  }
+};
+
