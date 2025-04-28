@@ -194,27 +194,30 @@
 
 
     <div class="container px-4 px-lg-5">
-        <% if (blogs.length > 0) { %>
-          <% blogs.forEach(blog => { %>
-            <div class="row gx-4 gx-lg-5 align-items-center my-5">
-              <div class="col-lg-7">
+      <% if (blogs.length > 0) { %>
+        <div class="row gx-4 gx-lg-5">
+          <% blogs.forEach((blog, index) => { %>
+            <div class="col-md-6 mb-4 d-flex">
+              <div class="card w-100">
                 <% if (blog.image && blog.image.length > 0 && blog.image[0] !== '') { %>
-                  <img class="blog-image mb-4 mb-lg-0" src="<%= blog.image[0] %>" alt="Blog Image" />
+                  <img class="card-img-top blog-image" src="<%= blog.image[0] %>" alt="Blog Image" />
                 <% } else { %>
-                  <img class="blog-image mb-4 mb-lg-0" src="https://dummyimage.com/900x400/dee2e6/6c757d.jpg" alt="Default Image" />
+                  <img class="card-img-top blog-image" src="https://dummyimage.com/600x400/dee2e6/6c757d.jpg" alt="Default Image" />
                 <% } %>
-              </div>
-              <div class="col-lg-5">
-                <h1 class="font-weight-light"><%= blog.title %></h1>
-                <p><%= blog.content.substring(0, 100) + '...' %></p>
-                <a class="btn btn-primary" href="/blog/<%= blog._id %>">Read More!!</a>
+                <div class="card-body d-flex flex-column">
+                  <h5 class="card-title"><%= blog.title %></h5>
+                  <p class="card-text"><%= blog.content.substring(0, 100) + '...' %></p>
+                  <a class="btn btn-primary mt-auto" href="/blog/<%= blog._id %>">Read More!!</a>
+                </div>
               </div>
             </div>
           <% }); %>
-        <% } else { %>
-          <p>Blogs not available !!!!!</p>
-        <% } %>
-      </div>
+        </div>
+      <% } else { %>
+        <p>Blogs not available !!!!!</p>
+      <% } %>
+    </div>
+    
       
 
  
