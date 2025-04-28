@@ -79,11 +79,10 @@
                   
             </div>
             <div class="col-lg-3 col-6 text-right">
-               
-                <a href="/cart" class="btn border">
-                    <i class="fas fa-shopping-cart" style="color: #98d5ca;"></i>
-                    <span class="badge">0</span>
-                </a>
+              <a href="/enquiry-cart" class="btn border">
+                <i class="fas fa-shopping-cart" style="color: #98d5ca;"></i>
+                <span id="cart-count" class="badge">0</span>
+              </a>
             </div>
         </div>
     </div>
@@ -196,7 +195,7 @@
         <table class="table table-bordered text-center mb-0">
           <thead class="bg-secondary text-dark">
             <tr>
-              <th>Product ID</th>
+              <th class="d-none">Product ID</th>
               <th>Product Name</th>
               <th>Quantity</th>
               <th>Size</th>
@@ -207,7 +206,7 @@
           <tbody id="enquiry-table-body" class="align-middle">
             <% enquiryProducts.forEach((product, index) => { %>
               <tr>
-                <td>
+                <td class="d-none">
                     <%= product.prod_id %>
                     <input type="hidden" name="products[<%= index %>][prod_id]" value="<%= product.prod_id %>" />
                   </td>
@@ -452,20 +451,45 @@
 </script>
 
 <script>
-    // Add this function inside your enquiry.ejs <script>
-async function updateCartCount() {
-  try {
-    const res = await fetch('/enquiry-count');
-    const data = await res.json();
-    const badge = document.getElementById('cart-count');
-    if (badge) {
-      badge.textContent = data.count;
+  document.addEventListener("DOMContentLoaded", function () {
+    // Function to update cart count
+    async function updateCartCount() {
+      try {
+        const res = await fetch('/enquiry-count');
+        const data = await res.json();
+        const badge = document.getElementById('cart-count');
+        if (badge) {
+          console.log("Updating cart count:", data.count); // Log count
+          badge.textContent = data.count;
+        }
+      } catch (error) {
+        console.error('Error fetching cart count:', error);
+      }
     }
-  } catch (error) {
-    console.error('Error fetching cart count:', error);
-  }
-}
 
+    // Call it once page is loaded
+    updateCartCount();
+
+    document.querySelectorAll(".add-to-enquiry").forEach((button) => {
+      button.addEventListener("click", async (e) => {
+        e.preventDefault();
+        const productId = button.getAttribute("data-id");
+
+        try {
+          const response = await fetch(`/add-to-enquiry/${productId}`, { method: "GET" });
+
+          if (response.ok) {
+            button.innerHTML = "Added to Enquiry"; // Optional: show feedback
+            await updateCartCount();  // Update cart count
+          } else {
+            console.error("Failed to add to enquiry.");
+          }
+        } catch (err) {
+          console.error("Error:", err);
+        }
+      });
+    });
+  });
 </script>
 
 <!-- Template Javascript -->

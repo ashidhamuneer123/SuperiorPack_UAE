@@ -4634,6 +4634,8 @@ input[type="button"].btn-block {
 
 .badge {
   display: inline-block;
+  
+  color: #000;
   padding: 0.25em 0.4em;
   font-size: 75%;
   font-weight: 700;
@@ -9728,14 +9730,22 @@ a.text-dark:hover, a.text-dark:focus {
   font-size: 48px;
   font-weight: 700;
   color: #fff;
-  display: block;
+  display: inline;
 }
+.stats-item .plus {
+  font-size: 48px;
+  font-weight: 700;
+  color: #fff;
+  display: inline;
+}
+
 
 .stats-item p {
   font-size: 16px;
   font-weight: 700;
   margin: 0;
   color: rgba(255, 255, 255, 0.7);
+  margin-top: 10px; 
 }
 
 
@@ -9749,15 +9759,6 @@ a.text-dark:hover, a.text-dark:focus {
 }
 .pl-custom {
   padding-left: 100px; /* adjust this value as needed */
-}
-.enquiry-icon-inner {
-  color: #0d6efd; /* Default blue */
-  transition: color 0.3s ease, transform 0.3s ease;
-}
-
-.enquiry-cart-icon:hover .enquiry-icon-inner {
-  color: #198754; /* Green on hover */
-  transform: scale(1.2);
 }
 
 
@@ -9955,4 +9956,8 @@ a.text-dark:hover, a.text-dark:focus {
 .toggle-icon {
   font-size: 24px;
   font-weight: bold;
+}
+/*  CSS to hide the Product ID column for users */
+table th.d-none, table td.d-none {
+  display: none;
 }

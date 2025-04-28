@@ -80,11 +80,10 @@
                   
             </div>
             <div class="col-lg-3 col-6 text-right">
-               
-                <a href="/cart" class="btn border">
-                    <i class="fas fa-shopping-cart" style="color: #98d5ca;"></i>
-                    <span class="badge">0</span>
-                </a>
+              <a href="/enquiry-cart" class="btn border">
+                <i class="fas fa-shopping-cart" style="color: #98d5ca;"></i>
+                <span id="cart-count" class="badge">0</span>
+              </a>
             </div>
         </div>
     </div>
@@ -198,6 +197,7 @@
 
     <!-- Contact Start -->
     <div class="container-fluid pt-5">
+      <div class="container">
         <div class="text-center mb-4">
             <h2 class="section-title px-5"><span class="px-2">Send a Message</span></h2>
         </div>
@@ -223,8 +223,13 @@
                                 Message</button>
                         </div>
                     </form>
+
+                     
+         
                 </div>
+          
             </div>
+                         
             <div class="col-lg-5 mb-5">
                 <h5 class="font-weight-semi-bold mb-3">Contact Us</h5>
                 <p>We are full-service printing house Packaging Solution In Dubai UAE. We have people working at the printing house with passion, professionalism and right attitude.</p>
@@ -239,7 +244,12 @@
                 </div>
                
             </div>
+               <!-- Google Map Embed (Below Form) -->
+               <div class="mt-5">
+                <iframe src="https://www.google.com/maps/embed?pb=!1m22!1m8!1m3!1d3607.643064966085!2d55.3532669!3d25.2825899!3m2!1i1024!2i768!4f13.1!4m11!3e6!4m3!3m2!1d25.2836134!2d55.354865499999995!4m5!1s0x3ef5f742ee27e389%3A0x301e79929309ba84!2sSuperior%20Pack%20Customised%20Packaging%20Manufacturer%20Deira%2024%20Al%20Wuheida%20Street%2C%20Deira%2C%20Office%20M4%2C%20Royal%20House%20Building%20Hor%20Al%20Anz%20East%20-%20Dubai!3m2!1d25.282589899999998!2d55.353266899999994!5e0!3m2!1sen!2sae!4v1745845237511!5m2!1sen!2sae" width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+            </div>
         </div>
+      </div>
     </div>
     <!-- Contact End -->
 
@@ -326,7 +336,7 @@
 
     <!-- Contact Javascript File -->
     <script src="userAssets/mail/jqBootstrapValidation.min.js"></script>
-    <script src="userAssets/mail/contact.js"></script>
+    
 
     <script>
         const contactForm = document.getElementById('contactForm');

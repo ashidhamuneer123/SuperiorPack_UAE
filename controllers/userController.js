@@ -265,10 +265,23 @@ export const userDashboard = async (req, res) => {
 
   export const searchProducts = async (req, res) => {
     try {
+      const categories = await Category.find({ isDeleted: false });
+      const productsByCategory = await Product.find().populate('catId');
+
+    const categoryProductsMap = {};
+    productsByCategory.forEach(product => {
+      if (product.catId) {
+        const categoryId = product.catId._id.toString();
+        if (!categoryProductsMap[categoryId]) {
+          categoryProductsMap[categoryId] = [];
+        }
+        categoryProductsMap[categoryId].push(product);
+      }
+    });
       const query = req.query.query?.trim();
   
       if (!query) {
-        return res.render("searchResults", { products: [], searchTerm: "" });
+        return res.render("searchResults", { products: [], searchTerm: "" ,categories,categoryProductsMap});
       }
   
       // Case-insensitive search for product name
@@ -279,6 +292,8 @@ export const userDashboard = async (req, res) => {
       res.render("searchResults", {
         products,
         searchTerm: query,
+        categories,
+        categoryProductsMap
       });
   
     } catch (error) {
