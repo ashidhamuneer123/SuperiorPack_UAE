@@ -325,7 +325,47 @@
 
     <!-- Contact Javascript File -->
     <script src="userAssets/mail/jqBootstrapValidation.min.js"></script>
-    <script src="userAssets/mail/contact.js"></script>
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        // Function to update cart count
+        async function updateCartCount() {
+          try {
+            const res = await fetch('/enquiry-count');
+            const data = await res.json();
+            const badge = document.getElementById('cart-count');
+            if (badge) {
+              console.log("Updating cart count:", data.count); // Log count
+              badge.textContent = data.count;
+            }
+          } catch (error) {
+            console.error('Error fetching cart count:', error);
+          }
+        }
+    
+        // Call it once page is loaded
+        updateCartCount();
+    
+        document.querySelectorAll(".add-to-enquiry").forEach((button) => {
+          button.addEventListener("click", async (e) => {
+            e.preventDefault();
+            const productId = button.getAttribute("data-id");
+    
+            try {
+              const response = await fetch(`/add-to-enquiry/${productId}`, { method: "GET" });
+    
+              if (response.ok) {
+                button.innerHTML = "Added to Enquiry"; // Optional: show feedback
+                await updateCartCount();  // Update cart count
+              } else {
+                console.error("Failed to add to enquiry.");
+              }
+            } catch (err) {
+              console.error("Error:", err);
+            }
+          });
+        });
+      });
+    </script>
 
     <!-- AOS JS -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
