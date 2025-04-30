@@ -192,34 +192,35 @@ border-color: #0056b3;
                 </section>
               </form>
               <div class="row">
-                <% user.products.forEach((product, index) => { %>
-                  <% if (product.status === 'active') { %>
                 <div class="h3 fw-bold text-second px-4">
-                  <br><span>Edit Products of- <%= user.userId %></span>
+                  <br><span>Edit Products of - <%= user.userId %></span>
                 </div>
-                <% user.products.forEach((product, index) => { %>
-                  <% if (product.status === 'active') { %>
-                    <div class="col-md-4 mb-3">
-                      <div class="border p-3 h-100" style="width: 100%; max-width: 300px;">
-                        <p><strong>Product ID:</strong> <%= product.prodID %></p>
-                        <img src="<%= product.productImage %>" alt="Product Image" style="width: 60px; height: auto;">
-                        <p><strong>MOQ:</strong> <%= product.customizedMOQ %></p>
-                        <p><strong>Size:</strong> <%= product.size %></p>
-                        <p><strong>Status:</strong> <%= product.status %></p>
-                        
-                        <form action="/admin/user/<%= user._id %>/product/<%= index %>/deactivate" method="POST" style="display:inline;">
-                          <button type="submit" class="btn btn-danger btn-sm">Remove Product</button>
-                        </form>
+                
+                <div class="row">
+                  <% const activeProducts = user.products.filter(p => p.status === 'active'); %>
+                  <% if (activeProducts.length > 0) { %>
+                    <% activeProducts.forEach((product, index) => { %>
+                      <div class="col-md-4 mb-3">
+                        <div class="border p-3 h-100" style="width: 100%; max-width: 300px;">
+                          <p><strong>Product ID:</strong> <%= product.prodID %></p>
+                          <img src="<%= product.productImage %>" alt="Product Image" style="width: 60px; height: auto;">
+                          <p><strong>MOQ:</strong> <%= product.customizedMOQ %></p>
+                          <p><strong>Size:</strong> <%= product.size %></p>
+                          <p><strong>Status:</strong> <%= product.status %></p>
+                
+                          <form action="/admin/user/<%= user._id %>/product/<%= user.products.indexOf(product) %>/deactivate" method="POST" style="display:inline;">
+                            <button type="submit" class="btn btn-danger btn-sm">Remove Product</button>
+                          </form>
+                        </div>
                       </div>
+                    <% }); %>
+                  <% } else { %>
+                    <div class="h3 fw-bold text-second px-4">
+                      <br><span>No Customized Products for - <%= user.userId %></span>
                     </div>
                   <% } %>
-                <% }) %>
-                <% }else{ %>
-                  <div class="h3 fw-bold text-second px-4">
-                    <br><span>No Customized Products for- <%= user.userId %></span>
-                  </div>
-                  <% } %>
-                  <% }) %>
+                </div>
+                
               </div>
             </div>
           </section>

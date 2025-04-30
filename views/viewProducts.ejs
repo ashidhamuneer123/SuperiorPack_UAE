@@ -135,7 +135,7 @@
                         <th>Product ID</th>
                         <th>Product Name</th>
                         <th>MOQ</th>
-                        <th>Description</th>
+                      
                         <th>Image</th>
                         <th>Customized Users</th>
                       </tr>
@@ -147,7 +147,7 @@
                           <td><%= product.prod_id %></td>
                           <td><%= product.name %></td>
                           <td><%= product.moq %></td>
-                          <td><%= product.description %></td>
+                       
                           <td>
                             <% if (product.image && product.image.length > 0) { %>
                               <img src="<%= product.image[0] %>" alt="Product Image" style="max-width: 100px; border-radius: 8px;" />

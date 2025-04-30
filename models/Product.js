@@ -18,7 +18,8 @@ const productSchema = new mongoose.Schema({
   minOrderWithoutPrinting: { type: String },
   quality: { type: String },
   color: { type: String },
-  timestamp: { type: Date, default: Date.now }
+  timestamp: { type: Date, default: Date.now },
+  
 });
 
 export default mongoose.model('Product', productSchema);
