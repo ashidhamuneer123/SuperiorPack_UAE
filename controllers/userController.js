@@ -3,7 +3,7 @@ import Category from "../models/Category.js";
 import nodemailer from "nodemailer";
 import User from "../models/User.js";
 import EnquiryNumber from "../models/EnquiryNumber.js";
-
+import EnquiryCartNumber from "../models/EnquiryCartNumber.js";
 export const loadHome = async (req, res) => {
   try {
   
@@ -604,6 +604,20 @@ export const userDashboard = async (req, res) => {
       return res.status(400).json({ success: false, message: 'Invalid product data' });
     }
   
+    // Step 1: Get the new enquiry cart number
+    let enquiryCartNumber;
+    try {
+      const enquiryCartDoc = await EnquiryCartNumber.findOneAndUpdate(
+        {},
+        { $inc: { currentNumber: 1 } },
+        { new: true, upsert: true }
+      );
+      const formattedNumber = String(enquiryCartDoc.currentNumber).padStart(4, '0');
+      enquiryCartNumber = `EC${formattedNumber}`;
+    } catch (error) {
+      return res.status(500).json({ success: false, message: 'Failed to generate enquiry number' });
+    }
+  
     const productRows = parsedProducts.map(prod => `
       <tr>
         <td>${prod.prod_id || ''}</td>
@@ -616,6 +630,7 @@ export const userDashboard = async (req, res) => {
   
     const htmlContent = `
       <h3>New Product Enquiry</h3>
+      <p><strong>Enquiry No:</strong> ${enquiryCartNumber}</p>
       <h4>Customer Details</h4>
       <p><strong>Name:</strong> ${name}</p>
       <p><strong>Email:</strong> ${email}</p>
@@ -651,16 +666,16 @@ export const userDashboard = async (req, res) => {
       await transporter.sendMail({
         from: `"Enquiry Mail" <${process.env.EMAIL_USER}>`,
         to: 'ashidhagithub@gmail.com',
-        subject: 'New Product Enquiry',
+        subject: `New Product Enquiry - ${enquiryCartNumber}`,
         html: htmlContent,
       });
   
       // ✅ Clear session cart after successful email
-    req.session.enquiryProducts = [];
-    req.session.save(() => {
-      res.status(200).json({ success: true, message: 'Enquiry submitted successfully' });
-    });
-
+      req.session.enquiryProducts = [];
+      req.session.save(() => {
+        res.status(200).json({ success: true, message: `Enquiry submitted successfully. Your Enquiry No is ${enquiryCartNumber}` });
+      });
+  
     } catch (error) {
       console.error('Error sending email:', error);
       return res.status(500).json({ success: false, message: 'Failed to send email' });

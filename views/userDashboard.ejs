@@ -134,6 +134,8 @@
         <i class="fas fa-shopping-cart" style="color: #9de7d7"></i>
         <span id="cart-count" class="badge">0</span>
       </a>
+    
+      
     </div>
   </div>
 </div>
@@ -261,6 +263,11 @@
                 <p class="m-0 px-2">-</p>
                 <p class="m-0">Dashboard</p>
             </div>
+            
+              <a href="/reorder-cart" class="nav-link">
+                <i class="fas fa-shopping-cart"></i> Reorder Cart
+              </a>
+           
         </div>
     </div>
     <!-- Page Header End -->
@@ -293,7 +300,14 @@
                     <p class="card-text text-center">Product ID: <%= product.prodID %></p>
                     <p class="card-text text-center">MOQ: <%= product.customizedMOQ %></p>
                     <p class="card-text text-center">Size: <%= product.size %></p>
-                    <button class="btn btn-primary mt-auto">Add to Cart</button>
+                    <form action="/reorder-cart/add" method="POST">
+                      <input type="hidden" name="prod_id" value="<%= product.prodID %>" />
+                      <input type="hidden" name="name" value="<%= product.name %>" />
+                      <input type="hidden" name="moq" value="<%= product.customizedMOQ %>" />
+                      <input type="hidden" name="size" value="<%= product.size %>" />
+                      <button type="submit" class="btn btn-primary mt-auto">Add to Cart</button>
+                    </form>
+                    
                   </div>
                 </div>
               </div>

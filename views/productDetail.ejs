@@ -335,10 +335,15 @@
                  
               </div>
               
-                <div class="d-flex  align-items-center mb-4 pt-2">
-                 
-                    <button class="btn btn-primary px-3"><i class="fa fa-shopping-cart mr-1"></i> Add To Cart</button>
-                </div>
+              <div class="d-flex align-items-center mb-4 pt-2">
+                <button 
+                  class="btn btn-primary px-3 add-to-enquiry" 
+                  data-id="<%= product._id %>" 
+                  id="enquiry-btn-<%= product._id %>">
+                  <i class="fa fa-shopping-cart mr-1"></i> Add To Enquiry
+                </button>
+              </div>
+              
               
             </div>
         </div>
@@ -418,9 +423,13 @@
         <a href="/product/<%= relProd._id %>" class="btn btn-sm text-dark p-0">
           <i class="fas fa-eye text-primary mr-1"></i>View Detail
         </a>
-        <a href="#" class="btn btn-sm text-dark p-0">
-          <i class="fas fa-shopping-cart text-primary mr-1"></i>Add To Cart
-        </a>
+        <a href="/add-to-enquiry/<%= relProd._id %>" 
+   class="btn btn-sm text-dark p-0 add-to-enquiry" 
+   data-id="<%= relProd._id %>" 
+   id="enquiry-btn-<%= relProd._id %>">
+   <i class="fas fa-shopping-cart text-primary mr-1"></i>Add To Enquiry
+</a>
+
       </div>
     </div>
   <% }) %>
