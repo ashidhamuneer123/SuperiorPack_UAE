@@ -198,37 +198,40 @@ export const userLogin = async (req, res) => {
 };
 
 
-// Fetch products for the user in the dashboard
 export const userDashboard = async (req, res) => {
   try {
-    const { _id} = req.session.user;
+    const { _id } = req.session.user;
+    const page = parseInt(req.query.page) || 1;
+    const limit = 9;
+    const skip = (page - 1) * limit;
+
     const categories = await Category.find({ isDeleted: false });
     const productsByCategory = await Product.find().populate('catId');
 
-  const categoryProductsMap = {};
-  productsByCategory.forEach(product => {
-    if (product.catId) {
-      const categoryId = product.catId._id.toString();
-      if (!categoryProductsMap[categoryId]) {
-        categoryProductsMap[categoryId] = [];
+    const categoryProductsMap = {};
+    productsByCategory.forEach(product => {
+      if (product.catId) {
+        const categoryId = product.catId._id.toString();
+        if (!categoryProductsMap[categoryId]) {
+          categoryProductsMap[categoryId] = [];
+        }
+        categoryProductsMap[categoryId].push(product);
       }
-      categoryProductsMap[categoryId].push(product);
-    }
-  });
-    // Get user and their active embedded products
+    });
+
     const user = await User.findById(_id).lean();
     if (!user) return res.status(404).send("User not found");
 
     const activeProducts = user.products.filter(p => p.status === 'active');
+    const totalProducts = activeProducts.length;
+    const totalPages = Math.ceil(totalProducts / limit);
 
-    // Collect all prodIDs to lookup in main Product collection
-    const prodIds = activeProducts.map(p => p.prodID);
+    const paginatedProducts = activeProducts.slice(skip, skip + limit);
 
-    // Find full product details for those IDs
+    const prodIds = paginatedProducts.map(p => p.prodID);
     const mainProducts = await Product.find({ prod_id: { $in: prodIds } }).lean();
 
-    // Merge product name from Product schema into embedded products
-    const enrichedProducts = activeProducts.map(product => {
+    const enrichedProducts = paginatedProducts.map(product => {
       const matching = mainProducts.find(p => p.prod_id === product.prodID);
       return {
         ...product,
@@ -243,7 +246,9 @@ export const userDashboard = async (req, res) => {
       userName: user.name,
       products: enrichedProducts,
       categories,
-      categoryProductsMap
+      categoryProductsMap,
+      currentPage: page,
+      totalPages,
     });
 
   } catch (error) {
@@ -289,32 +294,54 @@ export const userDashboard = async (req, res) => {
     try {
       const categories = await Category.find({ isDeleted: false });
       const productsByCategory = await Product.find().populate('catId');
-
-    const categoryProductsMap = {};
-    productsByCategory.forEach(product => {
-      if (product.catId) {
-        const categoryId = product.catId._id.toString();
-        if (!categoryProductsMap[categoryId]) {
-          categoryProductsMap[categoryId] = [];
+  
+      const categoryProductsMap = {};
+      productsByCategory.forEach(product => {
+        if (product.catId) {
+          const categoryId = product.catId._id.toString();
+          if (!categoryProductsMap[categoryId]) {
+            categoryProductsMap[categoryId] = [];
+          }
+          categoryProductsMap[categoryId].push(product);
         }
-        categoryProductsMap[categoryId].push(product);
-      }
-    });
+      });
+  
       const query = req.query.query?.trim();
+      const page = parseInt(req.query.page) || 1;
+      const limit = 8;
+      const skip = (page - 1) * limit;
   
       if (!query) {
-        return res.render("searchResults", { products: [], searchTerm: "" ,categories,categoryProductsMap});
+        return res.render("searchResults", {
+          products: [],
+          searchTerm: "",
+          categories,
+          categoryProductsMap,
+          currentPage: 1,
+          totalPages: 0
+        });
       }
   
-      // Case-insensitive search for product name
+      const totalProducts = await Product.countDocuments({
+        name: { $regex: query, $options: 'i' }
+      });
+  
+      const totalPages = Math.ceil(totalProducts / limit);
+  
       const products = await Product.find({
-        name: { $regex: query, $options: 'i' },
-      }).lean();
+        name: { $regex: query, $options: 'i' }
+      })
+        .skip(skip)
+        .limit(limit)
+        .lean();
   
       res.render("searchResults", {
         products,
         searchTerm: query,
-        categories,categoryProductsMap
+        categories,
+        categoryProductsMap,
+        currentPage: page,
+        totalPages
       });
   
     } catch (error) {
@@ -322,6 +349,53 @@ export const userDashboard = async (req, res) => {
       res.status(500).send("Internal Server Error");
     }
   };
+  
+  export const filterByCategory = async (req, res) => {
+    try {
+      const categoryId = req.params.categoryId;
+      const page = parseInt(req.query.page) || 1;
+      const limit = 8;
+      const skip = (page - 1) * limit;
+  
+      const categories = await Category.find({ isDeleted: false });
+      const productsByCategory = await Product.find().populate('catId');
+  
+      const categoryProductsMap = {};
+      productsByCategory.forEach(product => {
+        if (product.catId) {
+          const id = product.catId._id.toString();
+          if (!categoryProductsMap[id]) {
+            categoryProductsMap[id] = [];
+          }
+          categoryProductsMap[id].push(product);
+        }
+      });
+  
+      const totalProducts = await Product.countDocuments({ catId: categoryId });
+      const totalPages = Math.ceil(totalProducts / limit);
+  
+      const products = await Product.find({ catId: categoryId })
+        .skip(skip)
+        .limit(limit)
+        .lean();
+  
+      const selectedCategory = await Category.findById(categoryId);
+  
+      res.render("searchResults", {
+        products,
+        searchTerm: selectedCategory ? selectedCategory.name : '',
+        categories,
+        categoryProductsMap,
+        currentPage: page,
+        totalPages
+      });
+  
+    } catch (error) {
+      console.error("Error filtering products by category:", error);
+      res.status(500).send("Internal Server Error");
+    }
+  };
+  
   
 
   export const contactUs = async (req, res) => {
@@ -382,18 +456,36 @@ export const userDashboard = async (req, res) => {
       const page = parseInt(req.query.page) || 1;
       const limit = 9;
       const skip = (page - 1) * limit;
+      const sortOption = req.query.sort || 'latest';
+  
+      let sortCriteria;
+      switch (sortOption) {
+        case 'latest':
+          sortCriteria = { timestamp: -1 }; // Assuming you have a timestamp field
+          break;
+        case 'popularity':
+          sortCriteria = { views: -1 }; // Or any field that represents popularity
+          break;
+        case 'az':
+          sortCriteria = { name: 1 };
+          break;
+        case 'za':
+          sortCriteria = { name: -1 };
+          break;
+        default:
+          sortCriteria = { timestamp: -1 };
+      }
   
       const categories = await Category.find({ isDeleted: false });
       const totalProducts = await Product.countDocuments();
       const totalPages = Math.ceil(totalProducts / limit);
   
       const products = await Product.find()
-        .sort({ timestamp: -1 })
+        .sort(sortCriteria)
         .skip(skip)
         .limit(limit)
         .populate('catId');
   
-      // For mapping all products by category (optional, depending on how you're using it)
       const productsByCategory = await Product.find().populate('catId');
       const categoryProductsMap = {};
       productsByCategory.forEach(product => {
@@ -412,12 +504,14 @@ export const userDashboard = async (req, res) => {
         categoryProductsMap,
         currentPage: page,
         totalPages,
+        selectedSort: sortOption,
       });
     } catch (error) {
       console.error(error);
       res.status(500).send("Internal Server Error");
     }
   };
+  
   
 
 
@@ -600,4 +694,59 @@ export const faqPage = async (req, res) => {
     res.status(500).send("Internal Server Error");
   }
 };
+
+export const filterProducts = async (req, res) => {
+  try {
+    const { categories = [], sort = 'latest' } = req.body;
+
+    // Determine sort criteria
+    let sortCriteria;
+    switch (sort) {
+      case 'latest': sortCriteria = { timestamp: -1 }; break;
+      case 'popularity': sortCriteria = { views: -1 }; break;
+      case 'az': sortCriteria = { name: 1 }; break;
+      case 'za': sortCriteria = { name: -1 }; break;
+      default: sortCriteria = { timestamp: -1 };
+    }
+
+    // Category filter
+    const categoryCondition = categories.length ? { catId: { $in: categories } } : {};
+
+    // Fetch products based on category and sorting
+    const products = await Product.find(categoryCondition).sort(sortCriteria).populate('catId');
+
+    res.send({
+      html: renderProductsHTML(products)
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).send('Error fetching filtered products');
+  }
+};
+
+function renderProductsHTML(products) {
+  return products.map(product => `
+    <div class="col-lg-4 col-md-6 col-sm-12 pb-1">
+      <div class="card product-item border-0 mb-4">
+        <div class="card-header product-img position-relative overflow-hidden bg-transparent border p-0">
+          <img class="img-fluid w-100" src="${product.image[0]}" alt="${product.name}">
+        </div>
+        <div class="card-body border-left border-right text-center p-0 pt-4 pb-3">
+          <a href="/product/${product._id}">
+            <h6 class="text-truncate mb-3">${product.name}</h6>
+          </a>
+          <div class="d-flex justify-content-center">
+            <h6>MOQ: ${product.moq}</h6>
+          </div>
+        </div>
+        <div class="card-footer d-flex justify-content-between bg-light border">
+          <a href="/product/${product._id}" class="btn btn-sm text-dark p-0"><i class="fas fa-eye text-primary mr-1"></i>View Detail</a>
+          <a href="" class="btn btn-sm text-dark p-0"><i class="fas fa-shopping-cart text-primary mr-1"></i>Add To Cart</a>
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+
+
 

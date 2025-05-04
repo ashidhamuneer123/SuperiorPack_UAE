@@ -85,6 +85,11 @@ export const updateBlog = async (req, res) => {
 
 export const getAllBlogs = async (req, res) => {
   try {
+    const page = parseInt(req.query.page) || 1;
+    const limit = 4;
+    const skip = (page - 1) * limit;
+      const totalBlogs = await Blog.countDocuments();
+          const totalPages = Math.ceil(totalBlogs / limit);
      // fetch categories and products for rendering
         const categories = await Category.find({ isDeleted: false });
         const productsByCategory = await Product.find().populate('catId');
@@ -99,8 +104,8 @@ export const getAllBlogs = async (req, res) => {
             categoryProductsMap[categoryId].push(product);
           }
         });
-    const blogs = await Blog.find({ isDeleted: false }).sort({ createdAt: -1 });
-    res.render('userBlogView', { blogs,categories,categoryProductsMap });
+    const blogs = await Blog.find({ isDeleted: false }).sort({ createdAt: -1 }).skip(skip).limit(limit);
+    res.render('userBlogView', { blogs,categories,categoryProductsMap,currentPage: page,totalPages, });
   } catch (error) {
     console.error("Error loading blogs:", error);
     res.status(500).send("Server Error");

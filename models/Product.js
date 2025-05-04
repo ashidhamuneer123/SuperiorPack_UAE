@@ -16,8 +16,9 @@ const productSchema = new mongoose.Schema({
   ingredients: { type: String },
   minOrderWithPrinting: { type: String },
   minOrderWithoutPrinting: { type: String },
-  quality: { type: String },
-  color: { type: String },
+  moreInfo:{type:String},
+  customSizes: [{ type: String }],
+
   timestamp: { type: Date, default: Date.now },
   
 });

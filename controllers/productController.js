@@ -19,7 +19,7 @@ export const addProduct = async (req, res) => {
     const {
       name, moq, description, material, function: productFunction, size,
       leadTime, isCustomized, prod_id, catId, printing, ingredients,
-      minOrderWithPrinting, minOrderWithoutPrinting, quality, color
+      minOrderWithPrinting, minOrderWithoutPrinting, moreInfo,customSizes
     } = req.body;
 
     const imageFiles = req.files?.productImages?.map(file => file.path) || [];
@@ -40,8 +40,9 @@ export const addProduct = async (req, res) => {
       ingredients,
       minOrderWithPrinting,
       minOrderWithoutPrinting,
-      quality,
-      color
+     moreInfo,
+     customSizes: Array.isArray(customSizes) ? customSizes : [customSizes]
+
     });
 
     await newProduct.save();

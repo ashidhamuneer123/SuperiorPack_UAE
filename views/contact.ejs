@@ -28,66 +28,135 @@
 </head>
 
 <body>
-    <!-- Topbar Start -->
-    <div class="container-fluid">
-        <div class="row bg-secondary py-2 px-xl-5">
-            <div class="col-lg-6 d-none d-lg-block">
-                <div class="d-inline-flex align-items-center">
-                    <span class="text-muted px-2">Call Us:</span>
-                    <a class="text-dark" href="tel:+971564219630">+971564219630</a>
-                    <span class="text-muted px-2">|</span>
-                    <span class="text-muted px-2">Email:</span>
-                    <a class="text-dark" href="mailto:info@superiorpackuae.com">info@superiorpackuae.com</a>
-                   
-                </div>
-            </div>
-            <div class="col-lg-6 text-center text-lg-right">
-                <div class="d-inline-flex align-items-center">
-                    <a class="text-dark px-2" target="_blank" href="https://www.facebook.com/superiorpackuae?mibextid=ZbWKwL">
-                        <i class="fab fa-facebook-f"></i>
-                    </a>
-                   
-                    <a class="text-dark px-2" target="_blank" href="https://www.linkedin.com/company/superior-pack-uae/">
-                        <i class="fab fa-linkedin-in"></i>
-                    </a>
-                    <a class="text-dark px-2" target="_blank" href="https://www.instagram.com/superiorpack_uae">
-                        <i class="fab fa-instagram"></i>
-                    </a>
-                    <a class="text-dark pl-2" target="_blank" href="https://www.youtube.com/@superiorpackuae">
-                        <i class="fab fa-youtube"></i>
-                    </a>
-                </div>
-            </div>
+ <!-- Topbar Start -->
+<div class="container-fluid">
+  <div class="row bg-secondary py-2 px-xl-5 align-items-center">
+    <!-- Contact Info -->
+    <div class="col-12 col-lg-4 mb-2 mb-lg-0 text-center text-lg-left">
+      <div
+        class="d-flex flex-column flex-lg-row align-items-center justify-content-center justify-content-lg-start"
+      >
+        <div class="mb-1 mb-lg-0">
+          <span class="text-muted px-2 ">Call Us:</span>
+          <a class="text-dark" href="tel:+971564219630">+971564219630</a>
         </div>
-        <div class="row align-items-center py-3 px-xl-5">
-            <div class="col-lg-3 d-none d-lg-block">
-                <a href="/" class="text-decoration-none">
-                    <img src="/userAssets/img/sp.jpg" alt="Logo" style="max-width: 150px; height: auto;">
-
-                </a>
-            </div>
-            <div class="col-lg-6 col-6 text-left">
-                <form action="/search" method="get">
-                    <div class="input-group">
-                      <input type="text" name="query" class="form-control" placeholder="Search for products">
-                      <div class="input-group-append">
-                        <button type="submit" class="btn btn-primary" style="background-color: #98d5ca; border-color: #98d5ca;">
-                          Search
-                        </button>
-                      </div>
-                    </div>
-                  </form>
-                  
-            </div>
-            <div class="col-lg-3 col-6 text-right">
-              <a href="/enquiry-cart" class="btn border">
-                <i class="fas fa-shopping-cart" style="color: #98d5ca;"></i>
-                <span id="cart-count" class="badge">0</span>
-              </a>
-            </div>
+        <div>
+          
+          <span class="text-muted px-2">Email:</span>
+          <a class="text-dark" href="mailto:info@superiorpackuae.com"
+            >info@superiorpackuae.com</a
+          >
         </div>
+      </div>
     </div>
-    <!-- Topbar End -->
+
+    <!-- Scrolling Message -->
+    <div class="col-12 col-lg-4 mb-2 mb-lg-0">
+      <div class="text-center overflow-hidden">
+        <div class="ticker d-inline-block topbar-message">
+          <span class="text-dark font-weight-bold">
+            Made with <span style="color: red;">❤️</span> in&nbsp;
+             <img src="/userAssets/img/uae-flag.png" alt="UAE Flag" style="height: 1em; vertical-align: middle;" />
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Social Icons (Desktop Only) -->
+    <div class="col-12 col-lg-4 text-center text-lg-right d-none d-lg-block">
+      <div class="d-inline-flex align-items-center justify-content-lg-end w-100">
+        <a
+          class="text-dark px-2"
+          target="_blank"
+          href="https://www.facebook.com/superiorpackuae?mibextid=ZbWKwL"
+        >
+          <i class="fab fa-facebook-f"></i>
+        </a>
+        <a
+          class="text-dark px-2"
+          target="_blank"
+          href="https://www.linkedin.com/company/superior-pack-uae/"
+        >
+          <i class="fab fa-linkedin-in"></i>
+        </a>
+        <a
+          class="text-dark px-2"
+          target="_blank"
+          href="https://www.instagram.com/superiorpack_uae"
+        >
+          <i class="fab fa-instagram"></i>
+        </a>
+        <a
+          class="text-dark pl-2"
+          target="_blank"
+          href="https://www.youtube.com/@superiorpackuae"
+        >
+          <i class="fab fa-youtube"></i>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Logo + Search + Cart -->
+  <div class="row align-items-center py-3 px-xl-5">
+    <div class="col-lg-3 d-none d-lg-block">
+      <a href="/" class="text-decoration-none">
+        <img
+          src="/userAssets/img/splogo.jpeg"
+          alt="Logo"
+          style="max-width: 150px; height: auto; margin-left:50px ; max-height: 130px;"
+        />
+      </a>
+    </div>
+    <div class="col-lg-6 col-6 text-left">
+      <form action="/search" method="get">
+        <div class="input-group">
+          <input
+            type="text"
+            name="query"
+            class="form-control"
+            placeholder="Search for products"
+          />
+          <div class="input-group-append">
+            <button
+              type="submit"
+              class="btn btn-primary"
+              style="background-color: #9de7d7; border-color: #9de7d7"
+            >
+              Search
+            </button>
+          </div>
+        </div>
+      </form>
+    </div>
+    <div class="col-lg-3 col-6 text-right">
+      <a href="/enquiry-cart" class="btn border">
+        <i class="fas fa-shopping-cart" style="color: #9de7d7"></i>
+        <span id="cart-count" class="badge">0</span>
+      </a>
+    </div>
+  </div>
+</div>
+<!-- Topbar End -->
+
+<!-- Ticker Style -->
+<style>
+  .ticker {
+    white-space: nowrap;
+    animation: scroll-left 10s linear infinite;
+  }
+
+  @keyframes scroll-left {
+    0% {
+      transform: translateX(100%);
+    }
+
+    100% {
+      transform: translateX(-100%);
+    }
+  }
+</style>
+
 
 
     <!-- Navbar Start -->
