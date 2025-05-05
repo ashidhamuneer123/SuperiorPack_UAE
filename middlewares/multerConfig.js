@@ -4,12 +4,12 @@ import cloudinary from '../config/cloudinary.js';
 
 // Multer file filter to ensure only jpg, png, and webp files are uploaded
 const fileFilter = (req, file, cb) => {
-  const allowedTypes = /jpeg|jpg|png|webp/;
+  const allowedTypes = /jpeg|jpg|png|webp|pdf/;
   const isValid = allowedTypes.test(file.mimetype);
   if (isValid) {
     cb(null, true);
   } else {
-    cb(new Error('Invalid file type. Only jpg, png, and webp are allowed.'));
+    cb(new Error('Invalid file type. Only jpg, png, pdf and webp are allowed.'));
   }
 };
 
@@ -26,6 +26,8 @@ const storage = new CloudinaryStorage({
       folder = 'customProducts';
     } else if (file.fieldname === 'blogImage') {
       folder = 'blogs';
+    }else if (file.fieldname === 'lpoPdf') {
+      folder = 'lpo-pdfs'; // new folder for LPO reorder PDFs
     }
 
     return {
@@ -43,7 +45,8 @@ const upload = multer({
   { name: 'productImages', maxCount: 5 },
   { name: 'logo', maxCount: 1 },
   { name: 'customProductImages', maxCount: 10 },
-  { name: 'blogImage', maxCount: 1 }
+  { name: 'blogImage', maxCount: 1 },
+  { name: 'lpoPdf', maxCount: 1 }, // added this for PDF upload
 ]);
 
 export default upload;

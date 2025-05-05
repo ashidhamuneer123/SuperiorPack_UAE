@@ -1,5 +1,4 @@
-
-
+import ReOrder from "../models/ReOrder.js";
 import Category from "../models/Category.js";
 import Product from "../models/Product.js"
 import User from '../models/User.js';
@@ -273,6 +272,14 @@ export const blockUser = async (req, res) => {
 };
 
 
-
+export const viewReorders = async (req, res) => {
+  try {
+    const reorders = await ReOrder.find().populate("customerId");
+    res.render("viewOrders", { reorders });
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Failed to fetch reorders");
+  }
+};
 
 

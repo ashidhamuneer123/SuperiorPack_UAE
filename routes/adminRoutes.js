@@ -1,6 +1,6 @@
 import express from "express";
 import upload from "../middlewares/multerConfig.js"; 
-import { showAdminDashboard,showLoginPage, handleAdminLogin, handleAdminLogout,showAddUserPage,createUser,deactivateUserProduct,showAddProductForm,addProductToUser,showEditUserPage,editUser,toggleUserStatus,blockUser, viewUsers, } from "../controllers/adminController.js";
+import { showAdminDashboard,showLoginPage, handleAdminLogin, handleAdminLogout,showAddUserPage,createUser,deactivateUserProduct,showAddProductForm,addProductToUser,showEditUserPage,editUser,toggleUserStatus,blockUser, viewUsers, viewReorders, } from "../controllers/adminController.js";
 import { adminAuth } from "../middlewares/authMiddleware.js";
 import {showAddCategoryPage,addCategory,viewCategories,showEditCategoryPage,updateCategory,deleteCategory, } from '../controllers/categoryController.js';
 import {showAddProductPage,addProduct,viewProducts,} from '../controllers/productController.js';
@@ -51,4 +51,6 @@ router.get("/viewBlogs", adminAuth, viewBlogs);
 router.get("/blog/edit/:id", adminAuth, showEditBlogPage);
 router.post("/blog/edit/:id", adminAuth, upload, updateBlog);
 router.get("/blog/delete/:id", adminAuth, deleteBlog);
+
+router.get("/order", adminAuth,viewReorders);
 export default router;

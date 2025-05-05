@@ -100,13 +100,13 @@
   <!-- Logo + Search + Cart -->
   <div class="row align-items-center py-3 px-xl-5">
     <div class="col-lg-3 d-none d-lg-block">
-      <a href="/" class="text-decoration-none">
-        <img
-          src="/userAssets/img/splogo.jpeg"
-          alt="Logo"
-          style="max-width: 150px; height: auto; margin-left:50px ; max-height: 130px;"
-        />
-      </a>
+        <a href="/" class="text-decoration-none">
+            <img
+              src="/userAssets/img/splogoName.png"
+              alt="Logo"
+              style="max-width: 155px; height: auto;width: auto;"
+            />
+          </a>
     </div>
     <div class="col-lg-6 col-6 text-left">
       <form action="/search" method="get">
@@ -271,7 +271,7 @@
         <% if (reorderProducts.length === 0) { %>
           <div class="alert alert-info">Your reorder cart is empty.</div>
         <% } else { %>
-          <form action="/reorder-cart/submit" method="POST">
+          <form id="reorderForm" action="/reorder-cart/submit" method="POST">
             <table class="table table-bordered text-center mb-0">
               <thead class="bg-secondary text-dark">
                 <tr>
@@ -300,13 +300,13 @@
                       <textarea name="products[<%= index %>][message]" class="form-control form-control-sm"><%= product.message || '' %></textarea>
                     </td>
                     <td>
-                      <form action="/reorder-cart/remove" method="POST">
-                        <input type="hidden" name="prod_id" value="<%= product.prod_id %>">
-                        <button class="btn btn-outline-danger btn-sm" type="submit">
+                        <button 
+                          class="btn btn-outline-danger btn-sm remove-btn" 
+                          data-prod-id="<%= product.prod_id %>">
                           <i class="fas fa-times"></i>
                         </button>
-                      </form>
-                    </td>
+                      </td>
+                      
                   </tr>
                 <% }); %>
               </tbody>
@@ -420,8 +420,89 @@
     once: true, // Animation only runs once
   });
 </script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    document.querySelectorAll('.remove-btn').forEach(button => {
+      button.addEventListener('click', async (e) => {
+        e.preventDefault();
+  
+        const prodId = button.getAttribute('data-prod-id');
+  
+        const confirmResult = await Swal.fire({
+          title: 'Are you sure?',
+          text: "Remove this product from reorder cart?",
+          icon: 'warning',
+          showCancelButton: true,
+          confirmButtonColor: '#d33',
+          cancelButtonColor: '#aaa',
+          confirmButtonText: 'Yes, remove it'
+        });
+  
+        if (!confirmResult.isConfirmed) return;
+  
+        try {
+          const res = await fetch('/reorder-cart/remove', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ prod_id: prodId })
+          });
+  
+          if (res.redirected) {
+            window.location.href = res.url; // Redirect after success
+          } else {
+            const data = await res.json();
+            Swal.fire('Error', data.message || 'Failed to remove item.', 'error');
+          }
+        } catch (error) {
+          Swal.fire('Error', error.message, 'error');
+        }
+      });
+    });
+  </script>
+  
 
-
+<script>
+    const reorderForm = document.getElementById('reorderForm');
+    reorderForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+  
+      const formData = new FormData(reorderForm);
+      const products = [];
+  
+      const rows = document.querySelectorAll('tbody tr');
+      rows.forEach((row, index) => {
+        const prod_id = row.querySelector(`input[name="products[${index}][prod_id]"]`).value;
+        const name = row.querySelector(`input[name="products[${index}][name]"]`).value;
+        const moq = row.querySelector(`input[name="products[${index}][moq]"]`).value;
+        const message = row.querySelector(`textarea[name="products[${index}][message]"]`).value;
+        products.push({ prod_id, name, moq, message });
+      });
+  
+      Swal.fire({ title: 'Please wait...', text: 'Submitting reorder...', allowOutsideClick: false, showConfirmButton: false, didOpen: () => Swal.showLoading() });
+  
+      try {
+        const res = await fetch('/reorder-cart/submit', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ products })
+        });
+  
+        const result = await res.json();
+  
+        if (result.success) {
+          Swal.fire({ title: 'Reorder Sent!', text: result.message, icon: 'success', timer: 1500, showConfirmButton: false });
+          setTimeout(() => window.location.href = '/userdashboard', 1000);
+        } else {
+          Swal.fire('Oops!', result.message || 'Failed to submit', 'error');
+        }
+      } catch (error) {
+        Swal.fire('Error', error.message, 'error');
+      }
+    });
+  </script>
+  
     <!-- Template Javascript -->
     <script src="userAssets/js/main.js"></script>
     

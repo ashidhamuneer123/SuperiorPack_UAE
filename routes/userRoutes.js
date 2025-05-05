@@ -1,7 +1,7 @@
 import express from "express";
 import { loadHome , instantQuote ,sendQuote,userDashboard,contactUs,contactUsMail,showEnquiryCart,userLoginPage,userLogin,aboutUs,userLogout,productDetailPage,searchProducts, allProducts,  addToEnquirySession, removeFromEnquiry,sendEnquiryEmail,getEnquiryCount, faqPage, filterByCategory, filterProducts} from "../controllers/userController.js";
 import upload from "../middlewares/multerConfig.js"; 
-import { addToReorderCart, viewReorderCart, removeFromReorderCart } from '../controllers/reorderCartController.js';
+import { addToReorderCart, viewReorderCart, removeFromReorderCart, submitReorder } from '../controllers/reorderCartController.js';
 import { userAuth } from "../middlewares/authMiddleware.js";
 import { getAllBlogs,getBlogDetails } from '../controllers/blogController.js';
 const router = express.Router();
@@ -34,5 +34,5 @@ router.post('/products/filter', filterProducts);
 router.post('/reorder-cart/add', userAuth, addToReorderCart);
 router.get('/reorder-cart', userAuth, viewReorderCart);
 router.post('/reorder-cart/remove', userAuth, removeFromReorderCart);
-
+router.post('/reorder-cart/submit',submitReorder)
 export default router;

@@ -9976,3 +9976,24 @@ table th.d-none, table td.d-none {
   align-items: center;
   gap: 5px;
 }
+.custom-btn {
+  background-color: #6b3e26; /* chocolate brown */
+  color: #fff;
+  padding: 12px 24px;
+  font-weight: 600;
+  font-size: 16px;
+  border-radius: 30px;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  border: none;
+}
+
+.custom-btn:hover {
+  background-color: #8b4c2b;
+  transform: scale(1.05);
+  color: #fff;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+  text-decoration: none;
+}

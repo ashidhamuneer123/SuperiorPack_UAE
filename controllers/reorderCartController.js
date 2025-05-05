@@ -1,23 +1,34 @@
 import Product from "../models/Product.js";
 import Category from "../models/Category.js";
-
+import ReOrder from "../models/ReOrder.js";
+import ReorderCounter from "../models/ReorderCounter.js";
+import PDFDocument from "pdfkit";
+import fs from "fs";
+import path from "path";
+import nodemailer from "nodemailer";
+import cloudinary from "../config/cloudinary.js";
+import streamifier from 'streamifier';
+import User from "../models/User.js";
 export const addToReorderCart = async (req, res) => {
     try {
-      const { prod_id, name, moq, size } = req.body;
+      const { prod_id, name, moq } = req.body;
+  
       if (!req.session.reorderCart) req.session.reorderCart = [];
   
-      // Avoid duplicates
-      const exists = req.session.reorderCart.find(p => p.prod_id === prod_id);
-      if (!exists) {
-        req.session.reorderCart.push({ prod_id, name, moq, size });
-      }
+      req.session.reorderCart.push({
+        prod_id,
+        name,
+        moq,
+        message: ""
+      });
   
       res.redirect('/userdashboard');
     } catch (err) {
       console.error("Error adding to reorder cart:", err);
-      res.status(500).send("Error");
+      res.status(500).send("Failed to add to reorder cart");
     }
   };
+  
   
   export const viewReorderCart =async (req, res) => {
     try {
@@ -44,7 +55,189 @@ export const addToReorderCart = async (req, res) => {
   
   export const removeFromReorderCart = (req, res) => {
     const { prod_id } = req.body;
+  
     req.session.reorderCart = (req.session.reorderCart || []).filter(p => p.prod_id !== prod_id);
+  
+    // Support fetch/JS redirect
+    if (req.headers['content-type'] === 'application/json') {
+      return res.redirect('/reorder-cart');
+    }
+  
     res.redirect('/reorder-cart');
   };
   
+  export const submitReorder = async (req, res) => {
+    try {
+        const sessionUser = req.session.user;
+        const user = await User.findById(sessionUser._id);
+        
+      
+      const { products } = req.body;
+  
+      if (!products || products.length === 0) {
+        return res.status(400).json({ success: false, message: "No products submitted" });
+      }
+  
+      // 1. Generate LPO number
+      let counter = await ReorderCounter.findOne();
+      if (!counter) counter = await ReorderCounter.create({ count: 1000 });
+      const lpoNumber = `LPO-${++counter.count}`;
+      await counter.save();
+  
+      // 2. Save reorder without PDF path
+      const reorder = await ReOrder.create({
+        customerId: user._id,
+        lpoNumber,
+        products,
+        pdfPath: "" // initially empty
+      });
+  
+      // 3. Generate PDF
+      const pdfUrl = await generateLpoPdf({
+        from: user.name,
+        to: "Superior Pack UAE",
+        lpoNumber,
+        date: new Date(),
+        products
+      });
+  
+      // 4. Update reorder with PDF URL
+      await ReOrder.findByIdAndUpdate(reorder._id, { pdfPath: pdfUrl });
+  
+      // 5. Send email
+      await sendReorderEmails({
+        user,
+        adminEmail: 'ashidhagithub@gmail.com',
+        pdfPath: pdfUrl,
+        lpoNumber
+      });
+  
+      // 6. Clear cart
+      req.session.reorderCart = [];
+  
+      res.json({ success: true, message: "Reorder submitted successfully" });
+  
+    } catch (err) {
+      console.error("Reorder submit error:", err);
+      res.status(500).json({ success: false, message: "Submission failed" });
+    }
+  };
+  
+
+
+  export const generateLpoPdf = ({ from, to, lpoNumber, date, products }) => {
+    return new Promise((resolve, reject) => {
+      const doc = new PDFDocument({ margin: 50 });
+      const buffers = [];
+  
+      doc.on("data", buffers.push.bind(buffers));
+      doc.on("end", async () => {
+        const pdfBuffer = Buffer.concat(buffers);
+        const stream = cloudinary.uploader.upload_stream(
+          {
+            resource_type: "raw",
+            folder: "lpo-pdfs",
+            public_id: lpoNumber,
+          },
+          (error, result) => {
+            if (error) reject(error);
+            else resolve(result.secure_url);
+          }
+        );
+        streamifier.createReadStream(pdfBuffer).pipe(stream);
+      });
+  
+      // === Outer Border Box ===
+      const outerX = 40;
+      const outerY = 40;
+      const outerWidth = 520;
+      const outerHeight = 720;
+      doc.rect(outerX, outerY, outerWidth, outerHeight).stroke();
+  
+      // === Title ===
+      doc.fontSize(22).font("Helvetica-Bold").text("LPO", { align: "center" });
+      doc.moveDown(1.5);
+  
+      // === Info Section ===
+      const infoTop = doc.y;
+      doc.fontSize(12).font("Helvetica");
+  
+      doc.text("From:", 50, infoTop).font("Helvetica-Bold").text(from, 120, infoTop).font("Helvetica");
+      doc.text("To:", 50, infoTop + 20).font("Helvetica-Bold").text(to, 120, infoTop + 20).font("Helvetica");
+  
+      doc.text("LPO Number:", 340, infoTop).font("Helvetica-Bold").text(lpoNumber, 440, infoTop).font("Helvetica");
+      doc.text("Date:", 340, infoTop + 20).font("Helvetica-Bold").text(new Date(date).toLocaleDateString(), 440, infoTop + 20).font("Helvetica");
+  
+      doc.moveDown(3);
+  
+      // === Table Header ===
+      const tableTop = doc.y;
+      const columnX = [50, 100, 300, 400];
+      const columnWidths = [50, 200, 100, 150];
+  
+      doc.font("Helvetica-Bold");
+      doc.text("No.", columnX[0], tableTop, { width: columnWidths[0] });
+      doc.text("Product Name", columnX[1], tableTop, { width: columnWidths[1] });
+      doc.text("Quantity", columnX[2], tableTop, { width: columnWidths[2] });
+      doc.text("Message", columnX[3], tableTop, { width: columnWidths[3] });
+  
+      doc.moveTo(outerX, tableTop + 15).lineTo(outerX + outerWidth, tableTop + 15).stroke();
+  
+      // === Table Rows ===
+      doc.font("Helvetica");
+      let position = tableTop + 25;
+  
+      products.forEach((p, i) => {
+        doc.text(i + 1, columnX[0], position, { width: columnWidths[0] });
+        doc.text(p.name, columnX[1], position, { width: columnWidths[1] });
+        doc.text(p.moq, columnX[2], position, { width: columnWidths[2] });
+        doc.text(p.message || "N/A", columnX[3], position, { width: columnWidths[3] });
+  
+        position += 20;
+        doc.moveTo(outerX, position - 5).lineTo(outerX + outerWidth, position - 5).stroke();
+      });
+  
+      // === Footer Message ===
+      doc.fontSize(9).fillColor("gray");
+      doc.text("This document is auto-generated by Superior Pack UAE.", outerX, outerY + outerHeight - 30, {
+        align: "center",
+        width: outerWidth,
+      });
+  
+      doc.end();
+    });
+  };
+  
+  
+
+  export const sendReorderEmails = async ({ user, adminEmail, pdfPath, lpoNumber }) => {
+    const transporter = nodemailer.createTransport({
+      service: "Gmail",
+      auth: {
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASS // use env vars!
+      }
+    });
+  
+    const attachments = [{ filename: `${lpoNumber}.pdf`, path: pdfPath }];
+  
+    // Mail to Admin
+    await transporter.sendMail({
+      from:  `"Reorder Mail" <${process.env.EMAIL_USER}>`,
+      to: adminEmail,
+      subject: `New LPO Reorder - ${lpoNumber}`,
+      text: `A reorder has been submitted by ${user.name}.`,
+      attachments
+    });
+  
+    // Mail to Customer
+    await transporter.sendMail({
+      from: `"Reorder Mail" <${process.env.EMAIL_USER}>`,
+      to: user.email,
+      subject: `Your Reorder Confirmation - ${lpoNumber}`,
+      text: `Your reorder was successful. Reference copy attached.`,
+      attachments
+    });
+  };
+
+
