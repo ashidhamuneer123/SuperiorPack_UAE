@@ -9789,7 +9789,7 @@ a.text-dark:hover, a.text-dark:focus {
   bottom: 0;
   left: 50%;
   width: 1px;
-  background-color: #00aa4f;
+  background-color: #8b4c2b;
   transform: translateX(-50%);
   z-index: 0;
 }
@@ -9832,7 +9832,7 @@ a.text-dark:hover, a.text-dark:focus {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  background-color: #00aa4f;
+  background-color: #8b4c2b;
   color: white;
   width: 90px;
   height: 90px;
@@ -9852,7 +9852,7 @@ a.text-dark:hover, a.text-dark:focus {
   top: 50%;
   width: 50px;
   height: 2px;
-  background-color: #00aa4f;
+  background-color: #8b4c2b;
 }
 
 .timeline-item.right .step-circle::before {
@@ -9862,7 +9862,7 @@ a.text-dark:hover, a.text-dark:focus {
   top: 50%;
   width: 50px;
   height: 2px;
-  background-color: #00aa4f;
+  background-color: #8b4c2b;
 }
 
 /* Padding the cards away from center line */

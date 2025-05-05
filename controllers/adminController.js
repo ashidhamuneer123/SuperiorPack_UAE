@@ -38,19 +38,39 @@ export const handleAdminLogout = (req, res) => {
 
 // Show admin dashboard
 export const showAdminDashboard = async (req, res) => {
-  const currentPage = parseInt(req.query.page) || 1;
-  const perPage = 4; // Number of products per page
   try {
-  
-    const categories = await Category.find()
-    const products = await Product.find()
-    const users = await User.find()
-    res.render("adminDashboard", { categories ,products,users});
+    // Fetch all users and orders
+    const users = await User.find();
+    const orders = await ReOrder.find();
+
+    // Fetch top 5 products (sorted by order count, or fallback to recent)
+    const products = await Product.find().sort({ createdAt: -1 }).limit(5); 
+
+    // Fetch top 5 categories (sorted by number of products in each, or fallback to name)
+    const categories = await Category.find().limit(5);
+
+    // Count for chart data
+    const productCount = await Product.countDocuments();
+    const categoryCount = await Category.countDocuments();
+    const orderCount = await ReOrder.countDocuments();
+
+    res.render("adminDashboard", {
+      categories,
+      products,
+      users,
+      orders,
+      chartData: {
+        productCount,
+        categoryCount,
+        orderCount
+      }
+    });
   } catch (error) {
-    console.error("Error fetching customized product users:", error);
+    console.error("Error loading admin dashboard:", error);
     res.status(500).send("Internal Server Error");
   }
 };
+
 
 
 
