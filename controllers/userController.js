@@ -65,7 +65,7 @@ export const instantQuote = async (req, res) => {
             { new: true, upsert: true } // Create if not found
         );
 
-        const enquiryNumber = enquiryNumberDoc.currentNumber;
+        const enquiryNumber = `IQ${enquiryNumberDoc.currentNumber}`;
 
         // Get form data from the request body
         const { name, contact, email, message } = req.body;
@@ -89,7 +89,7 @@ export const instantQuote = async (req, res) => {
         // Email content with the enquiry number
         const mailOptions = {
             from: `"Instant Quote Mail" <${process.env.EMAIL_USER}>`,
-            to: 'ashidhagithub@gmail.com',  // Your target email address
+            to: process.env.COMPANY_MAIL,  // Your target email address
             subject: `New Quote Request from ${name} - Enquiry #${enquiryNumber} - ${new Date().toLocaleString()}`,
             html: `
                 <p><strong>Enquiry Number:</strong> ${enquiryNumber}</p>
@@ -433,7 +433,7 @@ export const userDashboard = async (req, res) => {
   
       const mailOptions = {
         from: `"Contact Mail" <${process.env.EMAIL_USER}>`,
-        to: 'ashidhaa@gmail.com',
+        to: process.env.COMPANY_MAIL,
         subject: `New Contact Message from ${name} - ${new Date().toLocaleString()}`,
         html: `
           <p><strong>Name:</strong> ${name}</p>
@@ -665,7 +665,7 @@ export const userDashboard = async (req, res) => {
   
       await transporter.sendMail({
         from: `"Enquiry Mail" <${process.env.EMAIL_USER}>`,
-        to: 'ashidhagithub@gmail.com',
+        to: process.env.COMPANY_MAIL,
         subject: `New Product Enquiry - ${enquiryCartNumber}`,
         html: htmlContent,
       });
