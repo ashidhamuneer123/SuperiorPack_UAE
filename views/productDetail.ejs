@@ -314,14 +314,16 @@
                       <thead>
                         <tr>
                           <th>#</th>
-                          <th>Custom Sizes</th>
+                          <th>System Code</th>
+                          <th>Custom Size</th>
                         </tr>
                       </thead>
                       <tbody>
-                        <% product.customSizes.forEach((size, index) => { %>
+                        <% product.customSizes.forEach((sizeObj, index) => { %>
                           <tr>
                             <td><%= index + 1 %></td>
-                            <td><%= size %></td>
+                            <td><%= sizeObj.systemCode %></td>
+                            <td><%= sizeObj.size %></td>
                           </tr>
                         <% }) %>
                       </tbody>
@@ -509,9 +511,7 @@
               <p class="mb-2">
                 &copy; <a class="text-dark font-weight-semi-bold" href="#">Superior Pack UAE</a>. All Rights Reserved.
               </p>
-              <p class="mb-0">
-                Developed By <a href="https://www.linkedin.com/in/ashidha-muneer-35618b13a/" target="_blank">Ashidha Muneer</a>
-              </p>
+            
             </div>
         </div>
           

@@ -19,11 +19,27 @@ export const addProduct = async (req, res) => {
     const {
       name, moq, description, material, function: productFunction, size,
       leadTime, isCustomized, prod_id, catId, printing, ingredients,
-      minOrderWithPrinting, minOrderWithoutPrinting, moreInfo,customSizes
+      minOrderWithPrinting, minOrderWithoutPrinting, moreInfo
     } = req.body;
 
     const imageFiles = req.files?.productImages?.map(file => file.path) || [];
+    const { customSizes = [], systemCode = [] } = req.body;
 
+    let formattedSizes = [];
+    
+    if (Array.isArray(customSizes) && Array.isArray(systemCode)) {
+      formattedSizes = customSizes.map((size, index) => ({
+        size,
+        systemCode: systemCode[index] || ''
+      }));
+    } else if (customSizes && systemCode) {
+      // Handle single entry case
+      formattedSizes.push({
+        size: customSizes,
+        systemCode: systemCode
+      });
+    }
+    
     const newProduct = new Product({
       name,
       moq,
@@ -41,7 +57,7 @@ export const addProduct = async (req, res) => {
       minOrderWithPrinting,
       minOrderWithoutPrinting,
      moreInfo,
-     customSizes: Array.isArray(customSizes) ? customSizes : [customSizes]
+     customSizes: formattedSizes
 
     });
 

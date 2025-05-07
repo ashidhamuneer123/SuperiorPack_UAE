@@ -169,6 +169,7 @@ border-color: #0056b3;
                         <div id="customSizesWrapper">
                           <div class="input-group mb-2">
                             <input type="text" name="customSizes[]" class="form-control" placeholder="Enter size">
+                            <input type="text" name="systemCode[]" class="form-control" placeholder="Enter the system code">
                             <button type="button" class="btn btn-success addSizeBtn">+</button>
                           </div>
                         </div>
@@ -294,6 +295,7 @@ border-color: #0056b3;
             newField.className = 'input-group mb-2';
             newField.innerHTML = `
               <input type="text" name="customSizes[]" class="form-control" placeholder="Enter size">
+              <input type="text" name="systemCode[]" class="form-control" placeholder="Enter system code">
               <button type="button" class="btn btn-danger removeSizeBtn">−</button>
             `;
             wrapper.appendChild(newField);

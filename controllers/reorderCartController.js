@@ -212,7 +212,9 @@ export const addToReorderCart = async (req, res) => {
 
   export const sendReorderEmails = async ({ user, adminEmail, pdfPath, lpoNumber }) => {
     const transporter = nodemailer.createTransport({
-      service: "Gmail",
+      host: 'mail.privateemail.com', 
+      port: 465,
+      secure: true,
       auth: {
         user: process.env.EMAIL_USER,
         pass: process.env.EMAIL_PASS // use env vars!

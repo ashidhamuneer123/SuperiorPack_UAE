@@ -1,4 +1,4 @@
-import mongoose from 'mongoose';
+import mongoose from "mongoose";
 
 const productSchema = new mongoose.Schema({
   name: { type: String, required: true },
@@ -11,16 +11,22 @@ const productSchema = new mongoose.Schema({
   image: [String],
   isCustomized: { type: Boolean, default: false },
   prod_id: { type: String, required: true },
-  catId: { type: mongoose.Schema.Types.ObjectId, ref: 'Category', required: true },
+  catId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Category",
+    required: true,
+  },
   printing: { type: String },
   ingredients: { type: String },
   minOrderWithPrinting: { type: String },
   minOrderWithoutPrinting: { type: String },
-  moreInfo:{type:String},
-  customSizes: [{ type: String }],
-
-  timestamp: { type: Date, default: Date.now },
+  moreInfo: { type: String },
+  customSizes: [{
+    size: { type: String },
+    systemCode: { type: String }
+  }],
   
+  timestamp: { type: Date, default: Date.now },
 });
 
-export default mongoose.model('Product', productSchema);
+export default mongoose.model("Product", productSchema);

@@ -79,7 +79,9 @@ export const instantQuote = async (req, res) => {
 
         // Set up email transport
         const transporter = nodemailer.createTransport({
-            service: 'gmail',
+          host: 'mail.privateemail.com', 
+          port: 465,
+          secure: true,
             auth: {
                 user: process.env.EMAIL_USER,
                 pass: process.env.EMAIL_PASS,
@@ -424,7 +426,9 @@ export const userDashboard = async (req, res) => {
       const { name, email, phone, message } = req.body;
   
       const transporter = nodemailer.createTransport({
-        service: 'gmail',
+        host: 'mail.privateemail.com', 
+          port: 465,
+          secure: true,
         auth: {
           user: process.env.EMAIL_USER,
           pass: process.env.EMAIL_PASS,
@@ -656,7 +660,9 @@ export const userDashboard = async (req, res) => {
   
     try {
       const transporter = nodemailer.createTransport({
-        service: 'gmail',
+        host: 'mail.privateemail.com', 
+        port: 465,
+        secure: true,
         auth: {
           user: process.env.EMAIL_USER,
           pass: process.env.EMAIL_PASS,
