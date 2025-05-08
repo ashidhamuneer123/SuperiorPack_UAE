@@ -294,17 +294,21 @@
             <div class="col-lg-7 pb-5">
                 <h3 class="font-weight-semi-bold"><%= product.name %></h3>
               
-               
                 <div class="mb-4">
                   <% let descLines = product.description.split('\n'); %>
                   <% descLines.forEach(line => { %>
+                    <% 
+                     
+                      let formattedLine = line.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>'); 
+                    %>
                     <% if (line.trim().startsWith('*') || line.trim().startsWith('•')) { %>
-                      <li><%= line.replace(/^[\*\•]\s*/, '') %></li>
+                      <li><%- formattedLine.replace(/^[\*\•]\s*/, '') %></li>
                     <% } else { %>
-                      <p><%= line %></p>
+                      <p><%- formattedLine %></p>
                     <% } %>
                   <% }) %>
                 </div>
+                
                 
                
                 <% if (product.customSizes && product.customSizes.length > 0) { %>
@@ -358,40 +362,66 @@
                 </div>
                 <div class="tab-content">
                  
-                    <div class="tab-pane fade show active" id="tab-pane-2">
-                        <h4 class="mb-3">Additional Information</h4>
-                        <div class="row">
-                          <div class="col-12">
-                            <table class="table table-bordered">
-                                <tbody>
-                                  <% 
-                                    const excludedFields = ['_id', 'name', 'moq', 'description', 'image', 'isCustomized', 'timestamp', 'prod_id', 'catId', '__v'];
-                                    const labelMap = {
-                                      leadTime: 'Delivery Time',
-                                      minOrderWithPrinting: 'Min Order With Printing',
-                                      minOrderWithoutPrinting: 'Min Order Without Printing'
-                                    };
-                              
-                                    for (const key in product) {
-                                      if (
-                                        Object.prototype.hasOwnProperty.call(product, key) &&
-                                        !excludedFields.includes(key) &&
-                                        product[key]
-                                      ) {
-                                        const label = labelMap[key] || key.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase());
-                                  %>
-                                    <tr>
-                                      <th scope="row"><%= label %></th>
-                                      <td><%= product[key] %></td>
-                                    </tr>
-                                  <% } } %>
-                                </tbody>
-                              </table>
-                              
-                          </div>
-                        </div>
+                  <div class="tab-pane fade show active" id="tab-pane-2">
+                    <h4 class="mb-3">Additional Information</h4>
+                    <div class="row">
+                      <div class="col-12">
+                        <table class="table table-bordered">
+                          <tbody>
+                            <% 
+                              const excludedFields = ['_id', 'moq', 'description', 'image', 'isCustomized', 'timestamp', 'prod_id', 'catId', '__v', 'customSizes', 'name'];
+
+                              const labelMap = {
+                                name: 'Product Name',
+                                leadTime: 'Delivery Time',
+                                minOrderWithPrinting: 'Min Order With Printing',
+                                minOrderWithoutPrinting: 'Min Order Without Printing'
+                              };
+                  
+                              const formatText = (text) => {
+                                const lines = text.split('\n');
+                                return lines.map(line => {
+                                  let formattedLine = line
+                                    .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>'); // bold
+                                  
+                                  if (line.trim().startsWith('*') || line.trim().startsWith('•')) {
+                                    return `<li>${formattedLine.replace(/^[\*\•]\s*/, '')}</li>`;
+                                  } else {
+                                    return `<p>${formattedLine}</p>`;
+                                  }
+                                }).join('');
+                              };
+                  
+                              // First show name
+                              if (product.name) {
+                            %>
+                              <tr>
+                                <th scope="row"><%= labelMap.name %></th>
+                                <td><%= product.name %></td>
+                              </tr>
+                            <% }
+                  
+                              // Render rest of fields
+                              for (const key in product) {
+                                if (
+                                  Object.prototype.hasOwnProperty.call(product, key) &&
+                                  !excludedFields.includes(key) &&
+                                  product[key]
+                                ) {
+                                  const label = labelMap[key] || key.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase());
+                                  const value = typeof product[key] === 'string' ? formatText(product[key]) : product[key];
+                            %>
+                              <tr>
+                                <th scope="row"><%= label %></th>
+                                <td><%- value %></td> <!-- Unescaped for HTML formatting -->
+                              </tr>
+                            <% } } %>
+                          </tbody>
+                        </table>
                       </div>
-                      
+                    </div>
+                  </div>
+                  
                    
                 </div>
             </div>
