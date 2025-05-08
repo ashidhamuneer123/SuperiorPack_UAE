@@ -22,7 +22,10 @@ export const addProduct = async (req, res) => {
       minOrderWithPrinting, minOrderWithoutPrinting, moreInfo
     } = req.body;
 
-    const imageFiles = req.files?.productImages?.map(file => file.path) || [];
+    const mainImage = req.files?.mainImage?.[0]?.path || '';
+    const subImages = req.files?.productImages?.map(file => file.path) || [];
+    
+    const imageFiles = [mainImage, ...subImages];
     const { customSizes = [], systemCode = [] } = req.body;
 
     let formattedSizes = [];

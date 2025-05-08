@@ -28,6 +28,8 @@ const storage = new CloudinaryStorage({
       folder = 'blogs';
     }else if (file.fieldname === 'lpoPdf') {
       folder = 'lpo-pdfs'; // new folder for LPO reorder PDFs
+    }else if (file.fieldname === 'mainImage') {
+      folder = 'mainImages'; // new folder for LPO reorder PDFs
     }
 
     return {
@@ -43,6 +45,7 @@ const upload = multer({
   fileFilter: fileFilter, // Apply the file filter
 }).fields([
   { name: 'productImages', maxCount: 20 },
+  { name: 'mainImage', maxCount: 1 },
   { name: 'logo', maxCount: 1 },
   { name: 'customProductImages', maxCount: 10 },
   { name: 'blogImage', maxCount: 1 },
