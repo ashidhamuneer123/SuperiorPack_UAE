@@ -57,6 +57,8 @@ export const showAdminDashboard = async (req, res) => {
     res.render("adminDashboard", {
       categories,
       products,
+      productCount,
+      categoryCount,
       users,
       orders,
       chartData: {
