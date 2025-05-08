@@ -42,7 +42,7 @@ const upload = multer({
   storage: storage,
   fileFilter: fileFilter, // Apply the file filter
 }).fields([
-  { name: 'productImages', maxCount: 5 },
+  { name: 'productImages', maxCount: 10 },
   { name: 'logo', maxCount: 1 },
   { name: 'customProductImages', maxCount: 10 },
   { name: 'blogImage', maxCount: 1 },
