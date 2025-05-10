@@ -1,7 +1,7 @@
 import Category from "../models/Category.js";
 import Product from "../models/Product.js"
 import User from '../models/User.js';
-
+import cloudinary from '../config/cloudinary.js';
 // Show product page
 export const showAddProductPage =async (req, res) => {
   try {
@@ -22,14 +22,10 @@ export const addProduct = async (req, res) => {
       minOrderWithPrinting, minOrderWithoutPrinting, moreInfo
     } = req.body;
 
-    const mainImage = req.files?.mainImage?.[0]?.path || '';
-    const subImages = req.files?.productImages?.map(file => file.path) || [];
-    
-    const imageFiles = [mainImage, ...subImages];
     const { customSizes = [], systemCode = [] } = req.body;
 
     let formattedSizes = [];
-    
+
     if (Array.isArray(customSizes) && Array.isArray(systemCode)) {
       formattedSizes = customSizes.map((size, index) => ({
         size,
@@ -42,7 +38,30 @@ export const addProduct = async (req, res) => {
         systemCode: systemCode
       });
     }
-    
+
+    // ⬇️ Image upload in correct order using Cloudinary SDK
+    const uploadedImages = [];
+
+    // Upload mainImage first
+    if (req.files?.mainImage?.[0]) {
+      const mainImageResult = await cloudinary.uploader.upload(req.files.mainImage[0].path, {
+        folder: 'mainImages',
+        public_id: `${Date.now()}-main`,
+      });
+      uploadedImages.push(mainImageResult.secure_url); // Add the main image URL to the array
+    }
+
+    // Upload productImages next (preserve order)
+    if (req.files?.productImages?.length) {
+      for (const file of req.files.productImages) {
+        const result = await cloudinary.uploader.upload(file.path, {
+          folder: 'products',
+          public_id: `${Date.now()}-${file.originalname.split('.')[0].replace(/\s+/g, '-').toLowerCase()}`,
+        });
+        uploadedImages.push(result.secure_url); // Add the sub images URLs to the array
+      }
+    }
+
     const newProduct = new Product({
       name,
       moq,
@@ -51,7 +70,7 @@ export const addProduct = async (req, res) => {
       function: productFunction,
       size,
       leadTime,
-      image: imageFiles,
+      image: uploadedImages, // Ordered images here
       isCustomized: isCustomized === 'true',
       prod_id,
       catId,
@@ -59,19 +78,18 @@ export const addProduct = async (req, res) => {
       ingredients,
       minOrderWithPrinting,
       minOrderWithoutPrinting,
-     moreInfo,
-     customSizes: formattedSizes
-
+      moreInfo,
+      customSizes: formattedSizes
     });
 
-    await newProduct.save();
-res.redirect('/admin/viewProducts')
+    await newProduct.save(); // Save the new product to DB
+    res.redirect('/admin/viewProducts'); // Redirect after saving
+
   } catch (err) {
     console.error(err);
     res.status(500).send('Error saving product');
   }
 };
-
 
 
 
