@@ -3,7 +3,7 @@ import upload from "../middlewares/multerConfig.js";
 import { showAdminDashboard,showLoginPage, handleAdminLogin, handleAdminLogout,showAddUserPage,createUser,deactivateUserProduct,showAddProductForm,addProductToUser,showEditUserPage,editUser,toggleUserStatus,blockUser, viewUsers, viewReorders, } from "../controllers/adminController.js";
 import { adminAuth } from "../middlewares/authMiddleware.js";
 import {showAddCategoryPage,addCategory,viewCategories,showEditCategoryPage,updateCategory,deleteCategory, } from '../controllers/categoryController.js';
-import {showAddProductPage,addProduct,viewProducts,} from '../controllers/productController.js';
+import {showAddProductPage,addProduct,viewProducts, showEditProductPage, updateProduct, deleteProduct,} from '../controllers/productController.js';
 import {showAddBlogPage,addBlog,deleteBlog, updateBlog, showEditBlogPage, viewBlogs} from '../controllers/blogController.js'
 const router = express.Router();
 
@@ -38,6 +38,10 @@ router.get("/addProduct", adminAuth, showAddProductPage);
 
 router.post("/addProduct", adminAuth,upload,addProduct );
 router.get("/viewProducts", adminAuth, viewProducts);
+router.get("/editProduct/:id", adminAuth, showEditProductPage);
+router.post("/editProduct/:id", adminAuth, upload, updateProduct);
+router.post("/deleteProduct/:id", adminAuth, deleteProduct);
+
 
 // Block user
 router.post('/block-user/:userId', adminAuth,blockUser);

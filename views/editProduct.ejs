@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en">
+<!-- Mirrored from wp.alithemes.com/html/evara/evara-backend/index.html by HTTrack Website Copier/3.x [XR&CO'2014], Sun, 01 Aug 2021 15:32:35 GMT -->
+
+<head>
+  <meta charset="utf-8" />
+  <title>Superior Pack UAE</title>
+  <meta http-equiv="x-ua-compatible" content="ie=edge" />
+  <meta name="description" content="" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta property="og:title" content="" />
+  <meta property="og:type" content="" />
+  <meta property="og:url" content="" />
+  <meta property="og:image" content="" />
+  <!-- Favicon -->
+  <link rel="shortcut icon" type="image/x-icon" href="/admin-assets/imgs/theme/titlelogo.jpg">
+  <!-- Template CSS -->
+  <link href="/admin-assets/css/main.css" rel="stylesheet" type="text/css" />
+  <style>
+    /* CSS for highlighting the submit button */
+.highlighted-btn {
+background-color: #007bff; 
+color: #fff; /* Text color */
+border-color: #007bff; /* Border color */
+width: 150px; 
+
+}
+
+.highlighted-btn:hover {
+background-color: #0056b3; 
+border-color: #0056b3;
+}
+
+</style>
+</head>
+
+<body>
+  <div class="screen-overlay"></div>
+  <aside class="navbar-aside" id="offcanvas_aside">
+    <div class="aside-top">
+        <a href="/admin/dashboard" class="brand-wrap">
+            <img src="/admin-assets/imgs/theme/mainlogo.jpg" class="logo" alt="Superior Pack Dashboard">
+        </a>
+        <div>
+            <button class="btn btn-icon btn-aside-minimize"> <i class="text-muted material-icons md-menu_open"></i> </button>
+        </div>
+    </div>
+    <nav>
+        <ul class="menu-aside">
+            <li class="menu-item">
+                <a class="menu-link" href="/admin"> <i class="icon material-icons md-home"></i>
+                    <span class="text">Dashboard</span>
+                </a>
+            </li>
+            <li class="menu-item has-submenu active">
+                <a class="menu-link" href="#"> <i class="icon material-icons md-shopping_bag"></i>
+                    <span class="text">Products</span>
+                </a>
+                <div class="submenu">
+                    <a href="/admin/addProduct">Add Product</a>
+                    <a href="/admin/viewProducts">View Products</a>
+                </div>
+            </li>
+
+            <li class="menu-item has-submenu">
+                <a class="menu-link" href="#"> <i class="icon material-icons md-shopping_bag"></i>
+                    <span class="text">Categories</span>
+                </a>
+                <div class="submenu">
+                    <a href="/admin/addCategory">Add Category</a>
+                    <a href="/admin/viewCategories">View Categories</a>
+                </div>
+            </li>
+            <li class="menu-item has-submenu">
+                <a class="menu-link" href="#"> <i class="icon material-icons md-shopping_cart"></i>
+                    <span class="text">Orders</span>
+                </a>
+                <div class="submenu">
+                    <a href="/admin/order">Order list</a>
+                    
+                </div>
+            </li>
+            <li class="menu-item has-submenu">
+                <a class="menu-link" href=""> <i class="icon material-icons md-store"></i>
+                    <span class="text">Users</span>
+                </a>
+                <div class="submenu">
+                    <a href="/admin/addUser">Add User</a>
+                    <a href="/admin/viewUser">View Users</a>
+                </div>
+            </li>
+            <li class="menu-item has-submenu">
+              <a class="menu-link" href=""> <i class="icon material-icons md-store"></i>
+                  <span class="text">Blogs</span>
+              </a>
+              <div class="submenu">
+                  <a href="/admin/addBlog">Add Blog</a>
+                  <a href="/admin/viewBlogs">View Blogs</a>
+              </div>
+          </li>
+        </ul>
+        <br>
+        <br>
+    </nav>
+</aside>
+    <main class="main-wrap">
+        <header class="main-header navbar">
+            
+            <div class="col-nav">
+                <button class="btn btn-icon btn-mobile me-auto" data-trigger="#offcanvas_aside"> <i class="material-icons md-apps"></i> </button>
+                <ul class="nav">
+                    
+                    <li class="nav-item">
+                        <a class="nav-link btn-icon darkmode" href="#"> <i class="material-icons md-nights_stay"></i> </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="requestfullscreen nav-link btn-icon"><i class="material-icons md-cast"></i></a>
+                    </li>
+                   
+                    <li class="dropdown nav-item">
+                        <a class="dropdown-toggle" data-bs-toggle="dropdown" href="#" id="dropdownAccount" aria-expanded="false">Admin</a>
+                        <div class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownAccount">
+                            <div class="dropdown-divider"></div>
+                            <a class="dropdown-item text-danger" href="/admin/logout"><i class="material-icons md-exit_to_app"></i>Logout</a>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </header>
+        <section style="position: relative;" class="new-product p-md-5">
+            <div class="h3 fw-bold text-second px-4">
+                <a class="text-second h6" style="text-decoration: none;" href="/admin/viewProducts"><i
+                        class="fa-solid fa-left-long"></i><span>Edit Products</span></a>
+                        <br>
+                <br><span>Add New Product</span>
+            </div>
+            <div class="card mb-4">
+               
+                <form action="/admin/editProduct/<%= product._id %>" method="POST" enctype="multipart/form-data" class="container mt-5">
+
+                    <div class="row">
+                      <div class="form-group col-md-6">
+                        <label for="name" class="fw-bold">Product Name</label>
+                        <input type="text" class="form-control" name="name" value="<%= product.name %>" required>
+                      </div>
+                  
+                      <div class="form-group col-md-6">
+                        <label for="moq" class="fw-bold">MOQ</label>
+                        <input type="text" class="form-control" name="moq" value="<%= product.moq %>" required>
+                      </div>
+                  
+                      <div class="form-group col-md-6">
+                        <label for="material" class="fw-bold">Material</label>
+                        <textarea class="form-control" name="material" required><%= product.material %></textarea>
+                      </div>
+                  
+                      <div class="form-group col-md-6">
+                        <label for="function" class="fw-bold">Function</label>
+                        <textarea class="form-control" name="function" required><%= product.function %></textarea>
+                      </div>
+                  
+                      <div class="form-group col-md-6">
+                        <label for="size" class="fw-bold">Size</label>
+                        <input type="text" class="form-control" name="size" value="<%= product.size %>" required>
+                      </div>
+                  
+                      <!-- Custom Sizes (Array Fields) -->
+                      <div class="form-group col-md-6">
+                        <label class="fw-bold">Customized Sizes</label>
+                        <div id="customSizesWrapper">
+                          <% if (product.customSizes && product.customSizes.length > 0) { %>
+                            <% product.customSizes.forEach((sizeObj, index) => { %>
+                              <div class="input-group mb-2">
+                                <input type="text" name="customSizes[]" class="form-control" value="<%= sizeObj.size %>" placeholder="Enter size">
+                                <input type="text" name="systemCode[]" class="form-control" value="<%= sizeObj.systemCode %>" placeholder="Enter the system code">
+                                <% if (index === 0) { %>
+                                  <button type="button" class="btn btn-success addSizeBtn">+</button>
+                                <% } else { %>
+                                  <button type="button" class="btn btn-danger removeSizeBtn">-</button>
+                                <% } %>
+                              </div>
+                            <% }); %>
+                          <% } else { %>
+                            <div class="input-group mb-2">
+                              <input type="text" name="customSizes[]" class="form-control" placeholder="Enter size">
+                              <input type="text" name="systemCode[]" class="form-control" placeholder="Enter the system code">
+                              <button type="button" class="btn btn-success addSizeBtn">+</button>
+                            </div>
+                          <% } %>
+                        </div>
+                      </div>
+                  
+                      <div class="form-group col-md-6">
+                        <label for="leadTime" class="fw-bold">Lead Time</label>
+                        <input type="text" class="form-control" name="leadTime" value="<%= product.leadTime %>" required>
+                      </div>
+                  
+                      <div class="form-group col-md-6">
+                        <label for="description" class="fw-bold">Description</label>
+                        <textarea class="form-control" name="description" required><%= product.description %></textarea>
+                      </div>
+                  
+                      <div class="form-group col-md-6">
+                        <label for="prod_id" class="fw-bold">Product ID</label>
+                        <input type="text" class="form-control" name="prod_id" value="<%= product.prod_id %>" required>
+                      </div>
+                  
+                      <div class="form-group col-md-6">
+                        <label for="catId" class="fw-bold">Category</label>
+                        <select name="catId" class="form-control" required>
+                          <% categories.forEach(category => { %>
+                            <option value="<%= category._id %>" <%= product.catId == category._id ? 'selected' : '' %>><%= category.name %></option>
+                          <% }) %>
+                        </select>
+                      </div>
+                  
+                      <div class="form-group col-md-6">
+                        <label for="mainImage" class="fw-bold">Main Image</label>
+                        <input type="file" name="mainImage" multiple class="form-control">
+                        <% if (product.mainImage) { %>
+                          <img src="/uploads/<%= product.mainImage %>" width="100" class="mt-2">
+                        <% } %>
+                      </div>
+                  
+                      <div class="form-group col-md-6">
+                        <label for="productImages" class="fw-bold">Product Images</label>
+                        <input type="file" name="productImages" multiple class="form-control">
+                        <% if (product.productImages && product.productImages.length > 0) { %>
+                          <div class="mt-2">
+                            <% product.productImages.forEach(image => { %>
+                              <img src="/uploads/<%= image %>" width="80" class="me-2 mb-2">
+                            <% }); %>
+                          </div>
+                        <% } %>
+                      </div>
+                  
+                      <div class="form-group col-md-6">
+                        <label for="printing" class="fw-bold">Printing</label>
+                        <input type="text" class="form-control" name="printing" value="<%= product.printing %>">
+                      </div>
+                  
+                      <div class="form-group col-md-6">
+                        <label for="ingredients" class="fw-bold">Ingredients</label>
+                        <textarea class="form-control" name="ingredients"><%= product.ingredients %></textarea>
+                      </div>
+                  
+                      <div class="form-group col-md-6">
+                        <label for="minOrderWithPrinting" class="fw-bold">Min Order (With Printing)</label>
+                        <input type="text" class="form-control" name="minOrderWithPrinting" value="<%= product.minOrderWithPrinting %>">
+                      </div>
+                  
+                      <div class="form-group col-md-6">
+                        <label for="minOrderWithoutPrinting" class="fw-bold">Min Order (Without Printing)</label>
+                        <input type="text" class="form-control" name="minOrderWithoutPrinting" value="<%= product.minOrderWithoutPrinting %>">
+                      </div>
+                  
+                      <div class="form-group col-md-6">
+                        <label for="moreInfo" class="fw-bold">More Info</label>
+                        <textarea class="form-control" name="moreInfo"><%= product.moreInfo %></textarea>
+                      </div>
+                  
+                      <div class="form-group col-md-6 d-flex flex-column">
+                        <label for="isCustomized" class="fw-bold mb-2">Is this product customized?</label>
+                        <select name="isCustomized" id="isCustomized" class="form-control">
+                          <option value="false" <%= product.isCustomized === false ? 'selected' : '' %>>Common</option>
+                          <option value="true" <%= product.isCustomized === true ? 'selected' : '' %>>Customized</option>
+                        </select>
+                      </div>
+                    </div>
+                  
+                    <div class="mt-4">
+                      <button type="submit" class="btn btn-primary">Update Product</button>
+                    </div>
+                  </form>
+                  
+                  
+              
+                  
+                  
+
+
+                
+        </section>
+
+      
+
+        <!-- content-main end// -->
+        <footer class="main-footer font-xs">
+          <div class="row pb-30 pt-15">
+            <div class="col-sm-6">
+              <script>
+                document.write(new Date().getFullYear());
+              </script>
+              ©SuperiorPack
+            </div>
+            <div class="col-sm-6">
+              <div class="text-sm-end">All rights reserved</div>
+            </div>
+          </div>
+        </footer>
+    </main>
+    <script src="/admin-assets/js/vendors/jquery-3.6.0.min.js"></script>
+    <script src="/admin-assets/js/vendors/bootstrap.bundle.min.js"></script>
+    <script src="/admin-assets/js/vendors/select2.min.js"></script>
+    <script src="/admin-assets/js/vendors/perfect-scrollbar.js"></script>
+    <script src="/admin-assets/js/vendors/jquery.fullscreen.min.js"></script>
+    <script src="/admin-assets/js/vendors/chart.js"></script>
+    <!-- Main Script -->
+    <script src="/admin-assets/js/main.js" type="text/javascript"></script>
+    
+    <script>
+      document.addEventListener('DOMContentLoaded', function () {
+        const wrapper = document.getElementById('customSizesWrapper');
+        
+        wrapper.addEventListener('click', function (e) {
+          if (e.target.classList.contains('addSizeBtn')) {
+            const newField = document.createElement('div');
+            newField.className = 'input-group mb-2';
+            newField.innerHTML = `
+              <input type="text" name="customSizes[]" class="form-control" placeholder="Enter size">
+              <input type="text" name="systemCode[]" class="form-control" placeholder="Enter system code">
+              <button type="button" class="btn btn-danger removeSizeBtn">−</button>
+            `;
+            wrapper.appendChild(newField);
+          }
+    
+          if (e.target.classList.contains('removeSizeBtn')) {
+            e.target.parentElement.remove();
+          }
+        });
+      });
+    </script>
+    
+
+
+</body> 
+
+<!-- Mirrored from wp.alithemes.com/html/evara/evara-backend/index.html by HTTrack Website Copier/3.x [XR&CO'2014], Sun, 01 Aug 2021 15:32:57 GMT -->
+
+</html>
