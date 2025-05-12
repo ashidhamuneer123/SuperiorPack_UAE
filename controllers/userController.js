@@ -23,7 +23,7 @@ export const loadHome = async (req, res) => {
       }
     });
     
-    const products = await Product.find().limit(8).sort({ timestamp: 1 }); 
+    const products = await Product.find({isCustomized:true}).limit(8).sort({ timestamp: 1 }); 
     const custProducts = await Product.find({isCustomized:true}).limit(8).sort({ timestamp: -1 }); 
     res.render("home", { categories, categoryProductsMap ,products,custProducts});
 

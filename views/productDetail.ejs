@@ -312,30 +312,32 @@
                 </div>
                 
                 
-               
-                <% if (product.customSizes && product.customSizes.length > 0) { %>
-                  
-                  <div class="table-responsive mb-4">
-                    <table class="table table-bordered">
-                      <thead>
+                <% 
+                const validSizes = product.customSizes?.filter(s => s.size?.trim() || s.systemCode?.trim());
+                if (validSizes.length > 0) { 
+              %>
+                <div class="table-responsive mb-4">
+                  <table class="table table-bordered">
+                    <thead>
+                      <tr>
+                        <th>#</th>
+                        <th>Product Code</th>
+                        <th>Custom Size</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <% validSizes.forEach((sizeObj, index) => { %>
                         <tr>
-                          <th>#</th>
-                          <th>Product Code</th>
-                          <th>Custom Size</th>
+                          <td><%= index + 1 %></td>
+                          <td><%= sizeObj.systemCode %></td>
+                          <td><%= sizeObj.size %></td>
                         </tr>
-                      </thead>
-                      <tbody>
-                        <% product.customSizes.forEach((sizeObj, index) => { %>
-                          <tr>
-                            <td><%= index + 1 %></td>
-                            <td><%= sizeObj.systemCode %></td>
-                            <td><%= sizeObj.size %></td>
-                          </tr>
-                        <% }) %>
-                      </tbody>
-                    </table>
-                  </div>
-                <% } %>
+                      <% }) %>
+                    </tbody>
+                  </table>
+                </div>
+              <% } %>
+              
                 
                 <div class="d-flex mb-3">
                   <p class="text-dark font-weight-medium mb-0 mr-3">Product ID:<%= product.prod_id %></p>
