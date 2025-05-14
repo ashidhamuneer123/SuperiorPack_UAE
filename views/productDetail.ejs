@@ -445,33 +445,38 @@
             <div class="col">
                 <div class="owl-carousel related-carousel">
                     
-            
                   <% if (relatedProducts && relatedProducts.length > 0) { %>
   <% relatedProducts.forEach(function(relProd) { %>
     <div class="card product-item border-0">
       <div class="card-header product-img position-relative overflow-hidden bg-transparent border p-0">
-        <img class="img-fluid w-100" src="<%= relProd.image && relProd.image[0] ? relProd.image[0] : '/default.jpg' %>" alt="<%= relProd.name %>">
+        <a href="/product/<%= relProd._id %>">
+          <img class="img-fluid w-100" src="<%= relProd.image && relProd.image[0] ? relProd.image[0] : '/default.jpg' %>" alt="<%= relProd.name %>">
+        </a>
       </div>
       <div class="card-body border-left border-right text-center p-0 pt-4 pb-3">
-        <h6 class="text-truncate mb-3"><%= relProd.name %></h6>
+        <h6 class="text-truncate mb-3">
+          <a href="/product/<%= relProd._id %>" class="text-dark">
+            <%= relProd.name %>
+          </a>
+        </h6>
       </div>
       <div class="card-footer d-flex justify-content-between bg-light border">
         <a href="/product/<%= relProd._id %>" class="btn btn-sm text-dark p-0">
           <i class="fas fa-eye text-primary mr-1"></i>View Detail
         </a>
         <a href="/add-to-enquiry/<%= relProd._id %>" 
-   class="btn btn-sm text-dark p-0 add-to-enquiry" 
-   data-id="<%= relProd._id %>" 
-   id="enquiry-btn-<%= relProd._id %>">
-   <i class="fas fa-shopping-cart text-primary mr-1"></i>Add To Enquiry
-</a>
-
+           class="btn btn-sm text-dark p-0 add-to-enquiry" 
+           data-id="<%= relProd._id %>" 
+           id="enquiry-btn-<%= relProd._id %>">
+          <i class="fas fa-shopping-cart text-primary mr-1"></i>Add To Enquiry
+        </a>
       </div>
     </div>
   <% }) %>
 <% } else { %>
   <p class="text-center">No related products found.</p>
 <% } %>
+
 
                 </div>
             </div>

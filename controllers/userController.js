@@ -4,34 +4,71 @@ import nodemailer from "nodemailer";
 import User from "../models/User.js";
 import EnquiryNumber from "../models/EnquiryNumber.js";
 import EnquiryCartNumber from "../models/EnquiryCartNumber.js";
+
+import mongoose from 'mongoose';
 export const loadHome = async (req, res) => {
   try {
-  
-
- // fetch categories and products for rendering
     const categories = await Category.find({ isDeleted: false });
-    const productsByCategory = await Product.find().populate('catId');
 
-    const categoryProductsMap = {};
-    productsByCategory.forEach(product => {
+    // Fetch all products and populate category
+    const allProducts = await Product.find().populate('catId');
+
+    // Maps for customized and generic products
+    const customizedCategoryProductsMap = {};
+    const genericCategoryProductsMap = {};
+
+    allProducts.forEach(product => {
       if (product.catId) {
         const categoryId = product.catId._id.toString();
-        if (!categoryProductsMap[categoryId]) {
-          categoryProductsMap[categoryId] = [];
+
+        if (product.isCustomized) {
+          if (!customizedCategoryProductsMap[categoryId]) {
+            customizedCategoryProductsMap[categoryId] = [];
+          }
+          customizedCategoryProductsMap[categoryId].push(product);
+        } else {
+          if (!genericCategoryProductsMap[categoryId]) {
+            genericCategoryProductsMap[categoryId] = [];
+          }
+          genericCategoryProductsMap[categoryId].push(product);
         }
-        categoryProductsMap[categoryId].push(product);
       }
     });
-    
-    const products = await Product.find({isCustomized:true}).limit(8).sort({ timestamp: 1 }); 
-    const custProducts = await Product.find({isCustomized:true}).limit(8).sort({ timestamp: -1 }); 
-    res.render("home", { categories, categoryProductsMap ,products,custProducts});
 
+    // Top 8 customized products (for sections like featured etc.)
+    const products = await Product.find({ isCustomized: true }).limit(8).sort({ timestamp: 1 });
+    const custProducts = await Product.find({ isCustomized: true }).limit(8).sort({ timestamp: -1 });
+
+    // Combine both customized and generic products into a single map for EJS category display
+const categoryProductsMap = {};
+
+Object.keys(customizedCategoryProductsMap).forEach(key => {
+  categoryProductsMap[key] = customizedCategoryProductsMap[key];
+});
+
+Object.keys(genericCategoryProductsMap).forEach(key => {
+  if (!categoryProductsMap[key]) {
+    categoryProductsMap[key] = genericCategoryProductsMap[key];
+  } else {
+    categoryProductsMap[key] = categoryProductsMap[key].concat(genericCategoryProductsMap[key]);
+  }
+});
+
+
+    res.render("home", {
+      categories,
+      customizedCategoryProductsMap,
+      genericCategoryProductsMap,
+      categoryProductsMap,
+      products,
+      custProducts
+    });
   } catch (error) {
     console.error("Error loading home:", error);
     res.status(500).send("Internal Server Error");
   }
 };
+
 
 
 export const instantQuote = async (req, res) => {
@@ -455,20 +492,26 @@ export const userDashboard = async (req, res) => {
     }
   };
 
+
+
   export const allProducts = async (req, res) => {
     try {
       const page = parseInt(req.query.page) || 1;
       const limit = 9;
       const skip = (page - 1) * limit;
       const sortOption = req.query.sort || 'latest';
+      const categoryFilterRaw = req.query.categories?.split(',') || [];
+      const categoryFilter = categoryFilterRaw.filter(id => mongoose.Types.ObjectId.isValid(id)); // Check for valid ObjectId(s)
+      const typeFilter = req.query.type || 'all';
   
+      // Sorting logic
       let sortCriteria;
       switch (sortOption) {
         case 'latest':
-          sortCriteria = { timestamp: -1 }; // Assuming you have a timestamp field
+          sortCriteria = { timestamp: -1 };
           break;
         case 'popularity':
-          sortCriteria = { views: -1 }; // Or any field that represents popularity
+          sortCriteria = { views: -1 };
           break;
         case 'az':
           sortCriteria = { name: 1 };
@@ -480,16 +523,28 @@ export const userDashboard = async (req, res) => {
           sortCriteria = { timestamp: -1 };
       }
   
-      const categories = await Category.find({ isDeleted: false });
-      const totalProducts = await Product.countDocuments();
+      // Filter logic
+      const filter = {};
+      if (typeFilter === 'generic') filter.isCustomized = false;
+      if (typeFilter === 'customized') filter.isCustomized = true;
+      if (categoryFilter.length) filter.catId = { $in: categoryFilter };
+  
+      const categories = await Category.find();
+      const totalProducts = await Product.countDocuments(filter);
       const totalPages = Math.ceil(totalProducts / limit);
   
-      const products = await Product.find()
+      const products = await Product.find(filter)
         .sort(sortCriteria)
         .skip(skip)
         .limit(limit)
-        .populate('catId');
+        .populate("catId");
   
+      // Handle AJAX request for pagination/filtering
+      if (req.xhr || req.headers.accept.indexOf('json') > -1) {
+        return res.json({ products, totalPages });
+      }
+  
+      // Build categoryProductsMap (used for navbar dropdowns)
       const productsByCategory = await Product.find().populate('catId');
       const categoryProductsMap = {};
       productsByCategory.forEach(product => {
@@ -502,6 +557,7 @@ export const userDashboard = async (req, res) => {
         }
       });
   
+      // Render full page
       res.render("allProducts", {
         categories,
         products,
@@ -510,6 +566,7 @@ export const userDashboard = async (req, res) => {
         totalPages,
         selectedSort: sortOption,
       });
+  
     } catch (error) {
       console.error(error);
       res.status(500).send("Internal Server Error");

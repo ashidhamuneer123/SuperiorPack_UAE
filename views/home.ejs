@@ -167,37 +167,70 @@
     <!-- Navbar Start -->
     <div class="container-fluid mb-5">
         <div class="row border-top px-xl-5">
-            <div class="col-lg-3 d-none d-lg-block">
-                <a class="btn shadow-none d-flex align-items-center justify-content-between text-white w-100" data-toggle="collapse" href="#navbar-vertical" style="height: 65px; margin-top: -1px; padding: 0 30px; background-color: #98d5ca;">
-                    <h6 class="m-0">Categories</h6>
-                    <i class="fa fa-angle-down text-dark"></i>
-                </a>
-                <nav class="collapse show navbar navbar-vertical navbar-light align-items-start p-0 border border-top-0 border-bottom-0" id="navbar-vertical">
-                    <div class="navbar-nav w-100 overflow-hidden">
-                      <% categories.forEach(category => { %>
-                        <div class="nav-item dropdown">
-                          <a href="#" class="nav-link" data-toggle="dropdown">
-                            <%= category.name %> 
-                            <i class="fa fa-angle-down float-right mt-1"></i>
+          <div class="col-lg-3">
+            <!-- Customized Products -->
+            <a class="btn shadow-none d-flex align-items-center justify-content-between text-white w-100" data-toggle="collapse" href="#navbar-vertical" style="height: 65px; margin-top: -1px; padding: 0 30px; background-color: #98d5ca;">
+              <h6 class="m-0">Customised Products</h6>
+              <i class="fa fa-angle-down text-dark"></i>
+            </a>
+            <nav class="collapse navbar navbar-vertical navbar-light align-items-start p-0 border border-top-0 border-bottom-0" id="navbar-vertical">
+              <div class="navbar-nav w-100 overflow-hidden">
+                <% categories.forEach(category => { %>
+                  <% if (customizedCategoryProductsMap[category._id]) { %>
+                    <div class="nav-item dropdown">
+                      <a href="#" class="nav-link" data-toggle="dropdown">
+                        <%= category.name %>
+                        <i class="fa fa-angle-down float-right mt-1"></i>
+                      </a>
+                      <div class="dropdown-menu bg-secondary border-0 rounded-0 w-100 m-0">
+                        <% customizedCategoryProductsMap[category._id].forEach(product => { %>
+                          <a 
+                            style="color: #98d5ca;" 
+                            href="/product/<%= product._id %>" 
+                            class="dropdown-item"
+                          >
+                            <%= product.name %>
                           </a>
-                          <% if (categoryProductsMap[category._id]) { %>
-                            <div class="dropdown-menu bg-secondary border-0 rounded-0 w-100 m-0">
-                              <% categoryProductsMap[category._id].forEach(product => { %>
-                                <a 
-                                  style="color: #98d5ca;" 
-                                  href="/product/<%= product._id %>" 
-                                  class="dropdown-item"
-                                >
-                                  <%= product.name %>
-                                </a>
-                              <% }) %>
-                            </div>
-                          <% } %>
-                        </div>
-                      <% }) %>
+                        <% }) %>
+                      </div>
                     </div>
-                  </nav>
-            </div>
+                  <% } %>
+                <% }) %>
+              </div>
+            </nav>
+          
+            <!-- Generic Products -->
+            <a class="btn shadow-none d-flex align-items-center justify-content-between text-white w-100 mt-2" data-toggle="collapse" href="#generic-vertical" style="height: 65px; padding: 0 30px; background-color: #98d5ca;">
+              <h6 class="m-0">Generic Products</h6>
+              <i class="fa fa-angle-down text-dark"></i>
+            </a>
+            <nav class="collapse navbar navbar-vertical navbar-light align-items-start p-0 border border-top-0 border-bottom-0" id="generic-vertical">
+              <div class="navbar-nav w-100 overflow-hidden">
+                <% categories.forEach(category => { %>
+                  <% if (genericCategoryProductsMap[category._id]) { %>
+                    <div class="nav-item dropdown">
+                      <a href="#" class="nav-link" data-toggle="dropdown">
+                        <%= category.name %>
+                        <i class="fa fa-angle-down float-right mt-1"></i>
+                      </a>
+                      <div class="dropdown-menu bg-secondary border-0 rounded-0 w-100 m-0">
+                        <% genericCategoryProductsMap[category._id].forEach(product => { %>
+                          <a 
+                          style="color: #98d5ca;" 
+                            href="/product/<%= product._id %>" 
+                            class="dropdown-item"
+                          >
+                            <%= product.name %>
+                          </a>
+                        <% }) %>
+                      </div>
+                    </div>
+                  <% } %>
+                <% }) %>
+              </div>
+            </nav>
+          </div>
+          
             
             <div class="col-lg-9">
                 <nav class="navbar navbar-expand-lg bg-light navbar-light py-3 py-lg-0 px-0">
@@ -357,7 +390,9 @@
                     <a href="/products/category/<%= category._id %>" class="cat-img position-relative overflow-hidden mb-3">
                       <img class="img-fluid" src="<%= category.image[0] %>" alt="<%= category.name %>">
                     </a>
+                    <a href="/products/category/<%= category._id %>" class="cat-img position-relative overflow-hidden mb-3">
                     <h5 class="font-weight-semi-bold m-0"><%= category.name %></h5>
+                    </a>
                   </div>
                 </div>
               <% }) %>
@@ -440,7 +475,7 @@
      <!-- Stats Section -->
 <div class="container-fluid stats-section position-relative text-white overflow-hidden" id="stats">
     <!-- Background Image -->
-    <img src="userAssets/img/statsBg.jpg" alt="Stats Background" class="bg-img">
+    <img src="userAssets/img/compnyStats.jpg" alt="Stats Background" class="bg-img">
   
     <!-- Overlay -->
     <div class="bg-overlay"></div>
@@ -504,7 +539,10 @@
   <div class="col-lg-3 col-md-6 col-sm-12 pb-1">
     <div class="card product-item border-0 mb-4">
       <div class="card-header product-img position-relative overflow-hidden bg-transparent border p-0">
-        <img class="img-fluid w-100" src="<%= product.image[0] %>" alt="<%= product.name %>">
+      
+        <a href="/product/<%= product._id %>">
+          <img class="img-fluid w-100" src="<%= product.image[0] %>" alt="<%= product.name %>">
+        </a>
       </div>
       <div class="card-body border-left border-right text-center p-0 pt-4 pb-3">
         <a href="/product/<%= product._id %>">
@@ -565,7 +603,9 @@
   <div class="col-lg-3 col-md-6 col-sm-12 pb-1">
     <div class="card product-item border-0 mb-4">
       <div class="card-header product-img position-relative overflow-hidden bg-transparent border p-0">
-        <img class="img-fluid w-100" src="<%= product.image[0] %>" alt="<%= product.name %>">
+        <a href="/product/<%= product._id %>">
+          <img class="img-fluid w-100" src="<%= product.image[0] %>" alt="<%= product.name %>">
+        </a>
       </div>
       <div class="card-body border-left border-right text-center p-0 pt-4 pb-3">
         <a href="/product/<%= product._id %>">
@@ -919,6 +959,16 @@
     
   </script>
 
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const isHomePage = window.location.pathname === '/'; // Adjust if home route is different
+    const isLargeScreen = window.innerWidth >= 992;
+
+    if (isHomePage && isLargeScreen) {
+      $('#navbar-vertical').collapse('show'); // Bootstrap jQuery method
+    }
+  });
+</script>
 
    
       <script>
