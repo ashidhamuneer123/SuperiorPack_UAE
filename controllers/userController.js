@@ -8,7 +8,7 @@ import EnquiryCartNumber from "../models/EnquiryCartNumber.js";
 import mongoose from 'mongoose';
 export const loadHome = async (req, res) => {
   try {
-    const categories = await Category.find({ isDeleted: false }).limit(9).sort({ timestamp: 1 });
+    const categories = await Category.find({ isDeleted: false }).limit(9).sort({ timestamp: -1 });
 
     // Fetch all products and populate category
     const allProducts = await Product.find().populate('catId');
