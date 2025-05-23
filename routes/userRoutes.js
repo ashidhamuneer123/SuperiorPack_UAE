@@ -1,5 +1,5 @@
 import express from "express";
-import { loadHome , instantQuote ,sendQuote,userDashboard,contactUs,contactUsMail,showEnquiryCart,userLoginPage,userLogin,aboutUs,userLogout,productDetailPage,searchProducts, allProducts,  addToEnquirySession, removeFromEnquiry,sendEnquiryEmail,getEnquiryCount, faqPage, filterByCategory, filterProducts} from "../controllers/userController.js";
+import { loadHome , instantQuote ,sendQuote,userDashboard,contactUs,contactUsMail,showEnquiryCart,userLoginPage,userLogin,aboutUs,userLogout,productDetailPage,searchProducts, allProducts,  addToEnquirySession, removeFromEnquiry,sendEnquiryEmail,getEnquiryCount, faqPage, filterByCategory, filterProducts, internationalOrders} from "../controllers/userController.js";
 import upload from "../middlewares/multerConfig.js"; 
 import { addToReorderCart, viewReorderCart, removeFromReorderCart, submitReorder } from '../controllers/reorderCartController.js';
 import { userAuth } from "../middlewares/authMiddleware.js";
@@ -29,6 +29,7 @@ router.post('/remove-from-enquiry/:prodId',removeFromEnquiry)
 router.post('/submit-enquiry', sendEnquiryEmail);
 router.get('/enquiry-count', getEnquiryCount);
 router.get('/faq',faqPage);
+router.get('/internationalOrders',internationalOrders)
 router.get('/products/category/:categoryId', filterByCategory);
 router.post('/products/filter', filterProducts);
 router.post('/reorder-cart/add', userAuth, addToReorderCart);

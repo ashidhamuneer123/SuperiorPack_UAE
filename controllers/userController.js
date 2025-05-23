@@ -772,6 +772,27 @@ export const faqPage = async (req, res) => {
     res.status(500).send("Internal Server Error");
   }
 };
+export const internationalOrders = async (req, res) => {
+  try {
+    const categories = await Category.find({ isDeleted: false });
+    const productsByCategory = await Product.find().populate('catId');
+
+    const categoryProductsMap = {};
+    productsByCategory.forEach(product => {
+      if (product.catId) {
+        const categoryId = product.catId._id.toString();
+        if (!categoryProductsMap[categoryId]) {
+          categoryProductsMap[categoryId] = [];
+        }
+        categoryProductsMap[categoryId].push(product);
+      }
+    });
+
+    res.render("internationalOrders", { categories, categoryProductsMap });
+  } catch (error) {
+    res.status(500).send("Internal Server Error");
+  }
+};
 
 export const filterProducts = async (req, res) => {
   try {
