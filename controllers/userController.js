@@ -794,6 +794,29 @@ export const internationalOrders = async (req, res) => {
   }
 };
 
+export const privacyPolicy = async (req, res) => {
+  try {
+    const categories = await Category.find({ isDeleted: false });
+    const productsByCategory = await Product.find().populate('catId');
+
+    const categoryProductsMap = {};
+    productsByCategory.forEach(product => {
+      if (product.catId) {
+        const categoryId = product.catId._id.toString();
+        if (!categoryProductsMap[categoryId]) {
+          categoryProductsMap[categoryId] = [];
+        }
+        categoryProductsMap[categoryId].push(product);
+      }
+    });
+
+    res.render("privacyPolicy", { categories, categoryProductsMap });
+  } catch (error) {
+    res.status(500).send("Internal Server Error");
+  }
+};
+
+
 export const filterProducts = async (req, res) => {
   try {
     const { categories = [], sort = 'latest' } = req.body;
