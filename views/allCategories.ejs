@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>Superior Pack UAE</title>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <meta content="Free HTML Templates" name="keywords">
+    <meta content="Free HTML Templates" name="description">
+
+    <!-- Favicon -->
+    <link href="userAssets/img/favicon.ico" rel="icon">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <!-- Google Web Fonts -->
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet"> 
+
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+    <!-- Libraries Stylesheet -->
+    <link href="/userAssets/lib/owlcarousel/assets/owl.carousel.min.css" rel="stylesheet">
+<!-- AOS CSS -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css">
+
+    <!-- Customized Bootstrap Stylesheet -->
+    <link href="/userAssets/css/style.css" rel="stylesheet">
+</head>
+
+<body>
+<!-- Topbar Start -->
+<div class="container-fluid">
+  <div class="row bg-secondary py-2 px-xl-5 align-items-center">
+    <!-- Contact Info -->
+    <div class="col-12 col-lg-4 mb-2 mb-lg-0 text-center text-lg-left">
+      <div
+        class="d-flex flex-column flex-lg-row align-items-center justify-content-center justify-content-lg-start"
+      >
+      <div class="mb-1 mb-lg-0 d-flex align-items-center flex-wrap">
+        <span class="text-muted px-2">Call Us:</span>
+        <a class="text-dark text-nowrap" href="tel:+971564219630">+971 56 421 9630</a>
+      </div>
+        <div>
+          
+          <span class="text-muted px-2">Email:</span>
+          <a class="text-dark" href="mailto:info@superiorpackuae.com"
+            >info@superiorpackuae.com</a
+          >
+        </div>
+      </div>
+    </div>
+
+    <!-- Scrolling Message -->
+    <div class="col-12 col-lg-4 mb-2 mb-lg-0">
+      <div class="text-center overflow-hidden">
+        <div class="ticker d-inline-block topbar-message">
+          <span class="text-dark font-weight-bold">
+            Made with <span style="color: red;">❤️</span> in&nbsp;
+             <img src="/userAssets/img/uae-flag.png" alt="UAE Flag" style="height: 1em; vertical-align: middle;" />
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Social Icons (Desktop Only) -->
+    <div class="col-12 col-lg-4 text-center text-lg-right d-none d-lg-block">
+      <div class="d-inline-flex align-items-center justify-content-lg-end w-100">
+        <a
+          class="text-dark px-2"
+          target="_blank"
+          href="https://www.facebook.com/superiorpackuae?mibextid=ZbWKwL"
+        >
+          <i class="fab fa-facebook-f"></i>
+        </a>
+        <a
+          class="text-dark px-2"
+          target="_blank"
+          href="https://www.linkedin.com/company/superior-pack-uae/"
+        >
+          <i class="fab fa-linkedin-in"></i>
+        </a>
+        <a
+          class="text-dark px-2"
+          target="_blank"
+          href="https://www.instagram.com/superiorpack_uae"
+        >
+          <i class="fab fa-instagram"></i>
+        </a>
+        <a
+          class="text-dark pl-2"
+          target="_blank"
+          href="https://www.youtube.com/@superiorpackuae"
+        >
+          <i class="fab fa-youtube"></i>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Logo + Search + Cart -->
+  <div class="row align-items-center py-3 px-xl-5">
+    <div class="col-lg-3 d-none d-lg-block">
+      <a href="/" class="text-decoration-none">
+        <img
+          src="/userAssets/img/splogoName.png"
+          alt="Logo"
+          style="max-width: 155px; height: auto;width: auto;"
+        />
+      </a>
+    </div>
+    <div class="col-lg-6 col-6 text-left">
+      <form action="/search" method="get">
+        <div class="input-group">
+          <input
+            type="text"
+            name="query"
+            class="form-control"
+            placeholder="Search for products"
+          />
+          <div class="input-group-append">
+            <button
+              type="submit"
+              class="btn btn-primary"
+              style="background-color: #9de7d7; border-color: #9de7d7"
+            >
+              Search
+            </button>
+          </div>
+        </div>
+      </form>
+    </div>
+    <div class="col-lg-3 col-6 text-right">
+      <a href="/enquiry-cart" class="btn border">
+        <i class="fas fa-shopping-cart" style="color: #9de7d7"></i>
+        <span id="cart-count" class="badge">0</span>
+      </a>
+    </div>
+  </div>
+</div>
+<!-- Topbar End -->
+
+<!-- Ticker Style -->
+<style>
+  .ticker {
+    white-space: nowrap;
+    animation: scroll-left 10s linear infinite;
+  }
+
+  @keyframes scroll-left {
+    0% {
+      transform: translateX(100%);
+    }
+
+    100% {
+      transform: translateX(-100%);
+    }
+  }
+</style>
+
+
+
+    <!-- Navbar Start -->
+    <div class="container-fluid mb-5">
+        <div class="row border-top px-xl-5">
+            <div class="col-lg-3 d-none d-lg-block">
+                <a class="btn shadow-none d-flex align-items-center justify-content-between text-white w-100" data-toggle="collapse" href="#navbar-vertical" style="height: 65px; margin-top: -1px; padding: 0 30px; background-color: #98d5ca;">
+                    <h6 class="m-0">Categories</h6>
+                    <i class="fa fa-angle-down text-dark"></i>
+                </a>
+                <nav class="collapse navbar navbar-vertical navbar-light align-items-start p-0 border border-top-0 border-bottom-0" id="navbar-vertical">
+                    <div class="navbar-nav w-100 overflow-hidden">
+                      <% categories.forEach(category => { %>
+                        <div class="nav-item dropdown">
+                          <a href="#" class="nav-link" data-toggle="dropdown">
+                            <%= category.name %> 
+                            <i class="fa fa-angle-down float-right mt-1"></i>
+                          </a>
+                          <% if (categoryProductsMap[category._id]) { %>
+                            <div class="dropdown-menu bg-secondary border-0 rounded-0 w-100 m-0">
+                              <% categoryProductsMap[category._id].forEach(product => { %>
+                                <a 
+                                  style="color: #98d5ca;" 
+                                  href="/product/<%= product._id %>" 
+                                  class="dropdown-item"
+                                >
+                                  <%= product.name %>
+                                </a>
+                              <% }) %>
+                            </div>
+                          <% } %>
+                        </div>
+                      <% }) %>
+                    </div>
+                  </nav>
+            </div>
+            
+            <div class="col-lg-9">
+                <nav class="navbar navbar-expand-lg bg-light navbar-light py-3 py-lg-0 px-0">
+                    <a href="/" class="text-decoration-none d-block d-lg-none">
+                      <img src="/userAssets/img/splogoName.png" alt="Logo" style="max-width: 150px; height: auto;  max-height: 120px;">
+                    </a>
+                    <button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#navbarCollapse">
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
+                    <div class="collapse navbar-collapse justify-content-between" id="navbarCollapse">
+                        <div class="navbar-nav mr-auto py-0">
+                            <a href="/" class="nav-item nav-link active">Home</a>
+                            <a href="/about" class="nav-item nav-link">About</a>
+                            <a href="/blogs" class="nav-item nav-link">Blogs</a>
+                           
+                            <a href="/allProducts" class="nav-item nav-link" >Products</a>
+                          
+                            <a href="/contact" class="nav-item nav-link">Contact</a>
+                            <a href="/faq" class="nav-item nav-link">FAQ's</a>
+                        </div>
+                        <div class="navbar-nav ml-auto py-0">
+                            <a href="https://heyzine.com/flip-book/c3143e1818.html" target="_blank" class="nav-item nav-link">E-Brochure</a>
+                            <a href='/quote' class="nav-item nav-link">Instant Quote</a>
+                            <a href="/login" class="nav-item nav-link">Login</a>
+                        </div>
+                    </div>
+                </nav>
+            
+                <!-- WhatsApp Floating Button -->
+                <a href="https://wa.me/971564219630" target="_blank" class="whatsapp-float">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" alt="WhatsApp" width="60" height="60">
+                </a>
+            
+                <style>
+                    .whatsapp-float {
+                        position: fixed;
+                        bottom: 20px;
+                        right: 20px;
+                        z-index: 1000;
+                        cursor: pointer;
+                    }
+                    .whatsapp-float img {
+                        width: 60px;
+                        height: 60px;
+                        border-radius: 50%;
+                        box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);
+                    }
+                </style>
+               
+            </div>
+        </div>
+    </div>
+    <!-- Navbar End -->
+ 
+
+
+
+    <!-- Page Header Start -->
+    <div class="container-fluid mb-5" style="
+    background: url('/userAssets/img/headerImgSample.webp') no-repeat center center;
+    background-size: cover;
+    min-height: 300px;
+">
+        <div class="d-flex flex-column align-items-center justify-content-center" style="min-height: 300px">
+            <h1 class="font-weight-semi-bold text-uppercase mb-3">Our Categories</h1>
+            <div class="d-inline-flex">
+                <p class="m-0"><a href="/">Home</a></p>
+                <p class="m-0 px-2">-</p>
+                <p class="m-0">Categories</p>
+            </div>
+        </div>
+    </div>
+    <!-- Page Header End -->
+
+    <div class="container-fluid pt-5">
+        <div class="text-center mb-4">
+          <h2 class="section-title px-5"><span class="px-2">Our categories</span></h2>
+        </div>
+        <div class="row px-xl-5 pb-3">
+            <% categories.forEach(category => { %>
+                <div class="col-lg-4 col-md-6 pb-1">
+                  <div class="cat-item d-flex flex-column border mb-4" style="padding: 30px;">
+                    <p class="text-right">
+                      <%= categoryProductsMap[category._id.toString()] ? categoryProductsMap[category._id.toString()].length : 0 %> Products
+                    </p>
+                    <a href="/products/category/<%= category._id %>" class="cat-img position-relative overflow-hidden mb-3">
+                      <img class="img-fluid" src="<%= category.image[0] %>" alt="<%= category.name %>">
+                    </a>
+                    <a href="/products/category/<%= category._id %>" class="cat-img position-relative overflow-hidden mb-3">
+                    <h5 class="font-weight-semi-bold m-0"><%= category.name %></h5>
+                    </a>
+                  </div>
+                </div>
+              <% }) %>
+              
+        </div>
+        
+     
+    </div>
+    
+  <!-- Footer Start -->
+  <div class="container-fluid bg-secondary text-dark mt-5 pt-5">
+    <div class="row px-xl-5 pt-5 ">
+        <!-- Get In Touch -->
+        <div class="col-lg-6 col-md-12 mb-4">
+          <h5 class="font-weight-bold text-dark mb-4">Get In Touch</h5>
+          <p>
+            Office no.4, M Floor, Royal House Building, <br>
+            Hor Al Anz East, Dubai-UAE
+          </p>
+          <p class="mb-2"><i class="fa fa-phone-alt text-primary mr-2"></i>+971 56 421 9630</p>
+          <p class="mb-2"><i class="fa fa-phone-volume text-primary mr-2"></i>+971 4330 9833</p>
+          <p class="mb-2"><i class="fa fa-envelope text-primary mr-2"></i>info@superiorpackuae.com</p>
+          <p class="mb-2"><strong>Opening Time:</strong><br>Open: 9:00 AM – Close: 6:00 PM<br>Monday – Saturday</p>
+        </div>
+      
+        <!-- Links + Social -->
+        <div class="col-lg-6 col-md-12 mb-4">
+          <div class="row justify-content-center">
+            <!-- Quick Links -->
+            <div class="col-md-6 mb-4">
+              <h5 class="font-weight-bold text-dark mb-4">Quick Links</h5>
+              <div class="d-flex flex-column">
+                <a class="text-dark mb-2" href="/"><i class="fa fa-angle-right mr-2"></i>Home</a>
+                <a class="text-dark mb-2" href="/allProducts"><i class="fa fa-angle-right mr-2"></i>Our Products</a>
+                <a class="text-dark mb-2" href="/contact"><i class="fa fa-angle-right mr-2"></i>Contact Us</a>
+                <a class="text-dark mb-2" href="/quote"><i class="fa fa-angle-right mr-2"></i>Get a Quote</a>
+                <a class="text-dark mb-2" href="/faq"><i class="fa fa-angle-right mr-2"></i>FAQs</a>
+                <a class="text-dark mb-2" href="/internationalOrders"><i class="fa fa-angle-right mr-2"></i>International Orders</a>
+                <a class="text-dark mb-2" href="/privacyPolicy"><i class="fa fa-angle-right mr-2"></i>Privacy Policy</a>
+              </div>
+            </div>
+      
+          <!-- Social Media -->
+<div class="col-md-6 mb-4 text-center">
+<h5 class="font-weight-bold text-dark mb-4">Follow Us</h5>
+<div class="d-flex justify-content-center gap-3">
+  <a class="text-primary fs-4 px-2" target="_blank" href="https://www.instagram.com/superiorpack_uae" style="color: #e4405f;">
+    <i class="fab fa-instagram"></i>
+  </a>
+  <a class="text-primary fs-4 px-2" target="_blank" href="https://www.facebook.com/superiorpackuae?mibextid=ZbWKwL" style="color: #3b5998;">
+    <i class="fab fa-facebook-f"></i>
+  </a>
+  <a class="text-primary fs-4 px-2" target="_blank" href="https://www.linkedin.com/company/superior-pack-uae/" style="color: #0e76a8;">
+    <i class="fab fa-linkedin-in"></i>
+  </a>
+ 
+  <a class="text-primary fs-4 px-2" target="_blank" href="https://www.youtube.com/@superiorpackuae" style="color: #ff0000;">
+    <i class="fab fa-youtube"></i>
+  </a>
+</div>
+   <!-- Made in Emirates Stamp -->
+   <div class="mt-3">
+    <a href="https://qc.moiat.gov.ae/en/archive-make-it-in-the-emirates" target="_blank">
+      <img src="/userAssets/img/makeInEmiratesStamp.jpeg" alt="Made in Emirates" class="img-fluid" style="max-width: 120px;">
+    </a>
+  </div>
+  
+</div>
+
+          </div>
+        </div>
+      </div>
+      
+      
+    <div class="row border-top border-light mx-xl-5 py-4 justify-content-center">
+        <div class="col-12 text-center text-dark">
+          <p class="mb-2">
+            &copy; <a class="text-dark font-weight-semi-bold" href="#">Superior Pack UAE</a>. All Rights Reserved.
+          </p>
+         
+        </div>
+    </div>
+      
+</div>
+<!-- Footer End -->
+  
+  
+  
+  
+      <!-- JavaScript Libraries -->
+      <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+      <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.bundle.min.js"></script>
+      <script src="userassets/lib/easing/easing.min.js"></script>
+      <script src="userassets/lib/owlcarousel/owl.carousel.min.js"></script>
+  
+      <!-- Contact Javascript File -->
+      <script src="userassets/mail/jqBootstrapValidation.min.js"></script>
+      <script>
+        document.addEventListener("DOMContentLoaded", function () {
+          // Function to update cart count
+          async function updateCartCount() {
+            try {
+              const res = await fetch('/enquiry-count');
+              const data = await res.json();
+              const badge = document.getElementById('cart-count');
+              if (badge) {
+                console.log("Updating cart count:", data.count); // Log count
+                badge.textContent = data.count;
+              }
+            } catch (error) {
+              console.error('Error fetching cart count:', error);
+            }
+          }
+      
+          // Call it once page is loaded
+          updateCartCount();
+      
+          document.querySelectorAll(".add-to-enquiry").forEach((button) => {
+            button.addEventListener("click", async (e) => {
+              e.preventDefault();
+              const productId = button.getAttribute("data-id");
+      
+              try {
+                const response = await fetch(`/add-to-enquiry/${productId}`, { method: "GET" });
+      
+                if (response.ok) {
+                  button.innerHTML = "Added to Enquiry"; // Optional: show feedback
+                  await updateCartCount();  // Update cart count
+                } else {
+                  console.error("Failed to add to enquiry.");
+                }
+              } catch (err) {
+                console.error("Error:", err);
+              }
+            });
+          });
+        });
+      </script>
+  
+      <!-- Template Javascript -->
+      <script src="userassets/js/main.js"></script>
+  </body>
+  
+  </html>

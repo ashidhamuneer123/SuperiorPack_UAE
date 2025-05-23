@@ -8,7 +8,7 @@ import EnquiryCartNumber from "../models/EnquiryCartNumber.js";
 import mongoose from 'mongoose';
 export const loadHome = async (req, res) => {
   try {
-    const categories = await Category.find({ isDeleted: false });
+    const categories = await Category.find({ isDeleted: false }).limit(9).sort({ timestamp: 1 });
 
     // Fetch all products and populate category
     const allProducts = await Product.find().populate('catId');
@@ -768,6 +768,28 @@ export const faqPage = async (req, res) => {
     });
 
     res.render("faq", { categories, categoryProductsMap });
+  } catch (error) {
+    res.status(500).send("Internal Server Error");
+  }
+};
+
+export const allCategories = async (req, res) => {
+  try {
+    const categories = await Category.find({ isDeleted: false });
+    const productsByCategory = await Product.find().populate('catId');
+
+    const categoryProductsMap = {};
+    productsByCategory.forEach(product => {
+      if (product.catId) {
+        const categoryId = product.catId._id.toString();
+        if (!categoryProductsMap[categoryId]) {
+          categoryProductsMap[categoryId] = [];
+        }
+        categoryProductsMap[categoryId].push(product);
+      }
+    });
+
+    res.render("allCategories", { categories, categoryProductsMap });
   } catch (error) {
     res.status(500).send("Internal Server Error");
   }
