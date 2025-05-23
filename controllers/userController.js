@@ -497,7 +497,7 @@ export const userDashboard = async (req, res) => {
   export const allProducts = async (req, res) => {
     try {
       const page = parseInt(req.query.page) || 1;
-      const limit = 9;
+      const limit = 15;
       const skip = (page - 1) * limit;
       const sortOption = req.query.sort || 'latest';
       const categoryFilterRaw = req.query.categories?.split(',') || [];

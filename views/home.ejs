@@ -527,53 +527,71 @@
 
 
 
-
-    <!-- Products Start -->
-    <div class="container-fluid pt-5">
-        <div class="text-center mb-4">
-            <h2 class="section-title px-5"><span class="px-2">Trending Products</span></h2>
-        </div>
-        <div class="row px-xl-5 pb-3">
-            
-            <% products.forEach(product => { %>
-  <div class="col-lg-3 col-md-6 col-sm-12 pb-1">
-    <div class="card product-item border-0 mb-4">
-      <div class="card-header product-img position-relative overflow-hidden bg-transparent border p-0">
-      
-        <a href="/product/<%= product._id %>">
-          <img class="img-fluid w-100" src="<%= product.image[0] %>" alt="<%= product.name %>">
-        </a>
-      </div>
-      <div class="card-body border-left border-right text-center p-0 pt-4 pb-3">
-        <a href="/product/<%= product._id %>">
-          <h6 class="text-truncate mb-3"><%= product.name %></h6>
-        </a>
-        
-        <div class="d-flex justify-content-center">
-          <h6>MOQ: <%= product.moq %></h6>
-        </div>
-      </div>
-      <div class="card-footer d-flex justify-content-between bg-light border">
-        <a href="/product/<%= product._id %>" class="btn btn-sm text-dark p-0">
-          <i class="fas fa-eye text-primary mr-1"></i>View Detail
-        </a>
-       <a href="/add-to-enquiry/<%= product._id %>" 
-   class="btn btn-sm text-dark p-0 add-to-enquiry" 
-   data-id="<%= product._id %>" 
-   id="enquiry-btn-<%= product._id %>">
-   <i class="fas fa-shopping-cart text-primary mr-1"></i>Add To Enquiry
-</a>
-
-      </div>
-    </div>
+<!-- Products Start -->
+<div class="container-fluid pt-5">
+  <div class="text-center mb-4">
+    <h2 class="section-title px-5"><span class="px-2">Trending Products</span></h2>
   </div>
-<% }) %>
 
-      
-           
+  <!-- Wrapper with horizontal scroll on small screens -->
+  <div class="products-wrapper px-xl-5 pb-3">
+    <% products.forEach(product => { %>
+    <div class="product-slide col-lg-3 col-md-6 col-sm-12 pb-1">
+      <div class="card product-item border-0 mb-4">
+        <div class="card-header product-img position-relative overflow-hidden bg-transparent border p-0">
+          <a href="/product/<%= product._id %>">
+            <img class="img-fluid w-100" src="<%= product.image[0] %>" alt="<%= product.name %>">
+          </a>
         </div>
+        <div class="card-body border-left border-right text-center p-0 pt-4 pb-3">
+          <a href="/product/<%= product._id %>">
+            <h6 class="text-truncate mb-3"><%= product.name %></h6>
+          </a>
+          <div class="d-flex justify-content-center">
+            <h6>MOQ: <%= product.moq %></h6>
+          </div>
+        </div>
+        <div class="card-footer d-flex justify-content-between bg-light border">
+          <a href="/product/<%= product._id %>" class="btn btn-sm text-dark p-0">
+            <i class="fas fa-eye text-primary mr-1"></i>View Detail
+          </a>
+          <a href="/add-to-enquiry/<%= product._id %>" 
+             class="btn btn-sm text-dark p-0 add-to-enquiry" 
+             data-id="<%= product._id %>" 
+             id="enquiry-btn-<%= product._id %>">
+            <i class="fas fa-shopping-cart text-primary mr-1"></i>Add To Enquiry
+          </a>
+        </div>
+      </div>
     </div>
-    <!-- Products End -->
+    <% }) %>
+  </div>
+</div>
+<!-- Products End -->
+
+<!-- CSS for horizontal scroll on mobile -->
+<style>
+  .products-wrapper {
+    display: flex;
+    flex-wrap: wrap;
+  }
+
+  @media (max-width: 768px) {
+    .products-wrapper {
+      overflow-x: auto;
+      flex-wrap: nowrap;
+      -webkit-overflow-scrolling: touch;
+      scroll-snap-type: x mandatory;
+    }
+
+    .product-slide {
+      flex: 0 0 90%;
+      scroll-snap-align: start;
+      padding-right: 10px;
+    }
+  }
+</style>
+
 
 
     <!-- Call to Action Start -->
