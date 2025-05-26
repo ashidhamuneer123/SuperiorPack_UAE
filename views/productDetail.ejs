@@ -2,30 +2,46 @@
 <html lang="en">
 
 <head>
-    <meta charset="utf-8">
-    <title>Superior Pack UAE</title>
-    <meta content="width=device-width, initial-scale=1.0" name="viewport">
-    <meta content="Free HTML Templates" name="keywords">
-    <meta content="Free HTML Templates" name="description">
+  <meta charset="utf-8" />
+  <title><%= product.name %> | Superior Pack UAE</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="<%= product.description.replace(/(<([^>]+)>)/gi, '').substring(0, 160) %>" />
+  <meta name="keywords" content="Packaging, Superior Pack UAE, <%= product.name %>, Custom Packaging, Paper Bags, Cups, Boxes" />
 
-    <!-- Favicon -->
-    <link href="userAssets/img/favicon.ico" rel="icon">
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <!-- Google Web Fonts -->
-    <link rel="preconnect" href="https://fonts.gstatic.com">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet"> 
+  <!-- Open Graph / Facebook / WhatsApp -->
+  <meta property="og:type" content="product" />
+  <meta property="og:title" content="<%= product.name %> | Superior Pack UAE" />
+  <meta property="og:description" content="<%= product.description.replace(/(<([^>]+)>)/gi, '').substring(0, 160) %>" />
+  <meta property="og:image" content="<%= product.image && product.image.length ? product.image[0] : '' %>" />
+  <meta property="og:url" content="https://www.superiorpackuae.com/products/<%= product._id %>" />
+  <meta property="og:site_name" content="Superior Pack UAE" />
 
-    <!-- Font Awesome -->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
-    <!-- Libraries Stylesheet -->
-    <link href="/userAssets/lib/owlcarousel/assets/owl.carousel.min.css" rel="stylesheet">
-<!-- AOS CSS -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css">
+  <!-- Twitter -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="<%= product.name %> | Superior Pack UAE" />
+  <meta name="twitter:description" content="<%= product.description.replace(/(<([^>]+)>)/gi, '').substring(0, 160) %>" />
+  <meta name="twitter:image" content="<%= product.image && product.image.length ? product.image[0] : '' %>" />
 
-    <!-- Customized Bootstrap Stylesheet -->
-    <link href="/userAssets/css/style.css" rel="stylesheet">
+  <!-- Favicon -->
+  <link href="/userAssets/img/favicon.ico" rel="icon" />
+
+  <!-- Scripts & Fonts -->
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <link rel="preconnect" href="https://fonts.gstatic.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+
+  <!-- Font Awesome & Bootstrap Icons -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" />
+
+  <!-- Libraries Stylesheet -->
+  <link href="/userAssets/lib/owlcarousel/assets/owl.carousel.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" />
+
+  <!-- Custom Style -->
+  <link href="/userAssets/css/style.css" rel="stylesheet" />
 </head>
+
 
 <body>
 <!-- Topbar Start -->
