@@ -8,7 +8,7 @@ import EnquiryCartNumber from "../models/EnquiryCartNumber.js";
 import mongoose from 'mongoose';
 export const loadHome = async (req, res) => {
   try {
-    const categories = await Category.find({ isDeleted: false }).limit(9);
+    const categories = await Category.find({ isDeleted: false });
 
     // Fetch all products and populate category
     const allProducts = await Product.find().populate('catId');
@@ -36,8 +36,8 @@ export const loadHome = async (req, res) => {
     });
 
     // Top 8 customized products (for sections like featured etc.)
-    const products = await Product.find({ isCustomized: true }).limit(8).sort({ timestamp: 1 });
-    const custProducts = await Product.find({ isCustomized: true }).limit(8).sort({ timestamp: -1 });
+    const products = await Product.find({ isCustomized: true }).limit(8).sort({ timestamp: -1 });
+    const custProducts = await Product.find({ isCustomized: true }).limit(8).sort({ timestamp: 1 });
 
     // Combine both customized and generic products into a single map for EJS category display
 const categoryProductsMap = {};

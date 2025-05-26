@@ -167,7 +167,7 @@
     <!-- Navbar Start -->
     <div class="container-fluid mb-5">
         <div class="row border-top px-xl-5">
-          <div class="col-lg-3">
+          <div class="col-lg-3 d-none d-lg-block">
             <!-- Customized Products -->
             <a class="btn shadow-none d-flex align-items-center justify-content-between text-white w-100" data-toggle="collapse" href="#navbar-vertical" style="height: 65px; margin-top: -1px; padding: 0 30px; background-color: #98d5ca;">
               <h6 class="m-0">Customised Products</h6>
@@ -375,38 +375,39 @@
     <!-- Featured End -->
 
 
-    <!-- Categories Start -->
-    <div class="container-fluid pt-5">
-        <div class="text-center mb-4">
-          <h2 class="section-title px-5"><span class="px-2">Our categories</span></h2>
+  <!-- Categories Start -->
+<div class="container-fluid pt-5">
+  <div class="text-center mb-4">
+    <h2 class="section-title px-5"><span class="px-2">Our categories</span></h2>
+  </div>
+
+  <div class="row px-xl-5 pb-3" id="category-list">
+    <% categories.forEach((category, index) => { %>
+      <div class="col-lg-4 col-md-6 pb-1 category-card" style="display: none;" data-index="<%= index %>">
+        <div class="cat-item d-flex flex-column border mb-4" style="padding: 30px;">
+          <p class="text-right">
+            <%= categoryProductsMap[category._id.toString()] ? categoryProductsMap[category._id.toString()].length : 0 %> Products
+          </p>
+          <a href="/products/category/<%= category._id %>" class="cat-img position-relative overflow-hidden mb-3">
+            <img class="img-fluid" src="<%= category.image[0] %>" alt="<%= category.name %>">
+          </a>
+          <a href="/products/category/<%= category._id %>" class="cat-img position-relative overflow-hidden mb-3">
+            <h5 class="font-weight-semi-bold m-0"><%= category.name %></h5>
+          </a>
         </div>
-        <div class="row px-xl-5 pb-3">
-            <% categories.forEach(category => { %>
-                <div class="col-lg-4 col-md-6 pb-1">
-                  <div class="cat-item d-flex flex-column border mb-4" style="padding: 30px;">
-                    <p class="text-right">
-                      <%= categoryProductsMap[category._id.toString()] ? categoryProductsMap[category._id.toString()].length : 0 %> Products
-                    </p>
-                    <a href="/products/category/<%= category._id %>" class="cat-img position-relative overflow-hidden mb-3">
-                      <img class="img-fluid" src="<%= category.image[0] %>" alt="<%= category.name %>">
-                    </a>
-                    <a href="/products/category/<%= category._id %>" class="cat-img position-relative overflow-hidden mb-3">
-                    <h5 class="font-weight-semi-bold m-0"><%= category.name %></h5>
-                    </a>
-                  </div>
-                </div>
-              <% }) %>
-              
-        </div>
-        
-        <div class="text-center mt-3">
-          <form action="/allCategories" method="get">
-            <button type="submit" class="btn btn-primary">View More</button>
-          </form>
-        </div>
-    </div>
-      
-     <!-- Categories End -->
+      </div>
+    <% }) %>
+  </div>
+
+  <div class="text-center mt-3">
+    <form action="/allCategories" method="get">
+      <button type="submit" class="btn btn-primary">View More</button>
+    </form>
+  </div>
+</div>
+<!-- Categories End -->
+
+
 
 
   <!-- Services Start -->
@@ -606,7 +607,7 @@
             <div class="col-md-8 col-12 py-5 text-center text-white">
                 <h2 class=" px-3 mb-3 text-black fw-bold" style="text-decoration: none;">Want to Know More About Our Services???</h2>
                 <p>Get in touch with us to explore our services and find the perfect solution for your needs!</p>
-                <a class="btn px-5 py-3 mt-3" style="background-color: #7f6850; color:black;" href="tel:+971564219630">Call To Action</a>
+                <a class="btn px-5 py-3 mt-3" style="background-color: #7f6850; color:black;" href="tel:+971564219630">Speak with an Expert</a>
             </div>
         </div>
     </div>
@@ -1110,6 +1111,19 @@
           console.error("Error:", err);
         }
       });
+    });
+  });
+</script>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const cards = document.querySelectorAll(".category-card");
+    const isMobile = window.innerWidth < 768;
+    const visibleCount = isMobile ? 6 : 9;
+
+    cards.forEach((card, index) => {
+      if (index < visibleCount) {
+        card.style.display = "block";
+      }
     });
   });
 </script>
