@@ -44,10 +44,10 @@ const upload = multer({
   storage: storage,
   fileFilter: fileFilter, // Apply the file filter
 }).fields([
-  { name: 'productImages', maxCount: 20 },
+  { name: 'productImages', maxCount: 30 },
   { name: 'mainImage', maxCount: 1 },
   { name: 'logo', maxCount: 1 },
-  { name: 'customProductImages', maxCount: 10 },
+  { name: 'customProductImages', maxCount: 20 },
   { name: 'blogImage', maxCount: 1 },
   { name: 'lpoPdf', maxCount: 1 }, // added this for PDF upload
 ]);
