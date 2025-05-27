@@ -43,6 +43,9 @@ const storage = new CloudinaryStorage({
 const upload = multer({
   storage: storage,
   fileFilter: fileFilter, // Apply the file filter
+  limits: {
+    fileSize: 5 * 1024 * 1024, // 5MB max per file
+  },
 }).fields([
   { name: 'productImages', maxCount: 30 },
   { name: 'mainImage', maxCount: 1 },
