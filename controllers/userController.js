@@ -460,12 +460,25 @@ export const userDashboard = async (req, res) => {
 
   export const contactUsMail = async (req, res) => {
     try {
+      const secretKey = process.env.RECAPTCHA_SECRET_KEY;
+      const token = req.body.token;
+  
+      // Verify reCAPTCHA with Google
+      const verificationURL = `https://www.google.com/recaptcha/api/siteverify?secret=${secretKey}&response=${token}`;
+  
+      const response = await fetch(verificationURL, { method: 'POST' });
+      const data = await response.json();
+  
+      if (!data.success) {
+        return res.status(400).json({ success: false, message: 'reCAPTCHA verification failed.' });
+      }
+  
       const { name, email, phone, message } = req.body;
   
       const transporter = nodemailer.createTransport({
-        host: 'mail.privateemail.com', 
-          port: 465,
-          secure: true,
+        host: 'mail.privateemail.com',
+        port: 465,
+        secure: true,
         auth: {
           user: process.env.EMAIL_USER,
           pass: process.env.EMAIL_PASS,
