@@ -32,7 +32,7 @@ router.get('/faq',faqPage);
 router.get('/internationalOrders',internationalOrders);
 router.get('/allCategories',allCategories)
 router.get('/privacyPolicy',privacyPolicy)
-router.get('/products/category/:categoryId', filterByCategory);
+router.get('/products/category/:slug', filterByCategory);
 router.post('/products/filter', filterProducts);
 router.post('/reorder-cart/add', userAuth, addToReorderCart);
 router.get('/reorder-cart', userAuth, viewReorderCart);

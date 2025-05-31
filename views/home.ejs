@@ -401,12 +401,11 @@
           <p class="text-right">
             <%= categoryProductsMap[category._id.toString()] ? categoryProductsMap[category._id.toString()].length : 0 %> Products
           </p>
-          <a href="/products/category/<%= category._id %>" class="cat-img position-relative overflow-hidden mb-3">
+          <a href="/products/category/<%= category.slug %>" class="cat-img position-relative overflow-hidden mb-3 d-block text-center">
             <img class="img-fluid" src="<%= category.image[0] %>" alt="<%= category.name %>">
+            <h5 class="font-weight-semi-bold m-0 mt-2"><%= category.name %></h5>
           </a>
-          <a href="/products/category/<%= category._id %>" class="cat-img position-relative overflow-hidden mb-3">
-            <h5 class="font-weight-semi-bold m-0"><%= category.name %></h5>
-          </a>
+          
         </div>
       </div>
     <% }) %>

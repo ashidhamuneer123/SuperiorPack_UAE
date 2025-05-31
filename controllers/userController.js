@@ -8,8 +8,10 @@ import EnquiryCartNumber from "../models/EnquiryCartNumber.js";
 import mongoose from 'mongoose';
 export const loadHome = async (req, res) => {
   try {
-    const categories = await Category.find({ isDeleted: false });
+    
 
+    const categories = await Category.find({ isDeleted: false });
+    
     // Fetch all products and populate category
     const allProducts = await Product.find().populate('catId');
 
@@ -391,10 +393,17 @@ export const userDashboard = async (req, res) => {
   
   export const filterByCategory = async (req, res) => {
     try {
-      const categoryId = req.params.categoryId;
+      const slug = req.params.slug;
       const page = parseInt(req.query.page) || 1;
       const limit = 8;
       const skip = (page - 1) * limit;
+  
+      const selectedCategory = await Category.findOne({ slug });
+      if (!selectedCategory) {
+        return res.status(404).send("Category not found");
+      }
+  
+      const categoryId = selectedCategory._id;
   
       const categories = await Category.find({ isDeleted: false });
       const productsByCategory = await Product.find().populate('catId');
@@ -418,11 +427,9 @@ export const userDashboard = async (req, res) => {
         .limit(limit)
         .lean();
   
-      const selectedCategory = await Category.findById(categoryId);
-  
       res.render("searchResults", {
         products,
-        searchTerm: selectedCategory ? selectedCategory.name : '',
+        searchTerm: selectedCategory.name,
         categories,
         categoryProductsMap,
         currentPage: page,
@@ -434,6 +441,7 @@ export const userDashboard = async (req, res) => {
       res.status(500).send("Internal Server Error");
     }
   };
+  
   
   
 
