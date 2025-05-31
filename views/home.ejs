@@ -586,6 +586,11 @@
     </div>
     <% }) %>
   </div>
+  
+<!-- Swipe Indicator -->
+<div class="swipe-indicator text-center d-md-none mt-2">
+  <span class="swipe-text">← Swipe to view more →</span>
+</div>
   <div class="text-center mt-3">
     <form action="/allProducts" method="get">
       <button type="submit" class="modern-btn">View More</button>
@@ -615,6 +620,17 @@
       padding-right: 10px;
     }
   }
+  .swipe-indicator {
+  font-size: 14px;
+  color: #555;
+  animation: blinkText 1.5s infinite;
+}
+
+@keyframes blinkText {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; }
+}
+
 </style>
 
 
