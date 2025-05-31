@@ -13,6 +13,9 @@ export const showAddBlogPage = async (req, res) => {
   }
 };
 
+
+
+
 export const addBlog = async (req, res) => {
   try {
     const { title,content } = req.body;
@@ -33,6 +36,7 @@ export const addBlog = async (req, res) => {
     res.status(500).send("Internal Server Error");
   }
 };
+
 
 export const viewBlogs = async (req, res) => {
 
@@ -80,6 +84,7 @@ export const updateBlog = async (req, res) => {
     res.status(500).send("Internal Server Error");
   }
 };
+
 
 //user Side blog functions
 

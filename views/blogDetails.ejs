@@ -293,18 +293,28 @@
           <% } %>
         </div>
   
-        <!-- Blog Content Section -->
-        <div class="col-lg-6">
-          <div class="content" style="font-family: 'Poppins', sans-serif;">
-            <h2 class="fw-bolder mb-3"><%= blog.title %></h2>
-            <div class="text-muted fst-italic mb-3">Posted on: <%= blog.createdAt.toDateString() %></div>
-            <p class="fs-5"><%= blog.content %></p>
-          </div>
-        </div>
-  
-      </div>
+     <!-- Blog Content Section -->
+<div class="col-lg-6">
+  <div class="content" style="font-family: 'Poppins', sans-serif;">
+    <h2 class="fw-bolder mb-3"><%= blog.title %></h2>
+    <div class="text-muted fst-italic mb-3">Posted on: <%= blog.createdAt.toDateString() %></div>
+
+    <div class="fs-5">
+      <% let lines = blog.content.split('\n'); %>
+      <% lines.forEach(line => { 
+        let formattedLine = line.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+      %>
+        <% if (line.trim().startsWith('*') || line.trim().startsWith('•')) { %>
+          <li><%- formattedLine.replace(/^[\*\•]\s*/, '') %></li>
+        <% } else { %>
+          <p><%- formattedLine %></p>
+        <% } %>
+      <% }) %>
     </div>
+
   </div>
+</div>
+
   
 <!-- Blog Details End -->
 

@@ -279,7 +279,31 @@
   
               <div class="card-body d-flex flex-column">
                 <h5 class="card-title"><%= blog.title %></h5>
-                <p class="card-text"><%= blog.content.substring(0, 100) + '...' %></p>
+                <%
+                // Take first 100 chars
+                let snippet = blog.content.substring(0, 60);
+              
+                // Check if snippet starts with bullet
+                let isBullet = snippet.trim().startsWith('*') || snippet.trim().startsWith('•');
+              
+                // Format bold syntax
+                let formattedSnippet = snippet.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+              
+                if (isBullet) {
+                  // If bullet, wrap in <ul><li>
+                  formattedSnippet = formattedSnippet.trim().replace(/^[\*\•]\s*/, '');
+              %>
+                  <ul class="card-text" style="padding-left: 20px; margin-bottom: 0;">
+                    <li><%- formattedSnippet %>...</li>
+                  </ul>
+              <%
+                } else {
+              %>
+                  <p class="card-text"><%- formattedSnippet %>...</p>
+              <%
+                }
+              %>
+              
                 <a class="modern-btn mt-auto align-self-start" href="/blog/<%= blog._id %>">Read More!!</a>
               </div>
             </div>

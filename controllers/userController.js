@@ -36,7 +36,7 @@ export const loadHome = async (req, res) => {
     });
 
     // Top 8 customized products (for sections like featured etc.)
-    const products = await Product.find({ isCustomized: true }).limit(8).sort({ timestamp: -1 });
+    const products = await Product.find({ isCustomized: true }).limit(12).sort({ timestamp: -1 });
     const custProducts = await Product.find({ isCustomized: true }).limit(8).sort({ timestamp: 1 });
 
     // Combine both customized and generic products into a single map for EJS category display
