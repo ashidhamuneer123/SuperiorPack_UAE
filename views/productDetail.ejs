@@ -14,7 +14,7 @@
   <meta property="og:description" content="<%= product.description.replace(/(<([^>]+)>)/gi, '').substring(0, 160) %>" />
   <meta property="og:image" content="https://www.superiorpackuae.com<%= product.image && product.image.length ? product.image[0] : '' %>" />
 
-  <meta property="og:url" content="https://www.superiorpackuae.com/products/<%= product._id %>" />
+  <meta property="og:url" content="https://www.superiorpackuae.com/products/<%= product.slug %>" />
   <meta property="og:site_name" content="Superior Pack UAE" />
 
   <!-- Twitter -->
