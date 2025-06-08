@@ -22,7 +22,7 @@
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content="<%= product.name %> | Superior Pack UAE" />
   <meta name="twitter:description" content="<%= product.description.replace(/(<([^>]+)>)/gi, '').substring(0, 160) %>" />
-  <meta name="twitter:image" content="https://www.superiorpackuae.com<%= product.image && product.image.length ? product.image[0] : '' %>" />
+  <meta name="twitter:image" content="<%= product.image && product.image.length ? product.image[0] : '' %>" />
 
 
   <!-- Favicon -->
