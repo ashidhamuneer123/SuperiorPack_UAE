@@ -158,7 +158,8 @@ export const instantQuote = async (req, res) => {
 };
 export const productDetailPage = async (req, res) => {
   try {
-    const product = await Product.findById(req.params.id).populate("catId");
+    
+    const product = await Product.findOne({ slug: req.params.slug }).populate("catId");
     const categories = await Category.find({ isDeleted: false });
     const productsByCategory = await Product.find().populate('catId');
 
@@ -172,9 +173,10 @@ export const productDetailPage = async (req, res) => {
         categoryProductsMap[categoryId].push(product);
       }
     });
+
     const relatedProducts = await Product.find({
       catId: product.catId._id,
-      _id: { $ne: product._id }, // exclude the current product
+      _id: { $ne: product._id }
     }).limit(4);
 
     res.render("productDetail", {
@@ -188,6 +190,7 @@ export const productDetailPage = async (req, res) => {
     res.status(500).send("Internal Server Error");
   }
 };
+
 
 
 

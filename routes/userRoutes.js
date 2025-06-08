@@ -16,7 +16,8 @@ router.get('/logout', userLogout);
 router.get('/userdashboard',userAuth,userDashboard)
 
 router.get('/about',aboutUs)
-router.get('/product/:id',productDetailPage)
+router.get('/product/:slug', productDetailPage);
+
 router.get('/search', searchProducts);
 router.get('/blogs', getAllBlogs);
 router.get('/blog/:id', getBlogDetails);

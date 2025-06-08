@@ -199,7 +199,7 @@
                         <% customizedCategoryProductsMap[category._id].forEach(product => { %>
                           <a 
                             style="color: #98d5ca;" 
-                            href="/product/<%= product._id %>" 
+                            href="/product/<%= product.slug %>" 
                             class="dropdown-item"
                           >
                             <%= product.name %>
@@ -230,7 +230,7 @@
                         <% genericCategoryProductsMap[category._id].forEach(product => { %>
                           <a 
                           style="color: #98d5ca;" 
-                            href="/product/<%= product._id %>" 
+                            href="/product/<%= product.slug %>" 
                             class="dropdown-item"
                           >
                             <%= product.name %>
@@ -558,12 +558,12 @@
     <div class="product-slide col-lg-3 col-md-6 col-sm-12 pb-1">
       <div class="card product-item border-0 mb-4">
         <div class="card-header product-img position-relative overflow-hidden bg-transparent border p-0">
-          <a href="/product/<%= product._id %>">
+          <a href="/product/<%= product.slug %>">
             <img class="img-fluid w-100" src="<%= product.image[0] %>" alt="<%= product.name %>">
           </a>
         </div>
         <div class="card-body border-left border-right text-center p-0 pt-4 pb-3">
-          <a href="/product/<%= product._id %>">
+          <a href="/product/<%= product.slug%>">
             <h6 class="text-truncate mb-3"><%= product.name %></h6>
           </a>
           <div class="d-flex justify-content-center">
@@ -571,7 +571,7 @@
           </div>
         </div>
         <div class="card-footer d-flex justify-content-between bg-light border">
-          <a href="/product/<%= product._id %>" class="btn btn-sm text-dark p-0">
+          <a href="/product/<%= product.slug %>" class="btn btn-sm text-dark p-0">
             <i class="fas fa-eye text-primary mr-1"></i>View Detail
           </a>
           <a href="/add-to-enquiry/<%= product._id %>" 
