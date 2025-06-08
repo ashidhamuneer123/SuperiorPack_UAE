@@ -12,7 +12,8 @@
   <meta property="og:type" content="product" />
   <meta property="og:title" content="<%= product.name %> | Superior Pack UAE" />
   <meta property="og:description" content="<%= product.description.replace(/(<([^>]+)>)/gi, '').substring(0, 160) %>" />
-  <meta property="og:image" content="<%= product.image && product.image.length ? product.image[0] : '' %>" />
+  <meta property="og:image" content="https://www.superiorpackuae.com<%= product.image && product.image.length ? product.image[0] : '' %>" />
+
   <meta property="og:url" content="https://www.superiorpackuae.com/products/<%= product._id %>" />
   <meta property="og:site_name" content="Superior Pack UAE" />
 
@@ -20,7 +21,8 @@
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content="<%= product.name %> | Superior Pack UAE" />
   <meta name="twitter:description" content="<%= product.description.replace(/(<([^>]+)>)/gi, '').substring(0, 160) %>" />
-  <meta name="twitter:image" content="<%= product.image && product.image.length ? product.image[0] : '' %>" />
+  <meta name="twitter:image" content="https://www.superiorpackuae.com<%= product.image && product.image.length ? product.image[0] : '' %>" />
+
 
   <!-- Favicon -->
   <link href="/userAssets/img/favicon.ico" rel="icon" />
