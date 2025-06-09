@@ -280,6 +280,7 @@
                 <tr>
                   <th class="d-none">Product ID</th>
                   <th>Product Name</th>
+                  <th>Product Image</th>
                   <th>Quantity</th>
                   <th>Message</th>
                   <th>Remove</th>
@@ -295,6 +296,16 @@
                     <td>
                       <%= product.name %>
                       <input type="hidden" name="products[<%= index %>][name]" value="<%= product.name %>" />
+                    </td>
+                    <td>
+                      <img 
+                      src="<%= product.productImage || 'default.jpg' %>" 
+                      alt="Product Image" 
+                      class="img-thumbnail"
+                      style="max-height: 80px; max-width: 80px; object-fit: cover;"
+                    />
+                    
+                      <input type="hidden" name="products[<%= index %>][productImage]" value="<%= product.productImage %>" />
                     </td>
                     <td>
                       <input type="text" name="products[<%= index %>][moq]" value="<%= product.moq %>" class="form-control form-control-sm" />

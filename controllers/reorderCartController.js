@@ -9,25 +9,29 @@ import nodemailer from "nodemailer";
 import cloudinary from "../config/cloudinary.js";
 import streamifier from 'streamifier';
 import User from "../models/User.js";
+
 export const addToReorderCart = async (req, res) => {
-    try {
-      const { prod_id, name, moq } = req.body;
-  
-      if (!req.session.reorderCart) req.session.reorderCart = [];
-  
-      req.session.reorderCart.push({
-        prod_id,
-        name,
-        moq,
-        message: ""
-      });
-  
-      res.redirect('/userdashboard');
-    } catch (err) {
-      console.error("Error adding to reorder cart:", err);
-      res.status(500).send("Failed to add to reorder cart");
-    }
-  };
+  try {
+    const { prod_id, name, description, moq, productImage } = req.body;
+
+    if (!req.session.reorderCart) req.session.reorderCart = [];
+
+    req.session.reorderCart.push({
+      prod_id,
+      name,
+      description,
+      moq,
+      productImage, // ✅ Include productImage
+      message: ""
+    });
+
+    res.redirect('/userdashboard');
+  } catch (err) {
+    console.error("Error adding to reorder cart:", err);
+    res.status(500).send("Failed to add to reorder cart");
+  }
+};
+
   
   
   export const viewReorderCart =async (req, res) => {

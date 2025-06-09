@@ -8,6 +8,7 @@ const ReorderSchema = new mongoose.Schema({
     {
       prod_id: String,
       name: String,
+      description:String,
       moq: String,
       message: String
     }
