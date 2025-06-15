@@ -255,18 +255,20 @@
 
 
     <!-- Page Header Start -->
-    <div class="container-fluid bg-secondary mb-5">
+    <div class="container-fluid mb-5" style="
+  background: url('/userAssets/img/Header_privacy policy.jpg') no-repeat center center;
+  background-size: cover;
+  min-height: 300px;
+">
         <div class="d-flex flex-column align-items-center justify-content-center" style="min-height: 300px">
             <h1 class="font-weight-semi-bold text-uppercase mb-3"> Welcome, <%= userName %>!</h1>
             <div class="d-inline-flex">
-                <p class="m-0"><a href="/">Home</a></p>
+                <p class="m-0 text-brown"><a class="text-brown" href="/">Home</a></p>
                 <p class="m-0 px-2">-</p>
-                <p class="m-0">Dashboard</p>
+                <p class="m-0 text-brown">Dashboard</p>
             </div>
             
-              <a href="/reorder-cart" class="nav-link">
-                <i class="fas fa-shopping-cart"></i> Reorder Cart
-              </a>
+           
            
         </div>
     </div>
@@ -308,7 +310,7 @@
                       <input type="hidden" name="size" value="<%= product.size %>" />
                       <input type="hidden" name="productImage" value="<%= product.productImage %>" />
 
-                      <button type="submit" class="btn btn-primary mt-auto">Add to Cart</button>
+                      <button type="submit" class="btn btn-primary mt-auto add-to-reorder-btn">Add to Cart</button>
                     </form>
                     
                   </div>
@@ -319,33 +321,15 @@
         <% } %>
       </div>
     
-    
+      <div class="d-flex justify-content-center mt-4">
+        <a href="/reorder-cart" class="modern-btn">
+          <i class="fas fa-shopping-cart"></i> Go To Cart
+        </a>
+      </div>
+      
     <!-- dashboard End -->
 
 
-    <div class="col-12 pb-1">
-      <nav aria-label="Page navigation">
-        <ul class="pagination justify-content-center mb-3">
-          <li class="page-item <%= currentPage === 1 ? 'disabled' : '' %>">
-            <a class="page-link" href="?page=<%= currentPage - 1 %>" aria-label="Previous">
-              <span aria-hidden="true">&laquo;</span>
-            </a>
-          </li>
-    
-          <% for(let i = 1; i <= totalPages; i++) { %>
-            <li class="page-item <%= currentPage === i ? 'active' : '' %>">
-              <a class="page-link" href="?page=<%= i %>"><%= i %></a>
-            </li>
-          <% } %>
-    
-          <li class="page-item <%= currentPage === totalPages ? 'disabled' : '' %>">
-            <a class="page-link" href="?page=<%= currentPage + 1 %>" aria-label="Next">
-              <span aria-hidden="true">&raquo;</span>
-            </a>
-          </li>
-        </ul>
-      </nav>
-    </div>
   
   <!-- Footer Start -->
   <div class="container-fluid bg-secondary text-dark mt-5 pt-5">
@@ -358,7 +342,7 @@
             Hor Al Anz East, Dubai-UAE
           </p>
           <p class="mb-2"><i class="fa fa-phone-alt text-primary mr-2"></i>+971 56 421 9630</p>
-          <p class="mb-2"><i class="fa fa-phone-volume text-primary mr-2"></i>+971 4330 9833</p>
+          <p class="mb-2"><i class="fa fa-phone-alt text-primary mr-2"></i>+971 4330 9833</p>
           <p class="mb-2"><i class="fa fa-envelope text-primary mr-2"></i>info@superiorpackuae.com</p>
           <p class="mb-2"><strong>Opening Time:</strong><br>Open: 9:00 AM – Close: 6:00 PM<br>Monday – Saturday</p>
         </div>
@@ -450,7 +434,21 @@
     <!-- Template Javascript -->
     <script src="userAssets/js/main.js"></script>
     
- 
+    <script>
+      document.querySelectorAll('.add-to-reorder-btn').forEach((btn) => {
+        btn.addEventListener('click', function (e) {
+          // Disable the button and change text
+          this.innerText = 'Added to Cart';
+          this.disabled = true;
+    
+          // Allow form submission to continue normally
+          // Find the parent form and submit it
+          this.closest('form').submit();
+        });
+      });
+    </script>
+    
+    
     
     
 </body>
