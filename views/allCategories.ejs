@@ -113,44 +113,94 @@
   </div>
 
   <!-- Logo + Search + Cart -->
-  <div class="row align-items-center py-3 px-xl-5">
-    <div class="col-lg-3 d-none d-lg-block">
-      <a href="/" class="text-decoration-none">
-        <img
-          src="/userAssets/img/splogoName.png"
-          alt="Logo"
-          style="max-width: 155px; height: auto;width: auto;"
-        />
-      </a>
-    </div>
-    <div class="col-lg-6 col-6 text-left">
-      <form action="/search" method="get">
-        <div class="input-group">
-          <input
-            type="text"
-            name="query"
-            class="form-control"
-            placeholder="Search for products"
+  <div class="container-fluid px-xl-5">
+    <div class="row align-items-center py-3 px-2 px-lg-0">
+      <!-- Logo (desktop only) -->
+      <div class="col-lg-3 d-none d-lg-block">
+        <a href="/" class="text-decoration-none">
+          <img
+            src="/userAssets/img/splogoName.png"
+            alt="Logo"
+            style="max-width: 155px; height: auto; width: auto;"
           />
-          <div class="input-group-append">
-            <button
-              type="submit"
-              class="btn btn-primary"
-              style="background-color: #9de7d7; border-color: #9de7d7"
-            >
-              Search
-            </button>
+        </a>
+      </div>
+  
+      <!-- Search and Cart (combined for mobile) -->
+      <div class="col-lg-9 col-12">
+        <div class="d-flex justify-content-between align-items-center flex-wrap">
+          <!-- Search Bar -->
+          <div class="flex-grow-1 me-2" style="min-width: 0; max-width: 50%;">
+            <form action="/search" method="get" class="search-form d-flex">
+              <input
+                type="text"
+                name="query"
+                class="form-control search-input"
+                placeholder="Search for products"
+              />
+              <button type="submit" class="search-button text-brown">
+                <i class="fas fa-search"></i>
+              </button>
+            </form>
+          </div>
+  
+          <!-- Cart Button -->
+          <div class="flex-shrink-0 mt-2 mt-md-0">
+            <a href="/enquiry-cart" class="btn border">
+              <i class="fas text-brown fa-shopping-cart"></i>
+              <span id="cart-count" class="badge">0</span>
+            </a>
           </div>
         </div>
-      </form>
-    </div>
-    <div class="col-lg-3 col-6 text-right">
-      <a href="/enquiry-cart" class="btn border">
-        <i class="fas fa-shopping-cart" style="color: #9de7d7"></i>
-        <span id="cart-count" class="badge">0</span>
-      </a>
+      </div>
     </div>
   </div>
+  
+  <!-- Styles -->
+  <style>
+    .search-input {
+      border: 1px solid #ccc;
+      border-right: none;
+      border-radius: 30px 0 0 30px;
+      padding-left: 20px;
+      height: 45px;
+      font-size: 16px;
+      flex: 1;
+      min-width: 0;
+    }
+  
+    .search-button {
+      background: white;
+      border: 1px solid #ccc;
+      border-left: none;
+      border-radius: 0 30px 30px 0;
+      padding: 0 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 45px;
+    }
+  
+    .search-button:hover {
+      background-color: #f7f7f7;
+    }
+  
+    @media (max-width: 768px) {
+      .search-input {
+        font-size: 14px;
+        padding-left: 10px;
+      }
+  
+      .search-button {
+        padding: 0 14px;
+      }
+  
+      .badge {
+        font-size: 12px;
+        padding: 4px 7px;
+      }
+    }
+  </style>
 </div>
 <!-- Topbar End -->
 
