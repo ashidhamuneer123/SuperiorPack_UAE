@@ -18,7 +18,7 @@ export const addProduct = async (req, res) => {
   try {
     const {
       name, moq, description, material, function: productFunction, size,
-      leadTime, isCustomized, prod_id, catId, printing, ingredients,
+      leadTime, isCustomized, isConcept,prod_id, catId, printing, ingredients,
       minOrderWithPrinting, minOrderWithoutPrinting, moreInfo
     } = req.body;
 
@@ -72,6 +72,8 @@ export const addProduct = async (req, res) => {
       leadTime,
       image: uploadedImages, // Ordered images here
       isCustomized: isCustomized === 'true',
+      isConcept: isConcept === 'true',
+
       prod_id,
       catId,
       printing,

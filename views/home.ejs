@@ -294,6 +294,36 @@
                 <% }) %>
               </div>
             </nav>
+ <!-- Concept based Products -->
+            <a class="btn shadow-none d-flex align-items-center justify-content-between text-white w-100 mt-2" data-toggle="collapse" href="#concept-vertical" style="height: 65px; padding: 0 30px; background-color: #98d5ca;">
+              <h6 class="m-0">Concept based Products</h6>
+              <i class="fa fa-angle-down text-dark"></i>
+            </a>
+            <nav class="collapse navbar navbar-vertical navbar-light align-items-start p-0 border border-top-0 border-bottom-0" id="concept-vertical">
+              <div class="navbar-nav w-100 overflow-hidden">
+                <% categories.forEach(category => { %>
+                  <% if (conceptCategoryProductsMap[category._id]) { %>
+                    <div class="nav-item dropdown">
+                      <a href="#" class="nav-link" data-toggle="dropdown">
+                        <%= category.name %>
+                        <i class="fa fa-angle-down float-right mt-1"></i>
+                      </a>
+                      <div class="dropdown-menu bg-secondary border-0 rounded-0 w-100 m-0">
+                        <% conceptCategoryProductsMap[category._id].forEach(product => { %>
+                          <a 
+                          style="color: #98d5ca;" 
+                            href="/product/<%= product.slug %>" 
+                            class="dropdown-item"
+                          >
+                            <%= product.name %>
+                          </a>
+                        <% }) %>
+                      </div>
+                    </div>
+                  <% } %>
+                <% }) %>
+              </div>
+            </nav>
           </div>
           
             
@@ -617,9 +647,12 @@
           <a href="/product/<%= product.slug%>">
             <h6 class="text-truncate mb-3"><%= product.name %></h6>
           </a>
-          <div class="d-flex justify-content-center">
-            <h6>MOQ: <%= product.moq %></h6>
-          </div>
+         <% if (!product.isConcept) { %>
+  <div class="d-flex justify-content-center">
+    <h6>MOQ: <%= product.moq %></h6>
+  </div>
+<% } %>
+
         </div>
         <div class="card-footer d-flex justify-content-between bg-light border">
           <a href="/product/<%= product.slug %>" class="btn btn-sm text-dark p-0">
@@ -687,16 +720,17 @@
 
 
     <!-- Call to Action Start -->
-    <div class="container-fluid my-5" style="background-color: #9DE7D7">
-        <div class="row justify-content-md-center py-5 px-xl-5" data-aos="zoom-in" data-aos-delay="100">
-            <div class="col-md-8 col-12 py-5 text-center text-white">
-                <h2 class=" px-3 mb-3 text-black fw-bold" style="text-decoration: none;">Want to Know More About Our Services???</h2>
-                <p>Get in touch with us to explore our services and find the perfect solution for your needs!</p>
-                <a class="modern-btn" href="tel:+971564219630">Speak With An Expert</a>
-
-            </div>
+<div class="container-fluid my-5" style="background: url('userAssets/img/callToAction.jpg') center center / cover no-repeat;">
+    <div class="row justify-content-md-center py-5 px-xl-5" data-aos="zoom-in" data-aos-delay="100">
+        <div class="col-md-8 col-12 py-5 text-center text-white">
+            <h2 class="px-3 mb-3 fw-bold" style="text-decoration: none;">Want to Know More About Our Services???</h2>
+            <p class="text-brown">Get in touch with us to explore our services and find the perfect solution for your needs!</p><br>
+            <a class="modern-btn" href="tel:+971564219630">Speak With An Expert</a>
         </div>
     </div>
+</div>
+
+
 
     
     

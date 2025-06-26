@@ -4,15 +4,17 @@ import slugify from "slugify";
 const productSchema = new mongoose.Schema({
   name: { type: String, required: true },
   slug: { type: String, unique: true }, // NEW FIELD
-  moq: { type: String, required: true },
+  moq: { type: String },
   description: { type: String, required: true },
-  material: { type: String, required: true },
-  function: { type: String, required: true },
-  size: { type: String, required: true },
-  leadTime: { type: String, required: true },
+  material: { type: String },
+  function: { type: String},
+  size: { type: String},
+  leadTime: { type: String},
   image: [String],
   isCustomized: { type: Boolean, default: false },
-  prod_id: { type: String, required: true },
+  isConcept: { type: Boolean, default: false },
+
+  prod_id: { type: String },
   catId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Category",

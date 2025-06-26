@@ -8,22 +8,26 @@ import EnquiryCartNumber from "../models/EnquiryCartNumber.js";
 import mongoose from 'mongoose';
 export const loadHome = async (req, res) => {
   try {
-    
-
     const categories = await Category.find({ isDeleted: false });
-    
-    // Fetch all products and populate category
+
+    // Fetch all products
     const allProducts = await Product.find().populate('catId');
 
-    // Maps for customized and generic products
+    // Grouping Maps
     const customizedCategoryProductsMap = {};
     const genericCategoryProductsMap = {};
+    const conceptCategoryProductsMap = {}; // 🆕 for concept-based
 
     allProducts.forEach(product => {
       if (product.catId) {
         const categoryId = product.catId._id.toString();
 
-        if (product.isCustomized) {
+        if (product.isConcept) {
+          if (!conceptCategoryProductsMap[categoryId]) {
+            conceptCategoryProductsMap[categoryId] = [];
+          }
+          conceptCategoryProductsMap[categoryId].push(product);
+        } else if (product.isCustomized) {
           if (!customizedCategoryProductsMap[categoryId]) {
             customizedCategoryProductsMap[categoryId] = [];
           }
@@ -37,31 +41,19 @@ export const loadHome = async (req, res) => {
       }
     });
 
-    // Top 8 customized products (for sections like featured etc.)
     const products = await Product.find({ isCustomized: true }).limit(12).sort({ timestamp: -1 });
     const custProducts = await Product.find({ isCustomized: true }).limit(8).sort({ timestamp: 1 });
-
-    // Combine both customized and generic products into a single map for EJS category display
-const categoryProductsMap = {};
-
-Object.keys(customizedCategoryProductsMap).forEach(key => {
-  categoryProductsMap[key] = customizedCategoryProductsMap[key];
-});
-
-Object.keys(genericCategoryProductsMap).forEach(key => {
-  if (!categoryProductsMap[key]) {
-    categoryProductsMap[key] = genericCategoryProductsMap[key];
-  } else {
-    categoryProductsMap[key] = categoryProductsMap[key].concat(genericCategoryProductsMap[key]);
-  }
-});
-
 
     res.render("home", {
       categories,
       customizedCategoryProductsMap,
       genericCategoryProductsMap,
-      categoryProductsMap,
+      conceptCategoryProductsMap, // 🆕 added
+      categoryProductsMap: {
+        ...customizedCategoryProductsMap,
+        ...genericCategoryProductsMap,
+        ...conceptCategoryProductsMap,
+      },
       products,
       custProducts
     });
@@ -70,6 +62,7 @@ Object.keys(genericCategoryProductsMap).forEach(key => {
     res.status(500).send("Internal Server Error");
   }
 };
+
 
 
 
