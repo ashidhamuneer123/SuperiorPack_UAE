@@ -36,6 +36,7 @@ const storage = new CloudinaryStorage({
       folder: folder,
       format: file.originalname.split('.').pop(), // Allow the format to match the file extension
       public_id: `${Date.now()}-${file.originalname.split('.')[0].replace(/\s+/g, '-').toLowerCase()}`, // Unique public ID with timestamp
+      type: 'upload', // 👈 Add this line to ensure public uploads
     };
   },
 });
