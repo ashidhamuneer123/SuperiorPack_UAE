@@ -174,7 +174,7 @@ export const productDetailPage = async (req, res) => {
       relatedProducts = await Product.find({
         _id: { $ne: product._id },
         isConcept: true
-      }).limit(4);
+      }).limit(5);
     } else {
       // For regular/customized products, get products in the same category (excluding self)
       relatedProducts = await Product.find({
