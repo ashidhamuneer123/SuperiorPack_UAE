@@ -151,26 +151,38 @@ export const instantQuote = async (req, res) => {
 };
 export const productDetailPage = async (req, res) => {
   try {
-    
     const product = await Product.findOne({ slug: req.params.slug }).populate("catId");
     const categories = await Category.find({ isDeleted: false });
     const productsByCategory = await Product.find().populate('catId');
 
+    // Map products by category
     const categoryProductsMap = {};
-    productsByCategory.forEach(product => {
-      if (product.catId) {
-        const categoryId = product.catId._id.toString();
+    productsByCategory.forEach(prod => {
+      if (prod.catId) {
+        const categoryId = prod.catId._id.toString();
         if (!categoryProductsMap[categoryId]) {
           categoryProductsMap[categoryId] = [];
         }
-        categoryProductsMap[categoryId].push(product);
+        categoryProductsMap[categoryId].push(prod);
       }
     });
 
-    const relatedProducts = await Product.find({
-      catId: product.catId._id,
-      _id: { $ne: product._id }
-    }).limit(4);
+    // Determine related products logic
+    let relatedProducts = [];
+    if (product.isConcept) {
+      // For concept-based products, get other concept products (excluding self)
+      relatedProducts = await Product.find({
+        _id: { $ne: product._id },
+        isConcept: true
+      }).limit(4);
+    } else {
+      // For regular/customized products, get products in the same category (excluding self)
+      relatedProducts = await Product.find({
+        catId: product.catId._id,
+        _id: { $ne: product._id },
+        isConcept: false
+      }).limit(4);
+    }
 
     res.render("productDetail", {
       product: product.toObject(),
