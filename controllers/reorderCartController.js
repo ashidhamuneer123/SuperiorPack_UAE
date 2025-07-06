@@ -129,88 +129,118 @@ export const addToReorderCart = async (req, res) => {
   
 
 
-  export const generateLpoPdf = ({ from, to, lpoNumber, date, products }) => {
-    return new Promise((resolve, reject) => {
-      const doc = new PDFDocument({ margin: 50 });
-      const buffers = [];
-  
-      doc.on("data", buffers.push.bind(buffers));
-      doc.on("end", async () => {
-        const pdfBuffer = Buffer.concat(buffers);
-        const stream = cloudinary.uploader.upload_stream(
-          {
-            resource_type: "raw",
-            folder: "lpo-pdfs",
-            public_id: lpoNumber,
-          },
-          (error, result) => {
-            if (error) reject(error);
-            else resolve(result.secure_url);
-          }
-        );
-        streamifier.createReadStream(pdfBuffer).pipe(stream);
-      });
-  
-      // === Outer Border Box ===
-      const outerX = 40;
-      const outerY = 40;
-      const outerWidth = 520;
-      const outerHeight = 720;
-      doc.rect(outerX, outerY, outerWidth, outerHeight).stroke();
-  
-      // === Title ===
-      doc.fontSize(22).font("Helvetica-Bold").text("LPO", { align: "center" });
-      doc.moveDown(1.5);
-  
-      // === Info Section ===
-      const infoTop = doc.y;
-      doc.fontSize(12).font("Helvetica");
-  
-      doc.text("From:", 50, infoTop).font("Helvetica-Bold").text(from, 120, infoTop).font("Helvetica");
-      doc.text("To:", 50, infoTop + 20).font("Helvetica-Bold").text(to, 120, infoTop + 20).font("Helvetica");
-  
-      doc.text("LPO Number:", 340, infoTop).font("Helvetica-Bold").text(lpoNumber, 440, infoTop).font("Helvetica");
-      doc.text("Date:", 340, infoTop + 20).font("Helvetica-Bold").text(new Date(date).toLocaleDateString(), 440, infoTop + 20).font("Helvetica");
-  
-      doc.moveDown(3);
-  
-      // === Table Header ===
-      const tableTop = doc.y;
-      const columnX = [50, 100, 300, 400];
-      const columnWidths = [50, 200, 100, 150];
-  
-      doc.font("Helvetica-Bold");
-      doc.text("No.", columnX[0], tableTop, { width: columnWidths[0] });
-      doc.text("Product Name", columnX[1], tableTop, { width: columnWidths[1] });
-      doc.text("Quantity", columnX[2], tableTop, { width: columnWidths[2] });
-      doc.text("Message", columnX[3], tableTop, { width: columnWidths[3] });
-  
-      doc.moveTo(outerX, tableTop + 15).lineTo(outerX + outerWidth, tableTop + 15).stroke();
-  
-      // === Table Rows ===
-      doc.font("Helvetica");
-      let position = tableTop + 25;
-  
-      products.forEach((p, i) => {
-        doc.text(i + 1, columnX[0], position, { width: columnWidths[0] });
-        doc.text(p.name, columnX[1], position, { width: columnWidths[1] });
-        doc.text(p.moq, columnX[2], position, { width: columnWidths[2] });
-        doc.text(p.message || "N/A", columnX[3], position, { width: columnWidths[3] });
-  
-        position += 20;
-        doc.moveTo(outerX, position - 5).lineTo(outerX + outerWidth, position - 5).stroke();
-      });
-  
-      // === Footer Message ===
+ export const generateLpoPdf = ({ from, to, lpoNumber, date, products }) => {
+  return new Promise((resolve, reject) => {
+    const doc = new PDFDocument({ margin: 50 });
+    const buffers = [];
+
+    doc.on("data", buffers.push.bind(buffers));
+    doc.on("end", () => {
+      const pdfBuffer = Buffer.concat(buffers);
+      const stream = cloudinary.uploader.upload_stream(
+        { resource_type: "raw", folder: "lpo-pdfs", public_id: lpoNumber },
+        (error, result) => {
+          if (error) reject(error);
+          else resolve(result.secure_url);
+        }
+      );
+      streamifier.createReadStream(pdfBuffer).pipe(stream);
+    });
+
+    const outerX = 40;
+    const outerY = 40;
+    const outerWidth = 520;
+    const outerHeight = 720;
+    doc.rect(outerX, outerY, outerWidth, outerHeight).stroke();
+
+    doc.fontSize(22).font("Helvetica-Bold").text("LPO", { align: "center" });
+    doc.moveDown(1.5);
+
+    const infoTop = doc.y;
+    doc.fontSize(12).font("Helvetica");
+
+    doc.text("From:", 50, infoTop).font("Helvetica-Bold").text(from, 120, infoTop).font("Helvetica");
+    doc.text("To:", 50, infoTop + 20).font("Helvetica-Bold").text(to, 120, infoTop + 20).font("Helvetica");
+    doc.text("LPO Number:", 340, infoTop).font("Helvetica-Bold").text(lpoNumber, 440, infoTop).font("Helvetica");
+    doc.text("Date:", 340, infoTop + 20).font("Helvetica-Bold").text(new Date(date).toLocaleDateString(), 440, infoTop + 20).font("Helvetica");
+
+    doc.moveDown(3);
+
+    // Table Header
+    const tableTop = doc.y;
+   const columnX = [50, 85, 270, 340, 440]; // image shifted right
+const columnWidths = [30, 180, 60, 90, 60]; // more room for description
+
+doc.font("Helvetica-Bold");
+doc.text("No.", columnX[0], tableTop, { width: columnWidths[0], align: 'left' });
+doc.text("Product Name", columnX[1], tableTop, { width: columnWidths[1], align: 'left' });
+doc.text("Quantity", columnX[2], tableTop, { width: columnWidths[2], align: 'left' });
+doc.text("Description", columnX[3], tableTop, { width: columnWidths[3], align: 'left' });
+doc.text("Image", columnX[4], tableTop, { width: columnWidths[4], align: 'left' });
+
+
+    doc.moveTo(outerX, tableTop + 15).lineTo(outerX + outerWidth, tableTop + 15).stroke();
+
+    // Table Rows
+    doc.font("Helvetica");
+    let position = tableTop + 25;
+
+    const loadImage = async (url) => {
+      const response = await fetch(url);
+      return await response.arrayBuffer();
+    };
+
+ const addRow = async (p, i) => {
+ 
+  doc.font("Helvetica");
+
+  // Calculate row height based on description content
+  const descriptionHeight = doc.heightOfString(p.message || "N/A", {
+    width: columnWidths[3],
+    align: 'left'
+  });
+  const rowHeight = Math.max(50, descriptionHeight + 10);
+
+  // Add text
+  doc.text(i + 1, columnX[0], position, { width: columnWidths[0], align: 'left' });
+  doc.text(p.name, columnX[1], position, { width: columnWidths[1], align: 'left' });
+  doc.text(p.moq, columnX[2], position, { width: columnWidths[2], align: 'left' });
+  doc.text(p.message || "N/A", columnX[3], position, { width: columnWidths[3], align: 'left' });
+
+  // Add image
+  if (p.productImage) {
+    try {
+      const imageBuffer = Buffer.from(await loadImage(p.productImage));
+      doc.image(imageBuffer, columnX[4], position, { width: 40, height: 40 });
+    } catch (err) {
+      doc.text("Image error", columnX[4], position, { width: columnWidths[4] });
+    }
+  } else {
+    doc.text("N/A", columnX[4], position, { width: columnWidths[4] });
+  }
+
+  // Draw row separator line
+  position += rowHeight;
+  doc.moveTo(outerX, position - 5).lineTo(outerX + outerWidth, position - 5).stroke();
+};
+
+
+    (async () => {
+      for (let i = 0; i < products.length; i++) {
+        await addRow(products[i], i);
+      }
+
       doc.fontSize(9).fillColor("gray");
       doc.text("This document is auto-generated by Superior Pack UAE.", outerX, outerY + outerHeight - 30, {
         align: "center",
         width: outerWidth,
       });
-  
+
       doc.end();
-    });
-  };
+    })();
+  });
+};
+
   
   
 
