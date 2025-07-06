@@ -350,16 +350,18 @@
                     <p class="card-text text-center">Product ID: <%= product.prodID %></p>
                     <p class="card-text text-center">MOQ: <%= product.customizedMOQ %></p>
                    
-                    <form action="/reorder-cart/add" method="POST">
-                      <input type="hidden" name="prod_id" value="<%= product.prodID %>" />
-                      <input type="hidden" name="name" value="<%= product.name %>" />
-                      <input type="hidden" name="description" value="<%= product.description %>" />
-                      <input type="hidden" name="moq" value="<%= product.customizedMOQ %>" />
-                      <input type="hidden" name="size" value="<%= product.size %>" />
-                      <input type="hidden" name="productImage" value="<%= product.productImage %>" />
+                <button 
+  class="btn modern-btn mt-auto add-to-reorder-btn" 
+  data-id="<%= product.prodID %>"
+  data-name="<%= product.name %>"
+  data-description="<%= product.description %>"
+  data-moq="<%= product.customizedMOQ %>"
+  data-size="<%= product.size %>"
+  data-image="<%= product.productImage %>"
+>
+  Add to Cart
+</button>
 
-                      <button type="submit" class="btn modern-btn mt-auto add-to-reorder-btn">Add to Cart</button>
-                    </form>
                     
                   </div>
                 </div>
@@ -482,19 +484,48 @@
     <!-- Template Javascript -->
     <script src="userAssets/js/main.js"></script>
     
-    <script>
-      document.querySelectorAll('.add-to-reorder-btn').forEach((btn) => {
-        btn.addEventListener('click', function (e) {
-          // Disable the button and change text
-          this.innerText = 'Added to Cart';
-          this.disabled = true;
-    
-          // Allow form submission to continue normally
-          // Find the parent form and submit it
-          this.closest('form').submit();
+   <script>
+  document.querySelectorAll(".add-to-reorder-btn").forEach(button => {
+    button.addEventListener("click", async (e) => {
+      e.preventDefault();
+
+      // Disable the button and change text
+      button.innerText = "Added to Cart";
+      button.disabled = true;
+
+      // Prepare data from data attributes
+      const payload = {
+        prod_id: button.getAttribute("data-id"),
+        name: button.getAttribute("data-name"),
+        description: button.getAttribute("data-description"),
+        moq: button.getAttribute("data-moq"),
+        size: button.getAttribute("data-size"),
+        productImage: button.getAttribute("data-image")
+      };
+
+      try {
+        const response = await fetch("/reorder-cart/add", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify(payload)
         });
-      });
-    </script>
+
+        if (!response.ok) {
+          console.error("Failed to add to reorder cart");
+          button.innerText = "Add to Cart";
+          button.disabled = false;
+        }
+      } catch (error) {
+        console.error("Error adding to reorder cart:", error);
+        button.innerText = "Add to Cart";
+        button.disabled = false;
+      }
+    });
+  });
+</script>
+
     
     
     
