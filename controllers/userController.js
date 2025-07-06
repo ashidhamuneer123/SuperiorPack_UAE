@@ -556,6 +556,7 @@ export const userDashboard = async (req, res) => {
       const filter = {};
       if (typeFilter === 'generic') filter.isCustomized = false;
       if (typeFilter === 'customized') filter.isCustomized = true;
+       if (typeFilter === 'concept') filter.isConcept = true;
       if (categoryFilter.length) filter.catId = { $in: categoryFilter };
   
       const categories = await Category.find();
