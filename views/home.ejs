@@ -250,9 +250,8 @@
                       <div class="dropdown-menu bg-secondary border-0 rounded-0 w-100 m-0">
                         <% customizedCategoryProductsMap[category._id].forEach(product => { %>
                           <a 
-                            style="color: #98d5ca;" 
                             href="/product/<%= product.slug %>" 
-                            class="dropdown-item"
+                            class="text-brown dropdown-item"
                           >
                             <%= product.name %>
                           </a>
@@ -281,9 +280,9 @@
                       <div class="dropdown-menu bg-secondary border-0 rounded-0 w-100 m-0">
                         <% genericCategoryProductsMap[category._id].forEach(product => { %>
                           <a 
-                          style="color: #98d5ca;" 
+                         
                             href="/product/<%= product.slug %>" 
-                            class="dropdown-item"
+                            class="text-brown dropdown-item"
                           >
                             <%= product.name %>
                           </a>
@@ -311,9 +310,9 @@
                       <div class="dropdown-menu bg-secondary border-0 rounded-0 w-100 m-0">
                         <% conceptCategoryProductsMap[category._id].forEach(product => { %>
                           <a 
-                          style="color: #98d5ca;" 
+                          
                             href="/product/<%= product.slug %>" 
-                            class="dropdown-item"
+                            class="text-brown dropdown-item"
                           >
                             <%= product.name %>
                           </a>
