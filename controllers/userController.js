@@ -179,8 +179,7 @@ export const productDetailPage = async (req, res) => {
       // For regular/customized products, get products in the same category (excluding self)
       relatedProducts = await Product.find({
         catId: product.catId._id,
-        _id: { $ne: product._id },
-        isConcept: false
+        _id: { $ne: product._id }
       }).limit(4);
     }
 
