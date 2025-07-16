@@ -250,7 +250,7 @@ export const userDashboard = async (req, res) => {
   try {
     const { _id } = req.session.user;
     const page = parseInt(req.query.page) || 1;
-    const limit = 9;
+    const limit = 50;
     const skip = (page - 1) * limit;
 
     const categories = await Category.find({ isDeleted: false });

@@ -129,9 +129,9 @@ export const addToReorderCart = async (req, res) => {
   
 
 
- export const generateLpoPdf = ({ from, to, lpoNumber, date, products }) => {
+export const generateLpoPdf = ({ from, to, lpoNumber, date, products }) => {
   return new Promise((resolve, reject) => {
-    const doc = new PDFDocument({ margin: 50 });
+    const doc = new PDFDocument({ margin: 50, size: 'A4' });
     const buffers = [];
 
     doc.on("data", buffers.push.bind(buffers));
@@ -151,129 +151,173 @@ export const addToReorderCart = async (req, res) => {
     const outerY = 40;
     const outerWidth = 520;
     const outerHeight = 720;
-    doc.rect(outerX, outerY, outerWidth, outerHeight).stroke();
 
-    doc.fontSize(22).font("Helvetica-Bold").text("LPO", { align: "center" });
-    doc.moveDown(1.5);
+    const columnX = [50, 80, 200, 260, 320];
+    const columnWidths = [25, 100, 50, 50, 210];
 
-    const infoTop = doc.y;
-    doc.fontSize(12).font("Helvetica");
+    let position;
+    let currentPage = 1;
 
-    doc.text("From:", 50, infoTop).font("Helvetica-Bold").text(from, 120, infoTop).font("Helvetica");
-    doc.text("To:", 50, infoTop + 20).font("Helvetica-Bold").text(to, 120, infoTop + 20).font("Helvetica");
-    doc.text("LPO Number:", 340, infoTop).font("Helvetica-Bold").text(lpoNumber, 440, infoTop).font("Helvetica");
-    doc.text("Date:", 340, infoTop + 20).font("Helvetica-Bold").text(new Date(date).toLocaleDateString(), 440, infoTop + 20).font("Helvetica");
-
-    doc.moveDown(3);
-
-    // Table Header
-    const tableTop = doc.y;
-   const columnX = [50, 85, 270, 340, 440]; // image shifted right
-const columnWidths = [30, 180, 60, 90, 60]; // more room for description
-
-doc.font("Helvetica-Bold");
-doc.text("No.", columnX[0], tableTop, { width: columnWidths[0], align: 'left' });
-doc.text("Product Name", columnX[1], tableTop, { width: columnWidths[1], align: 'left' });
-doc.text("Quantity", columnX[2], tableTop, { width: columnWidths[2], align: 'left' });
-doc.text("Description", columnX[3], tableTop, { width: columnWidths[3], align: 'left' });
-doc.text("Image", columnX[4], tableTop, { width: columnWidths[4], align: 'left' });
-
-
-    doc.moveTo(outerX, tableTop + 15).lineTo(outerX + outerWidth, tableTop + 15).stroke();
-
-    // Table Rows
-    doc.font("Helvetica");
-    let position = tableTop + 25;
-
-    const loadImage = async (url) => {
-      const response = await fetch(url);
-      return await response.arrayBuffer();
+    const drawOuterBox = () => {
+      doc.rect(outerX, outerY, outerWidth, outerHeight).stroke();
     };
 
- const addRow = async (p, i) => {
- 
-  doc.font("Helvetica");
+    const drawHeader = () => {
+      doc.fontSize(22).font("Helvetica-Bold").text("LPO", { align: "center" });
+      doc.moveDown(1.5);
 
-  // Calculate row height based on description content
-  const descriptionHeight = doc.heightOfString(p.message || "N/A", {
-    width: columnWidths[3],
-    align: 'left'
-  });
-  const rowHeight = Math.max(50, descriptionHeight + 10);
+      const infoTop = doc.y;
+      doc.fontSize(12).font("Helvetica");
+      doc.text("From:", 50, infoTop).font("Helvetica-Bold").text(from, 120, infoTop).font("Helvetica");
+      doc.text("To:", 50, infoTop + 20).font("Helvetica-Bold").text(to, 120, infoTop + 20).font("Helvetica");
+      doc.text("LPO Number:", 340, infoTop).font("Helvetica-Bold").text(lpoNumber, 440, infoTop).font("Helvetica");
+      doc.text("Date:", 340, infoTop + 20).font("Helvetica-Bold").text(new Date(date).toLocaleDateString(), 440, infoTop + 20).font("Helvetica");
 
-  // Add text
-  doc.text(i + 1, columnX[0], position, { width: columnWidths[0], align: 'left' });
-  doc.text(p.name, columnX[1], position, { width: columnWidths[1], align: 'left' });
-  doc.text(p.moq, columnX[2], position, { width: columnWidths[2], align: 'left' });
-  doc.text(p.message || "N/A", columnX[3], position, { width: columnWidths[3], align: 'left' });
+      doc.moveDown(3);
+    };
 
-  // Add image
-  if (p.productImage) {
-    try {
-      const imageBuffer = Buffer.from(await loadImage(p.productImage));
-      doc.image(imageBuffer, columnX[4], position, { width: 40, height: 40 });
-    } catch (err) {
-      doc.text("Image error", columnX[4], position, { width: columnWidths[4] });
-    }
-  } else {
-    doc.text("N/A", columnX[4], position, { width: columnWidths[4] });
-  }
+    const addTableHeader = () => {
+      position = doc.y;
+      doc.font("Helvetica-Bold");
+      doc.text("No.", columnX[0], position, { width: columnWidths[0], align: 'left' });
+      doc.text("Product Name", columnX[1], position, { width: columnWidths[1], align: 'left' });
+      doc.text("Qty", columnX[2], position, { width: columnWidths[2], align: 'left' });
+      doc.text("Image", columnX[3], position, { width: columnWidths[3], align: 'left' });
+      doc.text("Description", columnX[4], position, { width: columnWidths[4], align: 'left' });
 
-  // Draw row separator line
-  position += rowHeight;
-  doc.moveTo(outerX, position - 5).lineTo(outerX + outerWidth, position - 5).stroke();
-};
+      doc.moveTo(outerX, position + 15).lineTo(outerX + outerWidth, position + 15).stroke();
+      position += 25;
+      doc.font("Helvetica");
+    };
 
-
-    (async () => {
-      for (let i = 0; i < products.length; i++) {
-        await addRow(products[i], i);
-      }
-
+    const drawPageFooter = () => {
       doc.fontSize(9).fillColor("gray");
       doc.text("This document is auto-generated by Superior Pack UAE.", outerX, outerY + outerHeight - 30, {
         align: "center",
         width: outerWidth,
       });
 
+      doc.fillColor("black").fontSize(10);
+      doc.text(`Page ${currentPage}`, outerX + outerWidth - 50, outerY + outerHeight - 20);
+      currentPage++;
+    };
+
+    drawOuterBox();
+    drawHeader();
+    addTableHeader();
+
+    const loadImage = async (url) => {
+      const response = await fetch(url);
+      return await response.arrayBuffer();
+    };
+
+    const addRow = async (p, i) => {
+      doc.font("Helvetica");
+
+      const descriptionHeight = doc.heightOfString(p.message || "N/A", {
+        width: columnWidths[4],
+        align: 'left'
+      });
+      const rowHeight = Math.max(50, descriptionHeight + 10);
+
+      if (position + rowHeight > outerY + outerHeight - 60) {
+        drawPageFooter();
+        doc.addPage();
+        drawOuterBox();
+        drawHeader();
+        addTableHeader();
+      }
+
+      doc.text(i + 1, columnX[0], position, { width: columnWidths[0], align: 'left' });
+      doc.text(p.name, columnX[1], position, { width: columnWidths[1], align: 'left' });
+      doc.text(p.moq, columnX[2], position, { width: columnWidths[2], align: 'left' });
+
+      if (p.productImage) {
+        try {
+          const imageBuffer = Buffer.from(await loadImage(p.productImage));
+          doc.image(imageBuffer, columnX[3], position, { width: 40, height: 40 });
+        } catch (err) {
+          doc.text("Image error", columnX[3], position, { width: columnWidths[3] });
+        }
+      } else {
+        doc.text("N/A", columnX[3], position, { width: columnWidths[3] });
+      }
+
+      doc.text(p.message || "N/A", columnX[4], position, { width: columnWidths[4], align: 'left' });
+
+      position += rowHeight;
+
+      // ✅ Draw only horizontal line for row
+      doc.moveTo(outerX, position - 5).lineTo(outerX + outerWidth, position - 5).stroke();
+    };
+
+    (async () => {
+      for (let i = 0; i < products.length; i++) {
+        await addRow(products[i], i);
+      }
+
+      drawPageFooter();
       doc.end();
     })();
   });
 };
 
+
+
   
   
 
-  export const sendReorderEmails = async ({ user, adminEmail, pdfPath, lpoNumber }) => {
-    const transporter = nodemailer.createTransport({
-      host: 'mail.privateemail.com', 
-      port: 465,
-      secure: true,
-      auth: {
-        user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASS // use env vars!
-      }
-    });
-  
-    const attachments = [{ filename: `${lpoNumber}.pdf`, path: pdfPath }];
-  
-    // Mail to Admin
-    await transporter.sendMail({
-      from:  `"Reorder Mail" <${process.env.EMAIL_USER}>`,
-      to: adminEmail,
-      subject: `New LPO Reorder - ${lpoNumber}`,
-      text: `A reorder has been submitted by ${user.name}.`,
-      attachments
-    });
-  
-    // Mail to Customer
-    await transporter.sendMail({
-      from: `"Reorder Mail" <${process.env.EMAIL_USER}>`,
-      to: user.email,
-      subject: `Your Reorder Confirmation - ${lpoNumber}`,
-      text: `Your reorder was successful. Reference copy attached.`,
-      attachments
-    });
-  };
+export const sendReorderEmails = async ({ user, adminEmail, pdfPath, lpoNumber }) => {
+  const transporter = nodemailer.createTransport({
+    host: 'mail.privateemail.com',
+    port: 465,
+    secure: true,
+    auth: {
+      user: process.env.EMAIL_USER,
+      pass: process.env.EMAIL_PASS
+    }
+  });
+
+  const attachments = [{ filename: `${lpoNumber}.pdf`, path: pdfPath }];
+
+  // Mail to Admin
+  await transporter.sendMail({
+    from: `"Superior Pack Orders" <${process.env.EMAIL_USER}>`,
+    to: adminEmail,
+    subject: `New Order Received - ${lpoNumber}`,
+    text: `Dear Team,
+
+A new order has been placed by the customer:
+
+Name: ${user.name}
+Email: ${user.email}
+
+Please find the attached LPO (LPO Number: ${lpoNumber}) for your reference.
+
+Best regards,  
+Superior Pack UAE`,
+    attachments
+  });
+
+  // Mail to Customer
+  await transporter.sendMail({
+    from: `"Superior Pack Orders" <${process.env.EMAIL_USER}>`,
+    to: user.email,
+    subject: `Your Order Confirmation - ${lpoNumber}`,
+    text: `Dear ${user.name},
+
+Thank you for placing your order with Superior Pack UAE.
+
+We have received your order successfully, and it is now being processed.  
+Please find your LPO (LPO Number: ${lpoNumber}) attached to this email for your records.
+
+If you have any questions or need further assistance, feel free to reach out to us.
+
+Best regards,  
+Superior Pack UAE  
+info@superiorpackuae.com`,
+    attachments
+  });
+};
 
 
