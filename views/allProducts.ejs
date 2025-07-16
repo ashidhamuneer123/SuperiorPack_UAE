@@ -327,128 +327,113 @@
         </div>
     </div>
     <!-- Page Header End -->
-         <!-- Shop Start -->
-    <div class="container-fluid pt-5">
-        <div class="row px-xl-5">
-            <!-- Shop Sidebar Start -->
-            <div class="col-lg-3 col-md-12">
-            
-               
-
-           <!-- Filters Section -->
-<div class="mb-5">
-  <h5 class="font-weight-semi-bold mb-4">Filter by Type</h5>
-  <form id="type-filter-form">
-    <div class="custom-control custom-radio mb-2">
-      <input type="radio" class="custom-control-input product-type" name="productType" id="type-all" value="all" checked>
-      <label class="custom-control-label" for="type-all">All</label>
-    </div>
-    <div class="custom-control custom-radio mb-2">
-      <input type="radio" class="custom-control-input product-type" name="productType" id="type-generic" value="generic">
-      <label class="custom-control-label" for="type-generic">Generic</label>
-    </div>
-    <div class="custom-control custom-radio mb-2">
-      <input type="radio" class="custom-control-input product-type" name="productType" id="type-customized" value="customized">
-      <label class="custom-control-label" for="type-customized">Customized</label>
-    </div>
-     <div class="custom-control custom-radio mb-2">
-      <input type="radio" class="custom-control-input product-type" name="productType" id="type-concept" value="concept">
-      <label class="custom-control-label" for="type-concept">Concept Based</label>
-    </div>
-  </form>
-</div>
-
-<!-- Categories -->
-<div class="mb-5">
-  <h5 class="font-weight-semi-bold mb-4">Filter by Category</h5>
-  <form id="category-filter-form">
-    <% categories.forEach(category => { %>
-      <div class="custom-control custom-checkbox mb-2">
-        <input type="checkbox" class="custom-control-input category-filter" value="<%= category._id %>" id="cat-<%= category._id %>">
-        <label class="custom-control-label" for="cat-<%= category._id %>"><%= category.name %></label>
-      </div>
-    <% }) %>
-  </form>
-</div>
+<!-- Shop Start -->
+<div class="container-fluid pt-5">
+  <div class="row px-3 px-md-4 px-lg-5">
+  
+    <!-- Shop Sidebar Start -->
+    <div class="col-lg-3 mb-4 mb-lg-0"> <!-- Collapse on mobile -->
+      <!-- Filters Section -->
+      <div class="mb-5">
+        <h5 class="font-weight-semi-bold mb-4">Filter by Type</h5>
+        <form id="type-filter-form">
+          <% const types = ['all', 'generic', 'customized', 'concept']; %>
+          <% types.forEach(type => { %>
+            <div class="custom-control custom-radio mb-2">
+              <input type="radio" class="custom-control-input product-type" name="productType" id="type-<%= type %>" value="<%= type %>" <%= type === 'all' ? 'checked' : '' %> >
+              <label class="custom-control-label" for="type-<%= type %>"><%= type.charAt(0).toUpperCase() + type.slice(1) %></label>
             </div>
-            <!-- Shop Sidebar End -->
-         <!-- Shop Product Start -->
-         <div class="col-lg-9 col-md-12">
-            <div class="row pb-3">
-                <div class="col-12 pb-1">
-                    <div class="d-flex align-items-center justify-content-between mb-4">
-                       
-                  <!-- Sorting -->
-<div class="dropdown ml-auto">
-  <select id="sortDropdown" class="btn border">
-    <option value="latest">Latest</option>
-    <option value="popularity">Popularity</option>
-    <option value="az">Products A-Z</option>
-    <option value="za">Products Z-A</option>
-  </select>
-</div>
-                      
-                      
-                    </div>
-                </div>
-              <div id="product-list" class="row">
-                <% products.forEach(product => { %>
-  <div class="col-lg-4 col-md-6 col-sm-12 pb-1">
-    <div class="card product-item border mb-4"> <!-- Added full border to card -->
-
-      <!-- Entire image section is a clickable block -->
-      <div class="position-relative overflow-hidden bg-transparent border-bottom p-0">
-        <a href="/product/<%= product.slug %>">
-          <img class="img-fluid w-100" src="<%= product.image[0] %>" alt="<%= product.name %>">
-        </a>
+          <% }) %>
+        </form>
       </div>
 
-      <!-- Name and MOQ section -->
-      <div class="text-center px-2 pt-3 pb-3 border-bottom">
-        <a href="/product/<%= product.slug%>">
-          <h6 class="text-truncate mb-2"><%= product.name %></h6>
-        </a>
+      <!-- Categories -->
+      <div class="mb-5">
+        <h5 class="font-weight-semi-bold mb-4">Filter by Category</h5>
+        <form id="category-filter-form">
+          <% categories.forEach(category => { %>
+            <div class="custom-control custom-checkbox mb-2">
+              <input type="checkbox" class="custom-control-input category-filter" value="<%= category._id %>" id="cat-<%= category._id %>">
+              <label class="custom-control-label" for="cat-<%= category._id %>"><%= category.name %></label>
+            </div>
+          <% }) %>
+        </form>
+      </div>
+    </div>
+    <!-- Shop Sidebar End -->
 
-        <% if (!product.isConcept) { %>
-          <div class="d-flex justify-content-center">
-            <h6 class="mb-0">MOQ: <%= product.moq %></h6>
+    <!-- Shop Product Start -->
+    <div class="col-lg-9">
+      <div class="row pb-3">
+      
+        <!-- Sorting -->
+        <div class="col-12 pb-2">
+          <div class="d-flex align-items-center justify-content-end mb-3">
+            <select id="sortDropdown" class="btn border">
+              <option value="latest">Latest</option>
+              <option value="popularity">Popularity</option>
+              <option value="az">Products A-Z</option>
+              <option value="za">Products Z-A</option>
+            </select>
           </div>
-        <% } %>
-      </div>
-
-      <!-- Footer buttons -->
-      <div class="card-footer d-flex justify-content-between bg-light">
-        <a href="/product/<%= product.slug %>" class="btn btn-sm text-dark p-0">
-          <i class="fas fa-eye text-brown mr-1"></i>View Detail
-        </a>
-        <a href="/add-to-enquiry/<%= product._id %>"
-           class="btn btn-sm text-dark p-0 add-to-enquiry"
-           data-id="<%= product._id %>"
-           id="enquiry-btn-<%= product._id %>">
-          <i class="fas fa-shopping-cart text-brown mr-1"></i>Add To Enquiry
-        </a>
-      </div>
-
-    </div>
-  </div>
-<% }) %>
-
-</div>
-
-          
-                <!-- Pagination -->
-<div id="pagination-container" class="col-12 pb-1">
-  <nav aria-label="Page navigation">
-    <ul id="pagination" class="pagination justify-content-center mb-3"></ul>
-  </nav>
-</div>
-                  
-            </div>
         </div>
-        <!-- Shop Product End -->
+
+        <!-- Product Grid -->
+        <div id="product-list" class="row">
+          <% products.forEach(product => { %>
+            <div class="col-12 col-sm-6 col-md-4 pb-3 d-flex">
+              <div class="card product-item border w-100">
+                <!-- Image -->
+                <div class="position-relative overflow-hidden bg-transparent border-bottom p-0">
+                  <a href="/product/<%= product.slug %>">
+                    <img class="img-fluid w-100" src="<%= product.image[0] %>" alt="<%= product.name %>">
+                  </a>
+                </div>
+
+                <!-- Product Name + MOQ -->
+                <div class="text-center px-2 pt-3 pb-3 border-bottom">
+                  <a href="/product/<%= product.slug %>">
+                    <h6 class="text-truncate mb-2"><%= product.name %></h6>
+                  </a>
+
+                  <% if (product.isConcept !== true) { %>
+                    <div class="d-flex justify-content-center">
+                      <h6 class="mb-0">MOQ: <%= product.moq %></h6>
+                    </div>
+                  <% } %>
+                </div>
+
+                <!-- Footer Buttons -->
+                <div class="card-footer d-flex flex-column flex-sm-row justify-content-between bg-light px-2">
+                  <a href="/product/<%= product.slug %>" class="btn btn-sm text-dark p-0 mb-2 mb-sm-0">
+                    <i class="fas fa-eye text-brown mr-1"></i>View Detail
+                  </a>
+                  <a href="/add-to-enquiry/<%= product._id %>"
+                     class="btn btn-sm text-dark p-0 add-to-enquiry"
+                     data-id="<%= product._id %>"
+                     id="enquiry-btn-<%= product._id %>">
+                    <i class="fas fa-shopping-cart text-brown mr-1"></i>Add To Enquiry
+                  </a>
+                </div>
+              </div>
+            </div>
+          <% }) %>
+        </div>
+
+        <!-- Pagination -->
+        <div id="pagination-container" class="col-12">
+          <nav aria-label="Page navigation">
+            <ul id="pagination" class="pagination justify-content-center mb-3"></ul>
+          </nav>
+        </div>
+      </div>
     </div>
+    <!-- Shop Product End -->
+
+  </div>
 </div>
 <!-- Shop End -->
+
 
   <!-- Footer Start -->
   <div class="container-fluid bg-secondary text-dark mt-5 pt-5">
