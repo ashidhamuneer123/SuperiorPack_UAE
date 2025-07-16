@@ -536,7 +536,7 @@ export const userDashboard = async (req, res) => {
       let sortCriteria;
       switch (sortOption) {
         case 'latest':
-          sortCriteria = { timestamp: -1 };
+          sortCriteria = { timestamp: 1 };
           break;
         case 'popularity':
           sortCriteria = { views: -1 };
@@ -548,7 +548,7 @@ export const userDashboard = async (req, res) => {
           sortCriteria = { name: -1 };
           break;
         default:
-          sortCriteria = { timestamp: -1 };
+          sortCriteria = { timestamp: 1 };
       }
   
       // Filter logic
