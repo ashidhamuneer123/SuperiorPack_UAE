@@ -373,7 +373,21 @@ export const searchProducts = async (req, res) => {
     const searchCondition = {
       $or: [
         { name: { $regex: query, $options: 'i' } },
-        { prod_id: { $regex: query, $options: 'i' } }
+        { prod_id: { $regex: query, $options: 'i' } },
+        {
+          customSizes: {
+            $elemMatch: {
+              size: { $regex: query, $options: 'i' }
+            }
+          }
+        },
+        {
+          customSizes: {
+            $elemMatch: {
+              systemCode: { $regex: query, $options: 'i' }
+            }
+          }
+        }
       ]
     };
 
@@ -400,6 +414,7 @@ export const searchProducts = async (req, res) => {
     res.status(500).send("Internal Server Error");
   }
 };
+
 
   
   export const filterByCategory = async (req, res) => {
