@@ -143,7 +143,7 @@ export const viewUsers = async (req, res) => {
     const totalPages = Math.ceil(totalUsers / itemsPerPage);
 
     const users = await User.find()
-      .sort({ createdAt: -1 })
+      .sort({ createdAt: 1 })
       .skip((currentPage - 1) * itemsPerPage)
       .limit(itemsPerPage)
       .lean();
