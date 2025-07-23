@@ -3,7 +3,7 @@ import mongoose from 'mongoose';
 const productSchema = new mongoose.Schema({
   prodID: { type: String, required: true },
   productImage: { type: String }, // Cloudinary URL
-  customizedMOQ: { type: Number },
+  customizedMOQ: { type: String },
   size: { type: String },
   status: { type: String, enum: ['active', 'inactive'], default: 'active' }
 });
