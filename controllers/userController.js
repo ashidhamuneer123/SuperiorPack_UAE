@@ -338,65 +338,69 @@ export const userDashboard = async (req, res) => {
     });
   };
 
-  export const searchProducts = async (req, res) => {
-    try {
-      const categories = await Category.find({ isDeleted: false });
-      const productsByCategory = await Product.find().populate('catId');
-  
-      const categoryProductsMap = {};
-      productsByCategory.forEach(product => {
-        if (product.catId) {
-          const categoryId = product.catId._id.toString();
-          if (!categoryProductsMap[categoryId]) {
-            categoryProductsMap[categoryId] = [];
-          }
-          categoryProductsMap[categoryId].push(product);
+export const searchProducts = async (req, res) => {
+  try {
+    const categories = await Category.find({ isDeleted: false });
+    const productsByCategory = await Product.find().populate('catId');
+
+    const categoryProductsMap = {};
+    productsByCategory.forEach(product => {
+      if (product.catId) {
+        const categoryId = product.catId._id.toString();
+        if (!categoryProductsMap[categoryId]) {
+          categoryProductsMap[categoryId] = [];
         }
-      });
-  
-      const query = req.query.query?.trim();
-      const page = parseInt(req.query.page) || 1;
-      const limit = 8;
-      const skip = (page - 1) * limit;
-  
-      if (!query) {
-        return res.render("searchResults", {
-          products: [],
-          searchTerm: "",
-          categories,
-          categoryProductsMap,
-          currentPage: 1,
-          totalPages: 0
-        });
+        categoryProductsMap[categoryId].push(product);
       }
-  
-      const totalProducts = await Product.countDocuments({
-        name: { $regex: query, $options: 'i' }
-      });
-  
-      const totalPages = Math.ceil(totalProducts / limit);
-  
-      const products = await Product.find({
-        name: { $regex: query, $options: 'i' }
-      })
-        .skip(skip)
-        .limit(limit)
-        .lean();
-  
-      res.render("searchResults", {
-        products,
-        searchTerm: query,
+    });
+
+    const query = req.query.query?.trim();
+    const page = parseInt(req.query.page) || 1;
+    const limit = 8;
+    const skip = (page - 1) * limit;
+
+    if (!query) {
+      return res.render("searchResults", {
+        products: [],
+        searchTerm: "",
         categories,
         categoryProductsMap,
-        currentPage: page,
-        totalPages
+        currentPage: 1,
+        totalPages: 0
       });
-  
-    } catch (error) {
-      console.error("Error during search:", error);
-      res.status(500).send("Internal Server Error");
     }
-  };
+
+    const searchCondition = {
+      $or: [
+        { name: { $regex: query, $options: 'i' } },
+        { prod_id: { $regex: query, $options: 'i' } }
+      ]
+    };
+
+    const totalProducts = await Product.countDocuments(searchCondition);
+
+    const totalPages = Math.ceil(totalProducts / limit);
+
+    const products = await Product.find(searchCondition)
+      .skip(skip)
+      .limit(limit)
+      .lean();
+
+    res.render("searchResults", {
+      products,
+      searchTerm: query,
+      categories,
+      categoryProductsMap,
+      currentPage: page,
+      totalPages
+    });
+
+  } catch (error) {
+    console.error("Error during search:", error);
+    res.status(500).send("Internal Server Error");
+  }
+};
+
   
   export const filterByCategory = async (req, res) => {
     try {
