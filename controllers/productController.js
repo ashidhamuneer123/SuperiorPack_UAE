@@ -97,7 +97,7 @@ export const addProduct = async (req, res) => {
 
 export const viewProducts = async (req, res) => {
   const currentPage = parseInt(req.query.page) || 1;
-  const perPage = 5;
+  const perPage = 15;
   const skip = (currentPage - 1) * perPage;
 
   try {
