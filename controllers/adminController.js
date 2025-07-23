@@ -137,7 +137,7 @@ export const createUser = async (req, res) => {
 export const viewUsers = async (req, res) => {
   try {
     const currentPage = parseInt(req.query.page) || 1;
-    const itemsPerPage = 5;
+    const itemsPerPage = 1;
 
     const totalUsers = await User.countDocuments();
     const totalPages = Math.ceil(totalUsers / itemsPerPage);
