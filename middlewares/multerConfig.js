@@ -48,10 +48,10 @@ const upload = multer({
     fileSize: 5 * 1024 * 1024, // 5MB max per file
   },
 }).fields([
-  { name: 'productImages', maxCount: 30 },
+  { name: 'productImages', maxCount: 50 },
   { name: 'mainImage', maxCount: 1 },
   { name: 'logo', maxCount: 1 },
-  { name: 'customProductImages', maxCount: 20 },
+  { name: 'customProductImages', maxCount: 50 },
   { name: 'blogImage', maxCount: 1 },
   { name: 'lpoPdf', maxCount: 1 }, // added this for PDF upload
 ]);
