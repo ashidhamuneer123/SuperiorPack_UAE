@@ -111,7 +111,7 @@ export const addToReorderCart = async (req, res) => {
       // 5. Send email
       await sendReorderEmails({
         user,
-        adminEmail: 'ashidhaa@gmail.com',
+        adminEmail: 'info@superiorpackuae.com',
         pdfPath: pdfUrl,
         lpoNumber
       });
