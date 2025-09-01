@@ -267,14 +267,14 @@ export const generateLpoPdf = ({ from, to, lpoNumber, date, products }) => {
   
   
 
+
 export const sendReorderEmails = async ({ user, adminEmail, pdfPath, lpoNumber }) => {
+  // Gmail SMTP transporter
   const transporter = nodemailer.createTransport({
-    host: 'mail.privateemail.com',
-    port: 465,
-    secure: true,
+    service: 'gmail',
     auth: {
-      user: process.env.EMAIL_USER,
-      pass: process.env.EMAIL_PASS
+      user: process.env.GMAIL_USER, // superiorpack@gmail.com
+      pass: process.env.GMAIL_APP_PASS // Gmail App Password
     }
   });
 
@@ -282,8 +282,8 @@ export const sendReorderEmails = async ({ user, adminEmail, pdfPath, lpoNumber }
 
   // Mail to Admin
   await transporter.sendMail({
-    from: `"Superior Pack Orders" <${process.env.EMAIL_USER}>`,
-    to: adminEmail,
+    from: `"Superior Pack Orders" <${process.env.GMAIL_USER}>`, // sender
+    to: adminEmail, // e.g., info@superiorpackuae.com
     subject: `New Order Received - ${lpoNumber}`,
     text: `Dear Team,
 
@@ -301,7 +301,7 @@ Superior Pack UAE`,
 
   // Mail to Customer
   await transporter.sendMail({
-    from: `"Superior Pack Orders" <${process.env.EMAIL_USER}>`,
+    from: `"Superior Pack Orders" <${process.env.GMAIL_USER}>`, // sender
     to: user.email,
     subject: `Your Order Confirmation - ${lpoNumber}`,
     text: `Dear ${user.name},
