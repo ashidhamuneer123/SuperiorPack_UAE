@@ -703,17 +703,53 @@ export const searchProducts = async (req, res) => {
   };
 
 
-  export const sendEnquiryEmail = async (req, res) => {
-    const { name, email, phone, additionalMessage, products } = req.body;
-  
+
+export const sendEnquiryEmail = async (req, res) => {
+  try {
+    const { name, email, phone, additionalMessage, products, token } = req.body;
+
+    // ===============================
+    // ✅ STEP 1: Verify reCAPTCHA
+    // ===============================
+    const secretKey = process.env.RECAPTCHA_SECRET_KEY;
+
+    if (!token) {
+      return res.status(400).json({
+        success: false,
+        message: 'reCAPTCHA verification required.'
+      });
+    }
+
+    const verificationURL = `https://www.google.com/recaptcha/api/siteverify?secret=${secretKey}&response=${token}`;
+
+    const captchaResponse = await fetch(verificationURL, { method: 'POST' });
+    const captchaData = await captchaResponse.json();
+
+    if (!captchaData.success) {
+      return res.status(400).json({
+        success: false,
+        message: 'reCAPTCHA verification failed.'
+      });
+    }
+
+    // ===============================
+    // ✅ STEP 2: Parse products
+    // ===============================
     let parsedProducts = [];
     try {
-      parsedProducts = typeof products === 'string' ? JSON.parse(products) : products;
+      parsedProducts = typeof products === 'string'
+        ? JSON.parse(products)
+        : products;
     } catch (error) {
-      return res.status(400).json({ success: false, message: 'Invalid product data' });
+      return res.status(400).json({
+        success: false,
+        message: 'Invalid product data'
+      });
     }
-  
-    // Step 1: Get the new enquiry cart number
+
+    // ===============================
+    // ✅ STEP 3: Generate Enquiry No
+    // ===============================
     let enquiryCartNumber;
     try {
       const enquiryCartDoc = await EnquiryCartNumber.findOneAndUpdate(
@@ -721,12 +757,19 @@ export const searchProducts = async (req, res) => {
         { $inc: { currentNumber: 1 } },
         { new: true, upsert: true }
       );
+
       const formattedNumber = String(enquiryCartDoc.currentNumber).padStart(4, '0');
       enquiryCartNumber = `EC${formattedNumber}`;
     } catch (error) {
-      return res.status(500).json({ success: false, message: 'Failed to generate enquiry number' });
+      return res.status(500).json({
+        success: false,
+        message: 'Failed to generate enquiry number'
+      });
     }
-  
+
+    // ===============================
+    // ✅ STEP 4: Build email HTML
+    // ===============================
     const productRows = parsedProducts.map(prod => `
       <tr>
         <td>${prod.prod_id || ''}</td>
@@ -736,19 +779,20 @@ export const searchProducts = async (req, res) => {
         <td>${prod.message || ''}</td>
       </tr>
     `).join('');
-  
+
     const htmlContent = `
       <h3>New Product Enquiry</h3>
       <p><strong>Enquiry No:</strong> ${enquiryCartNumber}</p>
+
       <h4>Customer Details</h4>
       <p><strong>Name:</strong> ${name}</p>
       <p><strong>Email:</strong> ${email}</p>
       <p><strong>Phone:</strong> ${phone}</p>
-      <p><strong>Message:</strong> ${additionalMessage}</p>
-  
+      <p><strong>Message:</strong> ${additionalMessage || '-'}</p>
+
       <h4>Product Enquiry</h4>
       <table border="1" cellpadding="8" cellspacing="0" style="border-collapse: collapse; width: 100%;">
-        <thead style="background-color: #f2f2f2;">
+        <thead style="background-color:#f2f2f2;">
           <tr>
             <th>Product ID</th>
             <th>Product Name</th>
@@ -762,36 +806,48 @@ export const searchProducts = async (req, res) => {
         </tbody>
       </table>
     `;
-  
-    try {
-      const transporter = nodemailer.createTransport({
-        host: 'mail.privateemail.com', 
-        port: 465,
-        secure: true,
-        auth: {
-          user: process.env.EMAIL_USER,
-          pass: process.env.EMAIL_PASS,
-        },
+
+    // ===============================
+    // ✅ STEP 5: Send Email
+    // ===============================
+    const transporter = nodemailer.createTransport({
+      host: 'mail.privateemail.com',
+      port: 465,
+      secure: true,
+      auth: {
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASS
+      }
+    });
+
+    await transporter.sendMail({
+      from: `"Enquiry Mail" <${process.env.EMAIL_USER}>`,
+      to: process.env.COMPANY_MAIL,
+      subject: `New Product Enquiry - ${enquiryCartNumber}`,
+      html: htmlContent
+    });
+
+    // ===============================
+    // ✅ STEP 6: Clear cart + respond
+    // ===============================
+    req.session.enquiryProducts = [];
+    req.session.save(() => {
+      res.status(200).json({
+        success: true,
+        message: `Enquiry submitted successfully. Your Enquiry No is ${enquiryCartNumber}`
       });
-  
-      await transporter.sendMail({
-        from: `"Enquiry Mail" <${process.env.EMAIL_USER}>`,
-        to: process.env.COMPANY_MAIL,
-        subject: `New Product Enquiry - ${enquiryCartNumber}`,
-        html: htmlContent,
-      });
-  
-      // ✅ Clear session cart after successful email
-      req.session.enquiryProducts = [];
-      req.session.save(() => {
-        res.status(200).json({ success: true, message: `Enquiry submitted successfully. Your Enquiry No is ${enquiryCartNumber}` });
-      });
-  
-    } catch (error) {
-      console.error('Error sending email:', error);
-      return res.status(500).json({ success: false, message: 'Failed to send email' });
-    }
-  };
+    });
+
+  } catch (error) {
+    console.error('Error sending enquiry:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to send enquiry'
+    });
+  }
+};
+
+
   
  
 export const getEnquiryCount = (req, res) => {
