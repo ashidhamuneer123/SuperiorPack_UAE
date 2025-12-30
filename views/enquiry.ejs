@@ -51,90 +51,7 @@
   <!-- Customized Bootstrap Stylesheet -->
   <link href="/userAssets/css/style.css" rel="stylesheet">
 
-  <script src="https://www.google.com/recaptcha/api.js" async defer></script>
-
-  <script>
-  const enquiryForm = document.getElementById('enquiryForm');
-
-  enquiryForm.addEventListener('submit', async (e) => {
-    e.preventDefault();
-
-    // ✅ reCAPTCHA check
-    const token = grecaptcha.getResponse();
-    if (!token) {
-      Swal.fire({
-        title: 'reCAPTCHA Required!',
-        text: 'Please verify that you are not a robot.',
-        icon: 'warning'
-      });
-      return;
-    }
-
-    const formData = new FormData(enquiryForm);
-    const payload = {
-      products: [],
-      name: formData.get('name'),
-      email: formData.get('email'),
-      phone: formData.get('phone'),
-      additionalMessage: formData.get('additionalMessage'),
-      token // ✅ send captcha token
-    };
-
-    // Collect product rows
-    const tableRows = document.querySelectorAll('#enquiry-table-body tr');
-    tableRows.forEach((row) => {
-      const prod_id = row.querySelector('td:nth-child(1)')?.innerText.trim();
-      const name = row.querySelector('td:nth-child(2)')?.innerText.trim();
-      const moq = row.querySelector('input[name$="[moq]"]')?.value.trim();
-      const size = row.querySelector('input[name$="[size]"]')?.value.trim();
-      const message = row.querySelector('textarea[name$="[message]"]')?.value.trim();
-
-      if (prod_id && name) {
-        payload.products.push({ prod_id, name, moq, size, message });
-      }
-    });
-
-    Swal.fire({
-      title: 'Please wait...',
-      text: 'Submitting your enquiry...',
-      icon: 'info',
-      allowOutsideClick: false,
-      showConfirmButton: false,
-      didOpen: () => Swal.showLoading()
-    });
-
-    try {
-      const response = await fetch('/submit-enquiry', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
-      });
-
-      const result = await response.json();
-
-      if (result.success) {
-        Swal.fire({
-          title: 'Enquiry Sent!',
-          text: result.message,
-          icon: 'success',
-          timer: 1800,
-          showConfirmButton: false
-        });
-
-        // ✅ reset captcha
-        grecaptcha.reset();
-
-        setTimeout(() => window.location.href = '/', 1200);
-      } else {
-        Swal.fire('Oops!', result.message || 'Something went wrong', 'error');
-        grecaptcha.reset();
-      }
-    } catch (error) {
-      Swal.fire('Error', error.message, 'error');
-      grecaptcha.reset();
-    }
-  });
-</script>
+ 
 
 
 
@@ -632,7 +549,91 @@
 });
 
 </script>
+ <script src="https://www.google.com/recaptcha/api.js" async defer></script>
 
+  <script>
+  const enquiryForm = document.getElementById('enquiryForm');
+
+  enquiryForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    // ✅ reCAPTCHA check
+    const token = grecaptcha.getResponse();
+    console.log("Captcha token:", token);
+    if (!token) {
+      Swal.fire({
+        title: 'reCAPTCHA Required!',
+        text: 'Please verify that you are not a robot.',
+        icon: 'warning'
+      });
+      return;
+    }
+
+    const formData = new FormData(enquiryForm);
+    const payload = {
+      products: [],
+      name: formData.get('name'),
+      email: formData.get('email'),
+      phone: formData.get('phone'),
+      additionalMessage: formData.get('additionalMessage'),
+      token // ✅ send captcha token
+    };
+
+    // Collect product rows
+    const tableRows = document.querySelectorAll('#enquiry-table-body tr');
+    tableRows.forEach((row) => {
+      const prod_id = row.querySelector('td:nth-child(1)')?.innerText.trim();
+      const name = row.querySelector('td:nth-child(2)')?.innerText.trim();
+      const moq = row.querySelector('input[name$="[moq]"]')?.value.trim();
+      const size = row.querySelector('input[name$="[size]"]')?.value.trim();
+      const message = row.querySelector('textarea[name$="[message]"]')?.value.trim();
+
+      if (prod_id && name) {
+        payload.products.push({ prod_id, name, moq, size, message });
+      }
+    });
+
+    Swal.fire({
+      title: 'Please wait...',
+      text: 'Submitting your enquiry...',
+      icon: 'info',
+      allowOutsideClick: false,
+      showConfirmButton: false,
+      didOpen: () => Swal.showLoading()
+    });
+
+    try {
+      const response = await fetch('/submit-enquiry', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+
+      const result = await response.json();
+
+      if (result.success) {
+        Swal.fire({
+          title: 'Enquiry Sent!',
+          text: result.message,
+          icon: 'success',
+          timer: 1800,
+          showConfirmButton: false
+        });
+
+        // ✅ reset captcha
+        grecaptcha.reset();
+
+        setTimeout(() => window.location.href = '/', 1200);
+      } else {
+        Swal.fire('Oops!', result.message || 'Something went wrong', 'error');
+        grecaptcha.reset();
+      }
+    } catch (error) {
+      Swal.fire('Error', error.message, 'error');
+      grecaptcha.reset();
+    }
+  });
+</script>
 
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
