@@ -5367,6 +5367,11 @@ fieldset:disabled .btn {
   padding-left: 0;
   list-style: none;
    white-space: nowrap;
+    position: relative;
+  z-index: 10001;
+}
+.screen-overlay {
+  pointer-events: none !important;
 }
 
 .page-link {
