@@ -5366,6 +5366,7 @@ fieldset:disabled .btn {
   display: flex;
   padding-left: 0;
   list-style: none;
+   white-space: nowrap;
 }
 
 .page-link {

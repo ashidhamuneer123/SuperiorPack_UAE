@@ -107,7 +107,7 @@ export const viewProducts = async (req, res) => {
 
     // Fetch products with pagination
     const products = await Product.find()
-      .sort({ timestamp: -1 }) // optional: newest first
+      .sort({ _id: -1 }) // optional: newest first
       .skip(skip)
       .limit(perPage)
       .lean();
