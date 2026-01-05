@@ -149,6 +149,60 @@
               </tbody>
             </table>
           </div>
+          <% if (totalPages > 1) { %>
+  <nav class="mt-3">
+    <ul class="pagination justify-content-start flex-nowrap">
+
+      <!-- Previous -->
+      <li class="page-item <%= currentPage === 1 ? 'disabled' : '' %>">
+        <a class="page-link" href="?page=<%= currentPage - 1 %>">«</a>
+      </li>
+
+      <% 
+        const startPage = Math.max(1, currentPage - 2);
+        const endPage = Math.min(totalPages, currentPage + 2);
+      %>
+
+      <!-- First Page -->
+      <% if (startPage > 1) { %>
+        <li class="page-item">
+          <a class="page-link" href="?page=1">1</a>
+        </li>
+        <% if (startPage > 2) { %>
+          <li class="page-item disabled">
+            <span class="page-link">...</span>
+          </li>
+        <% } %>
+      <% } %>
+
+      <!-- Middle Pages -->
+      <% for (let i = startPage; i <= endPage; i++) { %>
+        <li class="page-item <%= currentPage === i ? 'active' : '' %>">
+          <a class="page-link" href="?page=<%= i %>"><%= i %></a>
+        </li>
+      <% } %>
+
+      <!-- Last Page -->
+      <% if (endPage < totalPages) { %>
+        <% if (endPage < totalPages - 1) { %>
+          <li class="page-item disabled">
+            <span class="page-link">...</span>
+          </li>
+        <% } %>
+        <li class="page-item">
+          <a class="page-link" href="?page=<%= totalPages %>"><%= totalPages %></a>
+        </li>
+      <% } %>
+
+      <!-- Next -->
+      <li class="page-item <%= currentPage === totalPages ? 'disabled' : '' %>">
+        <a class="page-link" href="?page=<%= currentPage + 1 %>">»</a>
+      </li>
+
+    </ul>
+  </nav>
+<% } %>
+
         </section>
 
       

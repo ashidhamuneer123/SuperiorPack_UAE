@@ -293,15 +293,33 @@ export const blockUser = async (req, res) => {
   }
 };
 
-
 export const viewReorders = async (req, res) => {
   try {
-    const reorders = await ReOrder.find().populate("customerId");
-    res.render("viewOrders", { reorders });
+    const perPage = 15;
+    const currentPage = parseInt(req.query.page) || 1;
+    const skip = (currentPage - 1) * perPage;
+
+    const totalOrders = await ReOrder.countDocuments();
+
+    const reorders = await ReOrder.find()
+      .populate("customerId")
+      .sort({ _id: -1 })        // ✅ latest order first
+      .skip(skip)
+      .limit(perPage)
+      .lean();
+
+    const totalPages = Math.ceil(totalOrders / perPage);
+
+    res.render("viewOrders", {
+      reorders,
+      currentPage,
+      totalPages
+    });
   } catch (err) {
     console.error(err);
     res.status(500).send("Failed to fetch reorders");
   }
 };
+
 
 
