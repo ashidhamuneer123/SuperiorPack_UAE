@@ -494,7 +494,12 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             <%= categoryProductsMap[category._id.toString()] ? categoryProductsMap[category._id.toString()].length : 0 %> Products
           </p>
           <a href="/products/category/<%= category.slug %>" class="cat-img position-relative overflow-hidden mb-3 d-block text-center">
-            <img class="img-fluid" src="<%= category.image[0] %>" alt="<%= category.name %>">
+            <img 
+  class="img-fluid" 
+  src="<%= category.image[0].replace('/upload/', '/upload/f_auto,q_auto,w_400/') %>" 
+  alt="<%= category.name %>"
+  loading="lazy"
+/>
             <h5 class="font-weight-semi-bold m-0 mt-2"><%= category.name %></h5>
           </a>
           
