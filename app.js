@@ -45,10 +45,7 @@ import userRoutes from "./routes/userRoutes.js";
 
 
 app.use("/admin", adminRoutes);
-// app.use("/",userRoutes)
-app.get("/", (req, res) => {
-  res.send("SERVER ROOT WORKING");
-});
+ app.use("/",userRoutes)
 
 
 // Start Server
