@@ -397,7 +397,12 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                 <!-- Image -->
                 <div class="position-relative overflow-hidden bg-transparent border-bottom p-0">
                   <a href="/product/<%= product.slug %>">
-                    <img class="img-fluid w-100" src="<%= product.image[0] %>" alt="<%= product.name %>">
+                   <img 
+  class="img-fluid w-100" 
+  src="<%= product.image[0].replace('/upload/', '/upload/f_auto,q_auto,w_500/') %>" 
+  alt="<%= product.name %>"
+  loading="lazy"
+/>
                   </a>
                 </div>
 
