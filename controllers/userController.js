@@ -220,6 +220,28 @@ export const userLoginPage = async (req, res) => {
   }
 };
 
+export const shopOnlinePage = async (req, res) => {
+  try {
+    const categories = await Category.find({ isDeleted: false });
+    const productsByCategory = await Product.find().populate('catId');
+
+  const categoryProductsMap = {};
+  productsByCategory.forEach(product => {
+    if (product.catId) {
+      const categoryId = product.catId._id.toString();
+      if (!categoryProductsMap[categoryId]) {
+        categoryProductsMap[categoryId] = [];
+      }
+      categoryProductsMap[categoryId].push(product);
+    }
+  });
+    res.render("shoponline",{categories,categoryProductsMap});
+  } catch (error) {
+    console.error("Error fetching users:", error);
+    res.status(500).send("Internal Server Error");
+  }
+};
+
 export const userLogin = async (req, res) => {
   try {
     const { userId, email } = req.body;
