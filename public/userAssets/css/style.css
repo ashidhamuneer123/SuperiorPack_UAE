@@ -10052,28 +10052,5 @@ table th.d-none, table td.d-none {
   transform: translateY(-2px);
 }
 
-.payment-icon{
-    width:70px;
-    height:45px;
 
-    display:flex;
-    justify-content:center;
-    align-items:center;
-
-    background:#fff;
-
-    border-radius:8px;
-
-    padding:5px;
-
-    margin:0 6px;
-
-    box-shadow:0 1px 4px rgba(0,0,0,0.08);
-}
-
-.payment-icon img{
-    width:100%;
-    height:100%;
-    object-fit:contain;
-}
 
