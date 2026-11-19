@@ -47,11 +47,11 @@ export const showAdminDashboard = async (req, res) => {
     const products = await Product.find().sort({ createdAt: -1 }).limit(5); 
 
     // Fetch top 5 categories (sorted by number of products in each, or fallback to name)
-    const categories = await Category.find().limit(5);
+   const categories = await Category.find({ isDeleted: false }).limit(5);
 
     // Count for chart data
     const productCount = await Product.countDocuments();
-    const categoryCount = await Category.countDocuments();
+   const categoryCount = await Category.countDocuments({ isDeleted: false });
     const orderCount = await ReOrder.countDocuments();
 
     res.render("adminDashboard", {
