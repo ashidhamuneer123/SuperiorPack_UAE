@@ -2,7 +2,7 @@ import express from "express";
 import upload from "../middlewares/multerConfig.js"; 
 import { showAdminDashboard,showLoginPage, handleAdminLogin, handleAdminLogout,showAddUserPage,createUser,deactivateUserProduct,showAddProductForm,addProductToUser,showEditUserPage,editUser,toggleUserStatus,blockUser, viewUsers, viewReorders, } from "../controllers/adminController.js";
 import { adminAuth } from "../middlewares/authMiddleware.js";
-import {showAddCategoryPage,addCategory,viewCategories,showEditCategoryPage,updateCategory,deleteCategory,fixDeletedSlugs } from '../controllers/categoryController.js';
+import {showAddCategoryPage,addCategory,viewCategories,showEditCategoryPage,updateCategory,deleteCategory, } from '../controllers/categoryController.js';
 import {showAddProductPage,addProduct,viewProducts, showEditProductPage, updateProduct, deleteProduct,} from '../controllers/productController.js';
 import {showAddBlogPage,addBlog,deleteBlog, updateBlog, showEditBlogPage, viewBlogs} from '../controllers/blogController.js'
 const router = express.Router();
@@ -21,7 +21,7 @@ router.get("/viewCategories", adminAuth, viewCategories);
 router.get("/category/edit/:id", adminAuth, showEditCategoryPage);
 router.post("/category/edit/:id", adminAuth, upload, updateCategory);
 router.get("/category/delete/:id", adminAuth, deleteCategory);
-router.get("/fix-deleted-slugs", adminAuth, fixDeletedSlugs); // TEMPORARY
+
 router.get("/addUser", adminAuth, showAddUserPage);
 router.post("/addUser", adminAuth,upload,createUser );
 router.get("/viewUsers",adminAuth,viewUsers)

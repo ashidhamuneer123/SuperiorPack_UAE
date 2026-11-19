@@ -89,19 +89,4 @@ export const updateCategory = async (req, res) => {
   }
 };
 
-// TEMPORARY – remove after running once
-export const fixDeletedSlugs = async (req, res) => {
-  try {
-    const deleted = await Category.find({ isDeleted: true, slug: { $not: /-deleted-/ } });
-    for (const c of deleted) {
-      await Category.updateOne(
-        { _id: c._id },
-        { $set: { slug: `${c.slug}-deleted-${c._id}` } }
-      );
-    }
-    res.send(`Fixed ${deleted.length} deleted categories: ${deleted.map(c => c.name).join(', ')}`);
-  } catch (error) {
-    console.error("Fix slugs error:", error);
-    res.status(500).send(error.message);
-  }
-};
+
